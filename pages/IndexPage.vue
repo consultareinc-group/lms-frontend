@@ -1,12 +1,17 @@
 <template>
   <q-page class="q-pa-md column">
     <page-breadcrumbs
-      title="Page Title"
+      title="Course Management"
       :items="[
         {
-          label: 'Nav 1',
+          label: 'Learning Management System',
           icon: 'home',
           to: { name: 'Nav1' },
+        },
+        {
+          label: 'Course Management',
+          icon: 'home',
+          to: { name: 'Course Management' },
         },
       ]"
     />

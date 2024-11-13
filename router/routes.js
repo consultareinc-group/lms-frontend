@@ -25,6 +25,12 @@ const routes = [
         component: () => import("../pages/UserCoursePage/QuizPage.vue"),
       },
       {
+        path: "certification_page",
+        name: "Certification Page",
+        component: () =>
+          import("../pages/UserCoursePage/CertificationPage.vue"),
+      },
+      {
         path: "course_management",
         name: "Course Management",
         component: () => import("../pages/AdminCoursePage/ViewPage.vue"),

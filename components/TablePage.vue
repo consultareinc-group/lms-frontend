@@ -65,45 +65,111 @@
 
       <!-- User Details Dialog -->
       <q-dialog v-model="showUserDetails">
-        <q-card class="q-px-xl relative-position">
-          <q-icon
-            name="cancel"
-            color="grey"
-            size="sm"
-            class="absolute-top-right q-mt-sm q-mr-sm cursor-pointer"
-            @click="showUserDetails = false"
-          />
-          <q-card-section class="text-center q-mt-lg">
-            <!-- <q-icon name="delete" color="red" size="lg" /> -->
-            <q-icon name="archive" color="orange-10" size="lg" />
-            <!-- <div class="text-h6 text-weight-bold">Delete Confirmation</div> -->
-            <div class="text-h6 text-weight-bold">User Details</div>
-          </q-card-section>
-
-          <q-card-section class="q-pt-none text-center">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit?
-          </q-card-section>
-
-          <q-card-section class="q-pt-none text-center">
-            <span class="text-bold">Code: </span> CD-100001
-          </q-card-section>
-
-          <q-card-section class="flex justify-center q-my-lg">
-            <q-btn
-              flat
-              no-caps
-              label="Cancel"
-              class="border-000000-all q-px-lg"
-              v-close-popup
+        <q-card class="relative-position" style="min-width: 40vw">
+          <div
+            class="row justify-between"
+            style="width: 100%; border-bottom: solid 1px #e6e6e6"
+          >
+            <q-card-section class="text-center">
+              <div class="text-h6 text-weight-regular">User Information</div>
+            </q-card-section>
+            <q-icon
+              name="cancel"
+              color="grey"
+              size="sm"
+              class="q-mt-md q-mr-md cursor-pointer"
+              @click="showUserDetails = false"
             />
-            <div class="q-mx-md"></div>
-            <q-btn
-              flat
-              no-caps
-              label="Confirm"
-              class="bg-accent text-white q-px-lg"
-            />
-          </q-card-section>
+          </div>
+
+          <div class="q-gutter-sm q-pa-md">
+            <div class="row">
+              <div class="col-6 q-px-sm">
+                <label>First Name <span class="text-red">*</span></label>
+                <q-input
+                  outlined
+                  dense
+                  class="q-mt-sm"
+                  :rules="[(val) => !!val || 'Field is required']"
+                />
+              </div>
+              <div class="col-6 q-px-sm">
+                <label>Middle Name</label>
+                <q-input
+                  outlined
+                  dense
+                  class="q-mt-sm"
+                  :rules="[(val) => !!val || 'Field is required']"
+                />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-10 q-px-sm">
+                <label>Last Name <span class="text-red">*</span></label>
+                <q-input
+                  outlined
+                  dense
+                  class="q-mt-sm"
+                  :rules="[(val) => !!val || 'Field is required']"
+                />
+              </div>
+              <div class="col-2 q-px-sm">
+                <label>Suffix <span class="text-red">*</span></label>
+                <q-input
+                  outlined
+                  dense
+                  class="q-mt-sm"
+                  :rules="[(val) => !!val || 'Field is required']"
+                />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-6 q-px-sm">
+                <label>Phone <span class="text-red">*</span></label>
+                <q-input
+                  outlined
+                  dense
+                  class="q-mt-sm"
+                  :rules="[(val) => !!val || 'Field is required']"
+                />
+              </div>
+              <div class="col-6 q-px-sm">
+                <label>Company <span class="text-red">*</span></label>
+                <q-input
+                  outlined
+                  dense
+                  class="q-mt-sm"
+                  :rules="[(val) => !!val || 'Field is required']"
+                />
+              </div>
+            </div>
+            <div class="q-px-sm">
+              <label>Email <span class="text-red">*</span></label>
+              <q-input
+                outlined
+                dense
+                class="q-mt-sm"
+                :rules="[(val) => !!val || 'Field is required']"
+              />
+            </div>
+            <q-card-section class="flex justify-end q-my-sm q-py-none">
+              <q-btn
+                flat
+                no-caps
+                label="Close"
+                class="border-000000-all q-px-lg"
+                v-close-popup
+              />
+              <div class="q-mx-md"></div>
+              <q-btn
+                :to="{ name: 'Quiz Page' }"
+                flat
+                no-caps
+                label="Confirm"
+                class="bg-accent text-white q-px-lg"
+              />
+            </q-card-section>
+          </div>
         </q-card>
       </q-dialog>
 

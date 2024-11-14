@@ -19,9 +19,9 @@
           to: { name: 'View Course Details' },
         },
         {
-          label: 'Add Quiz',
+          label: 'Edit Quiz',
           // icon: 'home',
-          to: { name: 'Add Quiz' },
+          to: { name: 'Edit Quiz' },
         },
       ]"
     />
@@ -45,7 +45,7 @@
               <label>Quiz Name <span class="text-red">*</span></label>
               <q-input
                 outlined
-                v-model="form.input_text"
+                v-model="form.quiz_name"
                 dense
                 class="q-mt-sm"
                 :rules="[(val) => !!val || 'Field is required']"
@@ -56,7 +56,7 @@
               <label>Total Marks <span class="text-red">*</span></label>
               <q-input
                 outlined
-                v-model="form.input_text"
+                v-model="form.total_marks"
                 dense
                 class="q-mt-sm"
                 :rules="[(val) => !!val || 'Field is required']"
@@ -68,7 +68,7 @@
             <label>Passing Percentage <span class="text-red">*</span></label>
             <q-input
               outlined
-              v-model="form.input_text"
+              v-model="form.passing_percentage"
               dense
               class="q-mt-sm"
               :rules="[(val) => !!val || 'Field is required']"
@@ -91,9 +91,12 @@
           :showOptions="true"
           :rows="rows"
           :columns="columns"
+          :viewName="'View Question'"
+          :editName="'Edit Question'"
         />
+        <!-- Button -->
         <q-btn
-          :to="{ name: 'Add Question', query: { origin: 'AddQuiz' } }"
+          :to="{ name: 'Add Question', query: { origin: 'EditQuiz' } }"
           label="Add Question"
           no-caps
           flat
@@ -133,7 +136,7 @@
 
 <script setup>
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
-import TablePage from "../../components/TablePage.vue";
+import TablePage from "../../../components/TablePage.vue";
 import { useQuasar } from "quasar";
 import { ref } from "vue";
 
@@ -141,7 +144,7 @@ const $q = useQuasar();
 
 const showNotif = () => {
   $q.notify({
-    message: "Success. The record has been saved.",
+    message: "Success. The record has been updated.",
     color: "green",
     position: "top-right",
     actions: [{ icon: "close", color: "white", rounded: true }],
@@ -149,9 +152,9 @@ const showNotif = () => {
 };
 
 let form = ref({
-  input_text: null,
-  input_date: null,
-  input_file: null,
+  quiz_name: "Quiz 1",
+  total_marks: "3",
+  passing_percentage: "100%",
 });
 
 const columns = [
@@ -175,12 +178,12 @@ const columns = [
 ];
 
 const rows = [
-  // {
-  //   id: 1,
-  //   name: "1",
-  //   question: "Question 1",
-  //   marks: "1",
-  // },
+  {
+    id: 1,
+    name: "1",
+    question: "Question 1",
+    marks: "1",
+  },
   // {
   //   id: 2,
   //   name: "2",

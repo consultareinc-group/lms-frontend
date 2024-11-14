@@ -15,72 +15,83 @@ const routes = [
         component: () => import("../pages/IndexPage.vue"),
       },
       {
-        path: "list_quizzes",
-        name: "List of Quizzes",
-        component: () => import("../pages/UserCoursePage/ListQuizzes.vue"),
-      },
-      {
-        path: "quiz_page",
-        name: "Quiz Page",
-        component: () => import("../pages/UserCoursePage/QuizPage.vue"),
-      },
-      {
-        path: "certification_page",
-        name: "Certification Page",
-        component: () =>
-          import("../pages/UserCoursePage/CertificationPage.vue"),
-      },
-      {
         path: "course_management",
         name: "Course Management",
-        component: () => import("../pages/AdminCoursePage/ViewPage.vue"),
+        component: () =>
+          import("../pages/CoursePage/AdminCoursePage/ViewPage.vue"),
       },
       {
         path: "add_course",
         name: "Add Course",
-        component: () => import("../pages/AdminCoursePage/AddCourse.vue"),
+        component: () =>
+          import("../pages/CoursePage/AdminCoursePage/AddCourse.vue"),
       },
       {
         path: "view_course_details",
         name: "View Course Details",
-        component: () => import("../pages/AdminCoursePage/ViewDetails.vue"),
+        component: () =>
+          import("../pages/CoursePage/AdminCoursePage/ViewDetails.vue"),
       },
       {
         path: "edit_course",
         name: "Edit Course",
-        component: () => import("../pages/AdminCoursePage/EditCourse.vue"),
+        component: () =>
+          import("../pages/CoursePage/AdminCoursePage/EditCourse.vue"),
       },
       {
         path: "add_quiz",
         name: "Add Quiz",
-        component: () => import("../pages/AdminCoursePage/AddQuiz.vue"),
+        component: () =>
+          import("../pages/CoursePage/AdminCoursePage/AddQuiz.vue"),
       },
       {
         path: "view_quiz",
         name: "View Quiz",
-        component: () => import("../pages/AdminCoursePage/ViewQuiz.vue"),
+        component: () =>
+          import("../pages/CoursePage/AdminCoursePage/ViewQuiz.vue"),
       },
       {
         path: "edit_quiz",
         name: "Edit Quiz",
-        component: () => import("../pages/AdminCoursePage/EditQuiz.vue"),
+        component: () =>
+          import("../pages/CoursePage/AdminCoursePage/EditQuiz.vue"),
       },
       {
         path: "add_question",
         name: "Add Question",
-        component: () => import("../pages/AdminCoursePage/AddQuestion.vue"),
+        component: () =>
+          import("../pages/CoursePage/AdminCoursePage/AddQuestion.vue"),
       },
       {
         path: "view_question",
         name: "View Question",
-        component: () => import("../pages/AdminCoursePage/ViewQuestion.vue"),
+        component: () =>
+          import("../pages/CoursePage/AdminCoursePage/ViewQuestion.vue"),
       },
       {
         path: "edit_question",
         name: "Edit Question",
-        component: () => import("../pages/AdminCoursePage/EditQuestion.vue"),
+        component: () =>
+          import("../pages/CoursePage/AdminCoursePage/EditQuestion.vue"),
       },
     ],
+  },
+  {
+    path: "/list_quizzes",
+    name: "List of Quizzes",
+    component: () =>
+      import("../pages/CoursePage/UserCoursePage/ListQuizzes.vue"),
+  },
+  {
+    path: "/quiz_page",
+    name: "Quiz Page",
+    component: () => import("../pages/CoursePage/UserCoursePage/QuizPage.vue"),
+  },
+  {
+    path: "/certification_page",
+    name: "Certification Page",
+    component: () =>
+      import("../pages/CoursePage/UserCoursePage/CertificationPage.vue"),
   },
 ];
 

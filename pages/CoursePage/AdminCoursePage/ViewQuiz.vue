@@ -135,7 +135,7 @@
 
 <script setup>
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
-import TablePage from "../../components/TablePage.vue";
+import TablePage from "../../../components/TablePage.vue";
 
 import { ref } from "vue";
 

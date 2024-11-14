@@ -43,7 +43,7 @@
 
 <script setup>
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
-import TablePage from "../../components/TablePage.vue";
+import TablePage from "../../../components/TablePage.vue";
 import { useRouter } from "vue-router";
 
 const columns = [

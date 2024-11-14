@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-xl column">
+  <div class="q-pa-xl column">
     <div class="bg-white q-pa-md items-start justify-start column">
       <div
         class="q-px-sm q-mb-lg row items-start justify-start"
@@ -15,11 +15,11 @@
         :columns="columns"
       />
     </div>
-  </q-page>
+  </div>
 </template>
 
 <script setup>
-import TablePage from "../../components/TablePage.vue";
+import TablePage from "../../../components/TablePage.vue";
 
 const columns = [
   {

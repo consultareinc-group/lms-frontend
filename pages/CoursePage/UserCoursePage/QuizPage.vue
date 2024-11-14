@@ -99,7 +99,7 @@
 </template>
 
 <script setup>
-import { quizData } from "../DATA";
+import { quizData } from "../../DATA";
 import { ref } from "vue";
 
 let alert = ref(false);

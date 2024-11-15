@@ -77,21 +77,30 @@ const routes = [
     ],
   },
   {
-    path: "/list_quizzes",
-    name: "List of Quizzes",
+    path: "/lms",
+    name: "Learning Management System Client",
     component: () =>
-      import("../pages/CoursePage/UserCoursePage/ListQuizzes.vue"),
-  },
-  {
-    path: "/quiz_page",
-    name: "Quiz Page",
-    component: () => import("../pages/CoursePage/UserCoursePage/QuizPage.vue"),
-  },
-  {
-    path: "/certification_page",
-    name: "Certification Page",
-    component: () =>
-      import("../pages/CoursePage/UserCoursePage/CertificationPage.vue"),
+      import("../pages/CoursePage/UserCoursePage/UserLayout.vue"),
+    children: [
+      {
+        path: "/list_quizzes",
+        name: "List of Quizzes",
+        component: () =>
+          import("../pages/CoursePage/UserCoursePage/ListQuizzes.vue"),
+      },
+      {
+        path: "/quiz_page",
+        name: "Quiz Page",
+        component: () =>
+          import("../pages/CoursePage/UserCoursePage/QuizPage.vue"),
+      },
+      {
+        path: "/certification_page",
+        name: "Certification Page",
+        component: () =>
+          import("../pages/CoursePage/UserCoursePage/CertificationPage.vue"),
+      },
+    ],
   },
 ];
 

@@ -5,7 +5,9 @@
         <div class="text-h4 text-cyan text-weight-bold">
           Certificate of Completion
         </div>
-        <div class="text-h5 text-weight-medium">Congratulations, John Doe!</div>
+        <div class="text-h5 text-weight-medium">
+          Congratulations, {{ userName }}!
+        </div>
       </div>
       <div>
         <p
@@ -13,7 +15,7 @@
           style="text-align: center; margin: 0 auto; max-width: 400px"
         >
           You have demonstrated exceptional knowledge and mastery by completing
-          the quiz Quiz 1 as part of the Course 1 course.
+          the quiz {{ quizName }} as part of the {{ courseName }} course.
         </p>
       </div>
       <div class="q-gutter-md">
@@ -36,7 +38,6 @@
       class="col-6"
       style="
         height: 100%;
-        background: rgb(4, 42, 81);
         background: linear-gradient(
           90deg,
           rgba(4, 42, 81, 1) 0%,
@@ -49,14 +50,21 @@
         style="height: 100%"
       >
         <div class="text-h5 text-white text-start">Preview:</div>
-        <div>
-          <img :src="certificate" alt="certificate-image" />
+        <div
+          style="position: relative; display: inline-block; text-align: center"
+        >
+          <img
+            :src="certificate"
+            alt="certificate-image"
+            style="width: 100%; max-width: 500px"
+          />
         </div>
         <q-btn
           label="Download Certificate"
           no-caps
           rounded
           class="bg-accent text-white q-px-xl"
+          @click="generateCertificate"
         />
       </div>
     </div>
@@ -65,4 +73,61 @@
 
 <script setup>
 import certificate from "../../../assets/certificate.png";
+import { ref } from "vue";
+import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import { saveAs } from "file-saver";
+
+const userName = ref("Allen Tiempo");
+const quizName = ref("Quiz 1");
+const courseName = ref("Course 1");
+
+const generateCertificate = async () => {
+  try {
+    const templateUrl = new URL(
+      "../../../assets/certificate.pdf",
+      import.meta.url
+    ).href;
+    const templateBytes = await fetch(templateUrl).then((res) =>
+      res.arrayBuffer()
+    );
+
+    const pdfDoc = await PDFDocument.load(templateBytes);
+    const page = pdfDoc.getPages()[0];
+
+    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const fontSize = 24;
+
+    page.drawText(userName.value, {
+      x: 160,
+      y: 200,
+      size: fontSize,
+      font,
+      color: rgb(0, 0, 0),
+    });
+
+    page.drawText(quizName.value, {
+      x: 170,
+      y: 150,
+      size: fontSize,
+      font,
+      color: rgb(0, 0, 0),
+    });
+
+    page.drawText(courseName.value, {
+      x: 190,
+      y: 120,
+      size: fontSize,
+      font,
+      color: rgb(0, 0, 0),
+    });
+
+    const pdfBytes = await pdfDoc.save();
+    saveAs(
+      new Blob([pdfBytes], { type: "application/pdf" }),
+      "certificate.pdf"
+    );
+  } catch (error) {
+    console.error("Error generating certificate:", error);
+  }
+};
 </script>

@@ -114,7 +114,7 @@
                 />
               </div>
               <div class="col-2 q-px-sm">
-                <label>Suffix <span class="text-red">*</span></label>
+                <label>Suffix</label>
                 <q-input
                   outlined
                   dense

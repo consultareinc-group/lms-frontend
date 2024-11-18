@@ -106,7 +106,7 @@
 
       <!-- Button -->
       <q-btn
-        @click="showNotif"
+        @click="handleSave"
         label="Save"
         no-caps
         flat
@@ -119,22 +119,19 @@
 <script setup>
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { computed } from "vue";
-import { ref } from "vue";
 import { useRoute } from "vue-router";
+import { useNotification } from "../Composables/UseNotification";
+import { ref } from "vue";
 
-import { useQuasar } from "quasar";
+const { showNotif } = useNotification();
 
-const $q = useQuasar();
+function handleSave() {
+  showNotif(
+    "<p class='q-mb-none text-green'><span class='text-weight-bold'>Success</span>. The record has been added.</p>",
+    "green-2"
+  );
+}
 const route = useRoute();
-
-const showNotif = () => {
-  $q.notify({
-    message: "Success. The record has been saved.",
-    color: "green",
-    position: "top-right",
-    actions: [{ icon: "close", color: "white", rounded: true }],
-  });
-};
 
 let form = ref({
   question: "",

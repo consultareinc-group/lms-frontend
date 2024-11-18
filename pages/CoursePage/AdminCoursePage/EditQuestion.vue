@@ -135,7 +135,7 @@
 
       <!-- Button -->
       <q-btn
-        @click="showNotif"
+        @click="handleSave"
         label="Save"
         no-caps
         flat
@@ -147,21 +147,17 @@
 
 <script setup>
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
-
+import { useNotification } from "../Composables/UseNotification";
 import { ref } from "vue";
 
-import { useQuasar } from "quasar";
+const { showNotif } = useNotification();
 
-const $q = useQuasar();
-
-const showNotif = () => {
-  $q.notify({
-    message: "Success. The record has been updated.",
-    color: "green",
-    position: "top-right",
-    actions: [{ icon: "close", color: "white", rounded: true }],
-  });
-};
+function handleSave() {
+  showNotif(
+    "<p class='q-mb-none text-green'><span class='text-weight-bold'>Success</span>. The record has been updated.</p>",
+    "green-2"
+  );
+}
 
 let form = ref({
   question: "Question 1",

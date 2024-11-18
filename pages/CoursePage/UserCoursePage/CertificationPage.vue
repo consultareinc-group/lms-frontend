@@ -34,6 +34,8 @@
         />
       </div>
     </div>
+
+    <!-- Certificate Preview with Overlay Text -->
     <div
       class="col-6"
       style="
@@ -51,14 +53,66 @@
       >
         <div class="text-h5 text-white text-start">Preview:</div>
         <div
-          style="position: relative; display: inline-block; text-align: center"
+          style="
+            position: relative;
+            display: inline-block;
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+          "
         >
-          <img
-            :src="certificate"
-            alt="certificate-image"
-            style="width: 100%; max-width: 500px"
-          />
+          <img :src="certificate" alt="certificate-image" style="width: 100%" />
+
+          <div
+            style="
+              position: absolute;
+              top: 35%;
+              left: 48%;
+              transform: translate(-50%, -50%);
+              font-size: 1.5em;
+              font-weight: 600;
+            "
+          >
+            {{ userName }}
+          </div>
+          <div
+            style="
+              position: absolute;
+              top: 51%;
+              left: 43%;
+              transform: translate(-50%, -50%);
+              font-size: 1.5em;
+              font-weight: 600;
+            "
+          >
+            {{ quizName }}
+          </div>
+          <div
+            style="
+              position: absolute;
+              top: 60%;
+              left: 48%;
+              transform: translate(-50%, -50%);
+              font-size: 1.5em;
+              font-weight: 600;
+            "
+          >
+            {{ courseName }}
+          </div>
+          <!-- <div
+            style="
+              position: absolute;
+              bottom: 10%;
+              left: 50%;
+              transform: translate(-50%, 0);
+              font-size: 1.1em;
+              font-style: italic;
+            "
+          >
+            Signature
+          </div> -->
         </div>
+
         <q-btn
           label="Download Certificate"
           no-caps

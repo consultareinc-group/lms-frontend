@@ -93,31 +93,13 @@
           :columns="columns"
         />
         <q-btn
-          :to="{ name: 'Add Question', query: { origin: 'AddQuiz' } }"
+          @click="showAddQuestionDialog"
           label="Add Question"
           no-caps
           flat
           class="bg-primary text-white q-mt-lg"
         />
       </div>
-
-      <!--Success modal-->
-      <!-- <div
-        style="width: 100%; border: solid 1px green"
-        class="items-center justify-between row bg-green-2 q-pa-md rounded-borders"
-        v-if="isSuccessModalOpen"
-      >
-        <p class="q-mb-none text-green">
-          <span class="text-weight-bold">Success!</span> The record has been
-          saved.
-        </p>
-        <q-icon
-          class="text-green"
-          name="close"
-          @click="handleCloseSuccesModal"
-          style="cursor: pointer"
-        />
-      </div> -->
 
       <!-- Button -->
       <q-btn
@@ -128,16 +110,24 @@
         class="bg-accent text-white q-px-xl q-mt-lg"
       />
     </div>
+    <add-dialog v-model="addQuestionDialog" />
   </q-page>
 </template>
 
 <script setup>
+import AddDialog from "./Components/AddDialog.vue";
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import TablePage from "../../../components/TablePage.vue";
-import { useNotification } from "../Composables/UseNotification";
+import { useNotification } from "./Composables/UseNotification";
 import { ref } from "vue";
 
 const { showNotif } = useNotification();
+
+const addQuestionDialog = ref(false);
+
+const showAddQuestionDialog = () => {
+  addQuestionDialog.value = true;
+};
 
 function handleSave() {
   showNotif(

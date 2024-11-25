@@ -114,7 +114,7 @@
 
 <script setup>
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
-import { useNotification } from "../Composables/UseNotification";
+import { useNotification } from "./Composables/UseNotification";
 import { ref } from "vue";
 
 const { showNotif } = useNotification();

@@ -120,7 +120,7 @@
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { computed } from "vue";
 import { useRoute } from "vue-router";
-import { useNotification } from "../Composables/UseNotification";
+import { useNotification } from "./Composables/UseNotification";
 import { ref } from "vue";
 
 const { showNotif } = useNotification();

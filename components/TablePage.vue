@@ -37,7 +37,20 @@
                     <q-item clickable v-close-popup :to="{ name: viewName }">
                       <q-item-section>View</q-item-section>
                     </q-item>
-                    <q-item clickable v-close-popup :to="{ name: editName }">
+                    <q-item
+                      clickable
+                      v-close-popup
+                      @click="showEditQuestionDialog"
+                      v-if="isDialog"
+                    >
+                      <q-item-section>Edit</q-item-section>
+                    </q-item>
+                    <q-item
+                      clickable
+                      v-close-popup
+                      :to="{ name: editName }"
+                      v-else
+                    >
                       <q-item-section>Edit</q-item-section>
                     </q-item>
                     <q-item
@@ -216,23 +229,25 @@
           </q-card-section>
         </q-card>
       </q-dialog>
+      <AddDialog v-model="editQuestionDialog" />
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
+import AddDialog from "../pages/CoursePage/AdminCoursePage/Components/AddDialog.vue";
 
 const props = defineProps({
+  isDialog: {
+    type: Boolean,
+    required: false,
+  },
   showOptions: {
     type: Boolean,
     required: false,
   },
   isViewOption: {
-    type: Boolean,
-    required: false,
-  },
-  isSearchTable: {
     type: Boolean,
     required: false,
   },
@@ -257,6 +272,12 @@ const props = defineProps({
     required: false,
   },
 });
+
+const editQuestionDialog = ref(false);
+
+const showEditQuestionDialog = () => {
+  editQuestionDialog.value = true;
+};
 
 const showUserDetails = ref(false);
 const showArchive = ref(false);

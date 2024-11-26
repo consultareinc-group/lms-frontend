@@ -1,12 +1,15 @@
 <template>
-  <q-dialog :v-model="isDialogOpen">
-    <q-card class="q-px-xl relative-position" style="min-width: 70vw">
+  <q-dialog v-model="model">
+    <q-card class="relative-position" style="min-width: 70vw">
       <div class="col-grow items-start justify-start column">
         <div
           class="bg-white q-py-lg items-start justify-start column"
           style="width: 100%"
         >
-          <header class="q-mb-lg row justify-between" style="width: 100%">
+          <header
+            class="q-pl-xl q-mb-lg row justify-between"
+            style="width: 100%"
+          >
             <div>
               <h6 class="q-ma-none">Question Details</h6>
               <p class="text-weight-thin">
@@ -19,11 +22,11 @@
               color="grey"
               size="sm"
               class="q-mt-md q-mr-md cursor-pointer"
-              @click="isDialogOpen = false"
+              @click="model = false"
             />
           </header>
           <!---->
-          <div class="row" style="width: 100%">
+          <div class="q-px-xl row" style="width: 100%">
             <!---->
             <div class="col-12 q-px-sm q-mb-md">
               <label>Question <span class="text-red">*</span></label>
@@ -85,22 +88,23 @@
               </div>
             </div>
           </div>
-          <!-- Button -->
-          <q-btn
-            label="Add Choice"
-            no-caps
-            flat
-            class="bg-primary text-white q-mt-lg"
-            @click="addChoice"
-          />
-
-          <!-- Button -->
-          <q-btn
-            label="Save"
-            no-caps
-            flat
-            class="bg-accent text-white q-px-xl q-mt-lg"
-          />
+          <div class="q-px-xl column">
+            <!-- Button -->
+            <q-btn
+              label="Add Choice"
+              no-caps
+              flat
+              class="bg-primary text-white q-mt-lg"
+              @click="addChoice"
+            />
+            <!-- Button -->
+            <q-btn
+              label="Save"
+              no-caps
+              flat
+              class="bg-accent text-white q-px-xl q-mt-lg"
+            />
+          </div>
         </div>
 
         <!--Success modal-->
@@ -126,16 +130,25 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 const props = defineProps({
-  model: {
+  modelValue: {
     type: Boolean,
     required: true,
   },
 });
 
-const isDialogOpen = ref(props.model);
+const emit = defineEmits(["update:modelValue"]);
+
+const model = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(newValue) {
+    emit("update:modelValue", newValue);
+  },
+});
 
 let form = ref({
   question: "",

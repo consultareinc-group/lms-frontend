@@ -93,6 +93,7 @@
           :columns="columns"
           :viewName="'View Question'"
           :editName="'Edit Question'"
+          :isDialog="true"
         />
         <!-- Button -->
         <!-- <q-btn
@@ -179,29 +180,5 @@ const rows = [
     question: "Question 1",
     marks: "1",
   },
-  // {
-  //   id: 2,
-  //   name: "2",
-  //   question: "Question 2",
-  //   marks: "1",
-  // },
-  // {
-  //   id: 3,
-  //   name: "3",
-  //   question: "Question 3",
-  //   marks: "1",
-  // },
-  // {
-  //   id: 4,
-  //   name: "4",
-  //   question: "Question 4",
-  //   marks: "1",
-  // },
-  // {
-  //   id: 5,
-  //   name: "5",
-  //   question: "Question 5",
-  //   marks: "1",
-  // },
 ];
 </script>

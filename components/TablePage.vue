@@ -229,7 +229,7 @@
           </q-card-section>
         </q-card>
       </q-dialog>
-      <AddDialog v-model="editQuestionDialog" />
+      <AddDialog v-model="editQuestionDialog" :dialog-type="'edit'" />
     </div>
   </div>
 </template>

@@ -103,6 +103,7 @@
               no-caps
               flat
               class="bg-accent text-white q-px-xl q-mt-lg"
+              @click="save"
             />
           </div>
         </div>
@@ -130,12 +131,16 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 
 const props = defineProps({
   modelValue: {
     type: Boolean,
     required: true,
+  },
+  dialogType: {
+    type: String,
+    default: "add",
   },
 });
 
@@ -158,6 +163,44 @@ let form = ref({
     { text: "", explanation: "", isCorrect: false },
   ],
 });
+
+let editForm = ref({
+  question: "Question 1",
+  choices: [
+    { text: "Choices 1", explanation: "Explanation 1", isCorrect: false },
+    { text: "Choices 2", explanation: "Explanation 2", isCorrect: false },
+    { text: "Choices 3", explanation: "Explanation 3", isCorrect: false },
+  ],
+});
+
+watch(
+  () => model.value,
+  (isOpen) => {
+    if (isOpen && props.dialogType === "edit") {
+      form.value = {
+        question: editForm.value.question || "",
+        choices: editForm.value.choices,
+      };
+    } else if (isOpen && props.dialogType === "add") {
+      resetForm();
+    }
+  }
+);
+
+const resetForm = () => {
+  form.value = {
+    question: "",
+    choices: [
+      { text: "", explanation: "", isCorrect: false },
+      { text: "", explanation: "", isCorrect: false },
+      { text: "", explanation: "", isCorrect: false },
+    ],
+  };
+};
+
+const save = () => {
+  model.value = false;
+};
 
 const addChoice = () => {
   form.value.choices.push({

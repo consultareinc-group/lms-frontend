@@ -34,7 +34,20 @@
                     <!-- <q-item
                               :to="{ name: 'route-name-here', params: { id: props.row.id } }"
                             > -->
-                    <q-item clickable v-close-popup :to="{ name: viewName }">
+                    <q-item
+                      clickable
+                      v-close-popup
+                      @click="showViewQuestionDialog"
+                      v-if="isDialog"
+                    >
+                      <q-item-section>View</q-item-section>
+                    </q-item>
+                    <q-item
+                      clickable
+                      v-close-popup
+                      :to="{ name: viewName }"
+                      v-else
+                    >
                       <q-item-section>View</q-item-section>
                     </q-item>
                     <q-item
@@ -225,10 +238,12 @@
               no-caps
               label="Confirm"
               class="bg-accent text-white q-px-lg"
+              @click="confirmArchive"
             />
           </q-card-section>
         </q-card>
       </q-dialog>
+      <ViewDialog v-model="viewQuestionDialog" />
       <AddDialog v-model="editQuestionDialog" :dialog-type="'edit'" />
     </div>
   </div>
@@ -237,6 +252,7 @@
 <script setup>
 import { ref } from "vue";
 import AddDialog from "../pages/CoursePage/AdminCoursePage/Components/AddDialog.vue";
+import ViewDialog from "../pages/CoursePage/AdminCoursePage/Components/ViewDialog.vue";
 
 const props = defineProps({
   isDialog: {
@@ -273,14 +289,18 @@ const props = defineProps({
   },
 });
 
+const viewQuestionDialog = ref(false);
 const editQuestionDialog = ref(false);
+const showUserDetails = ref(false);
+const showArchive = ref(false);
+
+const showViewQuestionDialog = () => {
+  viewQuestionDialog.value = true;
+};
 
 const showEditQuestionDialog = () => {
   editQuestionDialog.value = true;
 };
-
-const showUserDetails = ref(false);
-const showArchive = ref(false);
 
 const showUserDetailsDialog = (row) => {
   showUserDetails.value = true;

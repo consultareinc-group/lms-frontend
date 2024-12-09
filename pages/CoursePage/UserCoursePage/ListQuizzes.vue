@@ -11,7 +11,7 @@
         :isViewOption="true"
         :isSearchTable="true"
         :showOptions="true"
-        :rows="rows"
+        :rows="quizStore.quizzes"
         :columns="columns"
       />
     </div>
@@ -19,7 +19,14 @@
 </template>
 
 <script setup>
+import { onMounted } from "vue";
 import TablePage from "../../../components/TablePage.vue";
+import { useQuizStore } from "src/resources/lms/stores/course-store";
+
+const courseId = 1;
+
+const quizStore = useQuizStore();
+quizStore.fetchQuizData(courseId);
 
 const columns = [
   {
@@ -31,23 +38,5 @@ const columns = [
     sortable: true,
   },
   { name: "action", label: "Action", field: "action", align: "center" },
-];
-
-const rows = [
-  {
-    quiz_name: "Quiz 1",
-  },
-  {
-    quiz_name: "Quiz 2",
-  },
-  {
-    quiz_name: "Quiz 3",
-  },
-  {
-    quiz_name: "Quiz 4",
-  },
-  {
-    quiz_name: "Quiz 5",
-  },
 ];
 </script>

@@ -273,11 +273,11 @@ const props = defineProps({
   },
   rows: {
     type: Array,
-    required: false,
+    required: true,
   },
   columns: {
     type: Array,
-    required: false,
+    required: true,
   },
   viewName: {
     type: String,

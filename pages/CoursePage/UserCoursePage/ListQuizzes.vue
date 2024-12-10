@@ -19,7 +19,6 @@
 </template>
 
 <script setup>
-import { onMounted } from "vue";
 import TablePage from "../../../components/TablePage.vue";
 import { useQuizStore } from "src/resources/lms/stores/course-store";
 

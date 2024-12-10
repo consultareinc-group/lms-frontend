@@ -5,11 +5,11 @@
       style="width: 60vw"
     >
       <header class="q-ma-none q-px-xl q-pt-lg" style="width: 100%">
-        <h5 class="q-ma-none">{{ quizStore.quiz_name }}</h5>
+        <h5 class="q-ma-none">{{ quizStore.quizzes[0].quiz_name }}</h5>
       </header>
       <q-separator dark />
       <div
-        v-for="(question, index) in quizStore.questions"
+        v-for="(question, index) in quizStore.quizzes[0].questions"
         :key="index"
         class="q-my-lg q-px-xl q-mx-none"
       >

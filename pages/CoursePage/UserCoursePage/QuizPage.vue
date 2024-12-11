@@ -5,11 +5,11 @@
       style="width: 60vw"
     >
       <header class="q-ma-none q-px-xl q-pt-lg" style="width: 100%">
-        <h5 class="q-ma-none">{{ quizStore.quizzes[0].quiz_name }}</h5>
+        <h5 class="q-ma-none">Quiz Name</h5>
       </header>
       <q-separator dark />
       <div
-        v-for="(question, index) in quizStore.quizzes[0].questions"
+        v-for="(question, index) in questionStore.questions"
         :key="index"
         class="q-my-lg q-px-xl q-mx-none"
       >
@@ -66,13 +66,16 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { useQuizStore } from "src/resources/lms/stores/course-store";
+import { ref } from "vue";
+import { useQuestionStore } from "src/resources/lms/stores/course-store";
+import { useRoute } from "vue-router";
 
-const quizStore = useQuizStore();
+const route = useRoute();
+const questionStore = useQuestionStore();
+const quizId = ref(route.params.quizId);
 let alert = ref(false);
 
-quizStore.fetchQuizData(1);
+questionStore.fetchQuestionAndChoices(quizId.value);
 
 const showArchiveDialog = () => {
   alert.value = true;

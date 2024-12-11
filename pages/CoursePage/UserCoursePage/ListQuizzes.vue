@@ -5,7 +5,12 @@
         class="q-px-sm q-mb-lg row items-start justify-start"
         style="width: 100%"
       >
-        <h5 class="q-my-none q-px-sm text-primary">LIST OF QUIZZES</h5>
+        <h5 class="col-12 text-center q-mt-sm q-mb-xl">
+          You are about to take a quiz for the [Course Name]. Passing the quiz
+          will qualify you to receive a certificate of completion. Take your
+          time, and Good luck!
+        </h5>
+        <h5 class="col-12 q-my-none q-px-sm text-primary">LIST OF QUIZZES</h5>
       </div>
       <table-page
         :isViewOption="true"

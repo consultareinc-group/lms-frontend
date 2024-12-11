@@ -26,7 +26,7 @@
                 color="primary"
                 label="View"
                 v-if="isViewOption"
-                @click="showUserDetailsDialog"
+                @click="showUserDetailsDialog(props.row)"
               />
               <q-btn dense icon="more_vert" flat round v-else>
                 <q-menu>
@@ -116,6 +116,8 @@
                   outlined
                   dense
                   class="q-mt-sm"
+                  v-model="userDetails.first_name"
+                  @change="onFieldChange('first_name', $event)"
                   :rules="[(val) => !!val || 'Field is required']"
                 />
               </div>
@@ -125,7 +127,8 @@
                   outlined
                   dense
                   class="q-mt-sm"
-                  :rules="[(val) => !!val || 'Field is required']"
+                  v-model="userDetails.middle_name"
+                  @change="onFieldChange('middle_name', $event)"
                 />
               </div>
             </div>
@@ -136,6 +139,8 @@
                   outlined
                   dense
                   class="q-mt-sm"
+                  v-model="userDetails.last_name"
+                  @change="onFieldChange('last_name', $event)"
                   :rules="[(val) => !!val || 'Field is required']"
                 />
               </div>
@@ -145,7 +150,8 @@
                   outlined
                   dense
                   class="q-mt-sm"
-                  :rules="[(val) => !!val || 'Field is required']"
+                  v-model="userDetails.suffix"
+                  @change="onFieldChange('suffix', $event)"
                 />
               </div>
             </div>
@@ -156,6 +162,8 @@
                   outlined
                   dense
                   class="q-mt-sm"
+                  v-model="userDetails.phone"
+                  @change="onFieldChange('phone', $event)"
                   :rules="[(val) => !!val || 'Field is required']"
                 />
               </div>
@@ -165,6 +173,8 @@
                   outlined
                   dense
                   class="q-mt-sm"
+                  v-model="userDetails.company"
+                  @change="onFieldChange('company', $event)"
                   :rules="[(val) => !!val || 'Field is required']"
                 />
               </div>
@@ -175,6 +185,8 @@
                 outlined
                 dense
                 class="q-mt-sm"
+                v-model="userDetails.email"
+                @change="onFieldChange('email', $event)"
                 :rules="[(val) => !!val || 'Field is required']"
               />
             </div>
@@ -188,11 +200,11 @@
               />
               <div class="q-mx-md"></div>
               <q-btn
-                :to="{ name: 'Quiz Page' }"
                 flat
                 no-caps
                 label="Confirm"
                 class="bg-accent text-white q-px-lg"
+                @click="confirmAndNavigate"
               />
             </q-card-section>
           </div>
@@ -253,6 +265,37 @@
 import { ref } from "vue";
 import AddDialog from "../pages/CoursePage/AdminCoursePage/Components/AddDialog.vue";
 import ViewDialog from "../pages/CoursePage/AdminCoursePage/Components/ViewDialog.vue";
+import { addLog } from "src/resources/lms/stores/course-store";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+const logStore = addLog();
+
+const userDetails = ref({
+  id: null,
+  quiz_id: null,
+  first_name: "",
+  last_name: "",
+  middle_name: "",
+  suffix: "",
+  phone: "",
+  company: "",
+  email: "",
+  status: "Pending",
+});
+
+const onFieldChange = (field, value) => {
+  userDetails.value[field] = value;
+};
+
+const saveLog = () => {
+  logStore.logUserInfo({ ...userDetails.value });
+};
+
+const confirmAndNavigate = () => {
+  saveLog();
+  router.push({ name: "Quiz Page", params: { quizId: selectedQuizId.value } });
+};
 
 const props = defineProps({
   isDialog: {
@@ -293,6 +336,7 @@ const viewQuestionDialog = ref(false);
 const editQuestionDialog = ref(false);
 const showUserDetails = ref(false);
 const showArchive = ref(false);
+const selectedQuizId = ref(null);
 
 const showViewQuestionDialog = () => {
   viewQuestionDialog.value = true;
@@ -303,6 +347,19 @@ const showEditQuestionDialog = () => {
 };
 
 const showUserDetailsDialog = (row) => {
+  selectedQuizId.value = row.id;
+  userDetails.value = {
+    id: logStore.logs.length + 1,
+    quiz_id: row.id,
+    first_name: row.firstName || "",
+    last_name: row.lastName || "",
+    middle_name: row.middleName || "",
+    suffix: row.suffix || "",
+    phone: row.phone || "",
+    company: row.company || "",
+    email: row.email || "",
+    status: "Pending",
+  };
   showUserDetails.value = true;
 };
 

@@ -89,7 +89,7 @@ const routes = [
           import("../pages/CoursePage/UserCoursePage/ListQuizzes.vue"),
       },
       {
-        path: "/quiz_page",
+        path: "/quiz_page/:quizId",
         name: "Quiz Page",
         component: () =>
           import("../pages/CoursePage/UserCoursePage/QuizPage.vue"),

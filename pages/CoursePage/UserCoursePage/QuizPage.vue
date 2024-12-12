@@ -10,7 +10,7 @@
       <q-separator dark />
       <div
         v-for="(question, index) in questionStore.questions"
-        :key="index"
+        :key="question.question_id"
         class="q-my-lg q-px-xl q-mx-none"
       >
         <p>{{ index + 1 }}. {{ question.question_text }}</p>
@@ -19,6 +19,8 @@
           :options="question.choices"
           option-label="choice_text"
           option-value="id"
+          v-model="userAnswers[question.question_id]"
+          type="radio"
         />
       </div>
       <div
@@ -30,7 +32,7 @@
           no-caps
           flat
           class="bg-accent text-white q-px-xl q-mt-lg"
-          @click="showArchiveDialog"
+          @click="submitQuiz"
         />
       </div>
       <q-dialog v-model="alert">
@@ -43,20 +45,46 @@
             @click="alert = false"
           />
           <q-card-section class="text-center q-mt-lg">
-            <q-icon name="celebration" color="orange-10" size="lg" />
-            <div class="text-h5 text-weight-bold">Congratulations</div>
+            <q-icon
+              :name="quizStore.status === 'passed' ? 'celebration' : 'error'"
+              :color="quizStore.status === 'passed' ? 'orange-10' : 'red-10'"
+              size="lg"
+            />
+            <div class="text-h5 text-weight-bold">
+              {{
+                quizStore.status === "passed"
+                  ? "Congratulations"
+                  : "Almost there"
+              }}
+            </div>
           </q-card-section>
           <q-card-section class="q-pt-none text-center">
-            You have achieved a 100% score! You are now eligible to receive your
-            certification.
+            <p v-if="quizStore.status === 'passed'">
+              You have achieved a {{ quizStore.score }}% score! You are now
+              eligible to receive your certification.
+            </p>
+            <p v-else>
+              You didn’t quite make it this time. Your score is
+              {{ quizStore.score }}%. You need to get 100% to earn your
+              certification.
+            </p>
           </q-card-section>
-          <q-card-section class="flex justify-center q-my-lg">
+          <q-card-section class="flex justify-center q-mb-lg">
             <q-btn
+              v-if="quizStore.status === 'passed'"
               flat
               no-caps
               :to="{ name: 'Certification Page' }"
               label="Proceed"
               class="bg-accent text-white q-px-lg"
+            />
+            <q-btn
+              v-else
+              flat
+              no-caps
+              label="Retake Quiz"
+              class="bg-accent text-white q-px-lg"
+              @click="retakeQuiz"
             />
           </q-card-section>
         </q-card>
@@ -67,17 +95,37 @@
 
 <script setup>
 import { ref } from "vue";
-import { useQuestionStore } from "src/resources/lms/stores/course-store";
+import {
+  useQuestionStore,
+  useQuizStore,
+  addLog,
+} from "src/resources/lms/stores/course-store";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
-const questionStore = useQuestionStore();
-const quizId = ref(route.params.quizId);
 let alert = ref(false);
+const questionStore = useQuestionStore();
+const quizStore = useQuizStore();
+const logStore = addLog();
+
+const quizId = ref(route.params.quizId);
+const userAnswers = ref({});
 
 questionStore.fetchQuestionAndChoices(quizId.value);
 
-const showArchiveDialog = () => {
+const submitQuiz = async () => {
+  await quizStore.submitAnswers(userAnswers.value);
+  if (quizStore.status === "passed") {
+    await logStore.postLogs();
+  }
   alert.value = true;
+};
+
+const retakeQuiz = () => {
+  questionStore.questions = questionStore.questions.sort(
+    () => Math.random() - 0.5
+  );
+  userAnswers.value = {};
+  alert.value = false;
 };
 </script>

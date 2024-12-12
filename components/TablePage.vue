@@ -204,6 +204,7 @@
                 no-caps
                 label="Confirm"
                 class="bg-accent text-white q-px-lg"
+                :disable="!isFormValid"
                 @click="confirmAndNavigate"
               />
             </q-card-section>
@@ -262,7 +263,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import AddDialog from "../pages/CoursePage/AdminCoursePage/Components/AddDialog.vue";
 import ViewDialog from "../pages/CoursePage/AdminCoursePage/Components/ViewDialog.vue";
 import { addLog } from "src/resources/lms/stores/course-store";
@@ -362,6 +363,12 @@ const showUserDetailsDialog = (row) => {
   };
   showUserDetails.value = true;
 };
+
+const requiredFields = ["first_name", "last_name", "phone", "company", "email"];
+
+const isFormValid = computed(() => {
+  return requiredFields.every((field) => !!userDetails.value[field]);
+});
 
 const showArchiveDialog = (id) => {
   showArchive.value = true;

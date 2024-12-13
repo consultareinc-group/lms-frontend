@@ -130,6 +130,7 @@ import certificate from "../../../assets/certificate.png";
 import { ref } from "vue";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import { saveAs } from "file-saver";
+import { addLog } from "src/resources/lms/stores/course-store";
 
 const userName = ref("Allen Tiempo");
 const quizName = ref("Quiz 1");

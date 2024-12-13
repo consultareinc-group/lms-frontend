@@ -3,25 +3,18 @@ import { api } from "src/boot/axios.js";
 
 export const addLog = defineStore("logStore", {
   state: () => ({
-    logs: [], // Array to store logs locally
+    logs: null, // Array to store logs locally
   }),
 
   actions: {
-    logUserInfo(log) {
-      this.logs.push(log);
-      console.log("Log added:", log);
-    },
     async postLogs() {
       try {
-        if (this.logs.length === 0) {
-          console.warn("No logs to submit");
-          return;
-        }
-        console.log("Logs to be submitted:", this.logs);
+        console.log("Logs ", this.logs);
 
-        const response = await api.post(`/course-management/logs`, this.logs);
+        const response = await api.post(`course-management/logs`, this.logs);
         console.log("Logs submitted successfully:", response.data);
 
+        // this.logs = response.data
         // clear logs after successful submission
         // this.logs = [];
       } catch (error) {
@@ -41,7 +34,7 @@ export const useQuizStore = defineStore("quizStore", {
   actions: {
     async fetchQuizData(courseId) {
       try {
-        const response = await api.get(`/course-management/quiz/${courseId}`);
+        const response = await api.get(`course-management/quiz/${courseId}`);
         console.log(response.data.data);
         this.quizzes = response.data.data;
       } catch (error) {
@@ -50,7 +43,7 @@ export const useQuizStore = defineStore("quizStore", {
     },
     async submitAnswers(answers) {
       try {
-        const response = await api.post(`/course-management/submit`, {
+        const response = await api.post(`course-management/answers`, {
           answers,
         });
         this.score = response.data.score;
@@ -71,9 +64,7 @@ export const useQuestionStore = defineStore("questionStore", {
   actions: {
     async fetchQuestionAndChoices(quizId) {
       try {
-        const response = await api.get(
-          `/course-management/questions/${quizId}`
-        );
+        const response = await api.get(`course-management/questions/${quizId}`);
         console.log(response.data);
         this.questions = response.data;
       } catch (error) {

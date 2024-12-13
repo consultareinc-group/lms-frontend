@@ -273,8 +273,6 @@ const router = useRouter();
 const logStore = addLog();
 
 const userDetails = ref({
-  id: null,
-  quiz_id: null,
   first_name: "",
   last_name: "",
   middle_name: "",
@@ -282,21 +280,8 @@ const userDetails = ref({
   phone: "",
   company: "",
   email: "",
-  status: "Pending",
+  status: "",
 });
-
-const onFieldChange = (field, value) => {
-  userDetails.value[field] = value;
-};
-
-const saveLog = () => {
-  logStore.logUserInfo({ ...userDetails.value });
-};
-
-const confirmAndNavigate = () => {
-  saveLog();
-  router.push({ name: "Quiz Page", params: { quizId: selectedQuizId.value } });
-};
 
 const props = defineProps({
   isDialog: {
@@ -339,6 +324,8 @@ const showUserDetails = ref(false);
 const showArchive = ref(false);
 const selectedQuizId = ref(null);
 
+const requiredFields = ["first_name", "last_name", "phone", "company", "email"];
+
 const showViewQuestionDialog = () => {
   viewQuestionDialog.value = true;
 };
@@ -349,26 +336,23 @@ const showEditQuestionDialog = () => {
 
 const showUserDetailsDialog = (row) => {
   selectedQuizId.value = row.id;
-  userDetails.value = {
-    id: logStore.logs.length + 1,
-    quiz_id: row.id,
-    first_name: row.firstName || "",
-    last_name: row.lastName || "",
-    middle_name: row.middleName || "",
-    suffix: row.suffix || "",
-    phone: row.phone || "",
-    company: row.company || "",
-    email: row.email || "",
-    status: "Pending",
-  };
   showUserDetails.value = true;
 };
-
-const requiredFields = ["first_name", "last_name", "phone", "company", "email"];
 
 const isFormValid = computed(() => {
   return requiredFields.every((field) => !!userDetails.value[field]);
 });
+
+const onFieldChange = (field, value) => {
+  userDetails.value[field] = value;
+};
+
+const confirmAndNavigate = () => {
+  userDetails.value.quiz_id = selectedQuizId.value;
+  logStore.logs = userDetails.value;
+  console.log("Logs ", logStore.logs);
+  router.push({ name: "Quiz Page", params: { quizId: selectedQuizId.value } });
+};
 
 const showArchiveDialog = (id) => {
   showArchive.value = true;

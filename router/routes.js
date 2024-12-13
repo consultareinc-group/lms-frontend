@@ -18,7 +18,7 @@ const routes = [
         path: "course_management",
         name: "Course Management",
         component: () =>
-          import("../pages/CoursePage/AdminCoursePage/ViewPage.vue"),
+          import("../pages/CoursePage/AdminCoursePage/ViewCourse.vue"),
       },
       {
         path: "add_course",

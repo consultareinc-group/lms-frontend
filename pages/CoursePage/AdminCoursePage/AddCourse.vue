@@ -32,77 +32,68 @@
             <span class="text-red">*</span>
           </p>
         </header>
-        <!---->
-        <div class="row" style="width: 100%">
-          <!---->
+
+        <q-form class="row full-width" ref="courseForm" greedy>
           <div class="col-4 q-px-sm">
             <div>
               <label>Course Name <span class="text-red">*</span></label>
               <q-input
                 outlined
-                v-model="form.input_text"
+                v-model="form.course_name"
                 dense
                 class="q-mt-sm"
                 :rules="[(val) => !!val || 'Field is required']"
+                lazy-rules
               />
             </div>
-            <!---->
+
             <div>
               <label>Status <span class="text-red">*</span></label>
               <q-select
                 outlined
                 dense
-                v-model="form.select"
+                v-model="form.status"
                 :options="options"
+                option-label="name"
+                option-value="id"
+                map-options
+                emit-value
                 class="q-mt-sm"
-                :rules="[(val) => !!val || 'Field is required']"
+                :rules="[(val) => val === 0 || !!val || 'Field is required']"
+                lazy-rules
               />
             </div>
           </div>
-          <!---->
+
           <div class="col-4 q-px-sm">
             <label>Video Embed Link <span class="text-red">*</span></label>
             <q-input
               outlined
-              v-model="form.input_text"
+              v-model="form.video_link"
               dense
               class="q-mt-sm"
               :rules="[(val) => !!val || 'Field is required']"
+              lazy-rules
             />
           </div>
-          <!---->
+
           <div class="col-4 q-px-sm">
             <label>Description <span class="text-red">*</span></label>
             <q-input
               type="textarea"
               outlined
-              v-model="form.input_text"
+              v-model="form.course_description"
               dense
               class="q-mt-sm"
               :rules="[(val) => !!val || 'Field is required']"
+              lazy-rules
             />
           </div>
-        </div>
+        </q-form>
       </div>
-      <!--Success modal-->
-      <!-- <div
-        style="width: 100%; border: solid 1px green"
-        class="items-center justify-between row bg-green-2 q-pa-md rounded-borders"
-        v-if="isSuccessModalOpen"
-      >
-        <p class="q-mb-none text-green">
-          <span class="text-weight-bold">Success!</span> The record has been
-          saved.
-        </p>
-        <q-icon
-          class="text-green"
-          name="close"
-          @click="handleCloseSuccesModal"
-          style="cursor: pointer"
-        />
-      </div> -->
       <q-btn
-        @click="handleSave"
+        @click="saveCourse"
+        :loading="btnLoadingState"
         label="Save"
         no-caps
         flat
@@ -113,30 +104,95 @@
 </template>
 
 <script setup>
-import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
-import { useNotification } from "../Composables/UseNotification";
+// Import Vue's reactive utility for managing state
 import { ref } from "vue";
+// Import a breadcrumb component for navigation
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
+// Import the store for managing course data
+import { useCourseStore } from "src/resources/lms-frontend/stores/course-store";
+// Import Quasar's UI utilities
+import { useQuasar } from "quasar";
 
-const { showNotif } = useNotification();
+// Initialize the course store to manage state and perform actions
+const store = useCourseStore();
+// Access Quasar's notification and UI functionalities
+const $q = useQuasar();
 
-function handleSave() {
-  showNotif(
-    "<p class='q-mb-none text-green'><span class='text-weight-bold'>Success</span>. The record has been added.</p>",
-    "green-2"
-  );
-}
+// Define options for course status (Draft/Publish)
+let options = [
+  {
+    id: 0,
+    name: "Draft",
+  },
+  {
+    id: 1,
+    name: "Publish",
+  },
+];
 
-let options = ref(["Draft", "Published"]);
+// Define the form's reactive state object for course data
 let form = ref({
-  input_text: null,
-  input_date: null,
-  input_file: null,
+  course_name: "", // Input for the course name
+  video_link: "", // Input for the course video link
+  course_description: "", // Input for the course description
+  status: "", // Input for the course status (Draft/Publish)
 });
-</script>
 
-<!-- <style>
-.bordered-notification {
-  border: 1px solid green;
-  border-radius: 4px;
-}
-</style> -->
+// Reference to the form component, used for validation
+const courseForm = ref(null);
+// Reactive state to manage the loading state of the save button
+const btnLoadingState = ref(false);
+
+// Define the saveCourse function to handle form submission
+const saveCourse = () => {
+  // Validate the form fields
+  courseForm.value.validate().then((success) => {
+    if (success) {
+      // Indicate the save process is in progress
+      btnLoadingState.value = true;
+
+      // Call the store's PostCourse method to save the course data
+      store
+        .PostCourse(form.value)
+        .then((response) => {
+          // Check if the response indicates success
+          const status = Boolean(response.status === "success");
+
+          // Show a notification based on the response status
+          $q.notify({
+            message: `<p class='q-mb-none'><span class='text-weight-bold'>${
+              status ? "Success" : "Fail"
+            }!</span>. The record ${
+              status ? "has been" : "was not"
+            } added.</p>`,
+            color: `${status ? "green-2" : "red-2"}`, // Set notification color
+            position: "top-right", // Notification position
+            textColor: `${status ? "green" : "red"}`, // Set text color
+            actions: [
+              {
+                icon: "close", // Close icon
+                color: `${status ? "green" : "red"}`, // Icon color
+                round: true, // Rounded icon
+              },
+            ],
+            html: true, // Enable HTML content
+          });
+
+          // Reset the form fields if the save was successful
+          if (status) {
+            form.value = {
+              course_name: "",
+              video_link: "",
+              course_description: "",
+              status: "",
+            };
+          }
+        })
+        .finally(() => {
+          // Reset the loading state regardless of the response outcome
+          btnLoadingState.value = false;
+        });
+    }
+  });
+};
+</script>

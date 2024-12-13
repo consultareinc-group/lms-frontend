@@ -42,7 +42,7 @@
         <q-table
           flat
           bordered
-          :rows="store.Courses"
+          :rows="courses"
           :columns="columns"
           row-key="id"
           table-header-class="bg-dark text-white"
@@ -128,6 +128,7 @@
 <script setup>
 // Import necessary utilities and components from Vue and external files
 import { ref, onMounted, nextTick } from "vue";
+import { date } from "quasar";
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { useRouter } from "vue-router";
 import { useCourseStore } from "src/resources/lms-frontend/stores/course-store";
@@ -137,6 +138,8 @@ const router = useRouter();
 
 // Access the course store for managing course-related data
 const store = useCourseStore();
+
+const status = ["Draft", "Publish"];
 
 // Define the table columns with configurations for name, alignment, and formatting
 const columns = [
@@ -156,25 +159,38 @@ const columns = [
     field: "course_name",
   },
   {
+    name: "status",
+    align: "left",
+    label: "Status",
+    field: (row) => status[row.status],
+  },
+  {
     name: "date_time_added",
     align: "left",
     style: "width: 100px", // Custom column width
-    label: "Date & Time Added",
-    field: "date_time_added",
+    label: "Date Added",
+    field: (row) => date.formatDate(row.date_time_added, "YYYY-MM-DD"),
   },
   { name: "action", field: "action" }, // Placeholder for action buttons or controls
 ];
+
+const courses = ref([]);
 
 // Reactive variable to manage the loading state of the table
 const tableLoadingState = ref(false);
 
 // Function to fetch the list of courses, recursively fetching until all are loaded
 const getCourses = () => {
-  store.GetCourses({ offset: store.Courses.length }).then((response) => {
+  store.GetCourses({ offset: courses.value.length }).then((response) => {
     tableLoadingState.value = false;
+    if (response.status === "success") {
+      response.data.forEach((data) => {
+        courses.value.push(data);
+      });
 
-    if (response.data.length) {
-      getCourses(); // Continue fetching if more data is available
+      if (response.data.length) {
+        getCourses(); // Continue fetching if more data is available
+      }
     }
   });
 };
@@ -182,6 +198,7 @@ const getCourses = () => {
 // Lifecycle hook to fetch courses when the component is mounted
 onMounted(() => {
   tableLoadingState.value = true;
+  // reset course list on page render
   getCourses();
 });
 
@@ -194,9 +211,12 @@ const search = () => {
   if (search_keyword.value) {
     store.SearchCourses({ keyword: search_keyword.value }).then((response) => {
       tableLoadingState.value = false;
+      if (response.status === "success") {
+        courses.value = response.data;
+      }
     });
   } else {
-    store.Courses = []; // Reset course list if no keyword is provided
+    courses.value = []; // Reset course list if no keyword is provided
     getCourses(); // Reload all courses
   }
 };

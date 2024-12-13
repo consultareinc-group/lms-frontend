@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'; // Import Pinia's defineStore to create a s
 import { api } from 'boot/axios'; // Import the axios instance for API requests
 
 // Define a Pinia store named 'counter' for managing course-related data
-export const useCourseStore = defineStore('counter', {
+export const useCourseStore = defineStore('course', {
   state: () => ({
     Courses: [], // Reactive array to store the list of courses
   }),
@@ -12,13 +12,6 @@ export const useCourseStore = defineStore('counter', {
       return new Promise((resolve, reject) => {
         // Make a GET request to fetch courses based on the offset
         api.get(`lms/course?offset="${request.offset}"`).then((response) => {
-          // Check if the API response is successful
-          if (response.data.status === 'success') {
-            // Append each course from the response data to the Courses array
-            response.data.data.forEach(element => {
-              this.Courses.push(element);
-            });
-          }
           resolve(response.data); // Resolve the promise with the API response data
         }).catch((response) => {
           reject(response.data); // Reject the promise if the API request fails
@@ -30,11 +23,17 @@ export const useCourseStore = defineStore('counter', {
       return new Promise((resolve, reject) => {
         // Make a GET request to fetch courses matching the search keyword
         api.get(`lms/course?search_keyword="${request.keyword}"`).then((response) => {
-          // Check if the API response is successful
-          if (response.data.status === 'success') {
-            // Update the Courses array with the search results
-            this.Courses = response.data.data;
-          }
+          resolve(response.data); // Resolve the promise with the API response data
+        }).catch((response) => {
+          reject(response.data); // Reject the promise if the API request fails
+        });
+      });
+    },
+    // Action to insert courses
+    PostCourse(request) {
+      return new Promise((resolve, reject) => {
+        // Make a POST request to insert courses in the database courses table
+        api.post(`lms/course`, request).then((response) => {
           resolve(response.data); // Resolve the promise with the API response data
         }).catch((response) => {
           reject(response.data); // Reject the promise if the API request fails

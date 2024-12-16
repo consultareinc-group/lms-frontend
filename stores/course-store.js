@@ -3,7 +3,7 @@ import { api } from "src/boot/axios.js";
 
 export const addLog = defineStore("logStore", {
   state: () => ({
-    logs: null, // Array to store logs locally
+    logs: null,
   }),
 
   actions: {
@@ -12,13 +12,41 @@ export const addLog = defineStore("logStore", {
         console.log("Logs ", this.logs);
 
         const response = await api.post(`course-management/logs`, this.logs);
-        console.log("Logs submitted successfully:", response.data);
+        console.log("Logs submitted successfully:", response.data.data);
 
-        // this.logs = response.data
-        // clear logs after successful submission
-        // this.logs = [];
+        const logsId = response.data.data[0].id;
+        console.log("logsId: ", logsId);
+        return logsId;
       } catch (error) {
         console.error("Error submitting logs:", error);
+      }
+    },
+    async getLogs(logsId) {
+      try {
+        const response = await api.get(`course-management/logs/${logsId}`);
+        this.logs = response.data.data[0];
+
+        // Fetch the quiz name based on the quiz_id from logs
+        const quizId = this.logs.quiz_id;
+
+        // Ensure quizzes are loaded in quizStore
+        const quizStore = useQuizStore();
+        if (quizStore.quizzes.length === 0) {
+          await quizStore.fetchQuizData(this.logs.course_id); // Assuming `course_id` is available in logs
+        }
+
+        // Match the quiz name
+        const matchedQuiz = quizStore.quizzes.find(
+          (quiz) => quiz.id === quizId
+        );
+        if (matchedQuiz) {
+          this.logs.quiz_name = matchedQuiz.quiz_name;
+          console.log("Quiz Name:", matchedQuiz.quiz_name);
+        } else {
+          console.warn("Quiz not found for quiz_id:", quizId);
+        }
+      } catch (error) {
+        console.error("Error fetching logs:", error);
       }
     },
   },

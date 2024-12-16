@@ -27,7 +27,7 @@
 import TablePage from "../../../components/TablePage.vue";
 import { useQuizStore } from "src/resources/lms/stores/course-store";
 
-const courseId = 1;
+const courseId = 3;
 
 const quizStore = useQuizStore();
 quizStore.fetchQuizData(courseId);

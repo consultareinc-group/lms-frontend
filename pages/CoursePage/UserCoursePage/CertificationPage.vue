@@ -69,7 +69,7 @@
               top: 35%;
               left: 48%;
               transform: translate(-50%, -50%);
-              font-size: 1.5em;
+              font-size: 1em;
               font-weight: 600;
             "
           >
@@ -80,8 +80,8 @@
               position: absolute;
               top: 51%;
               left: 43%;
-              transform: translate(-50%, -50%);
-              font-size: 1.5em;
+              transform: translate(-80%, -50%);
+              font-size: 1em;
               font-weight: 600;
             "
           >
@@ -93,7 +93,7 @@
               top: 60%;
               left: 48%;
               transform: translate(-50%, -50%);
-              font-size: 1.5em;
+              font-size: 1em;
               font-weight: 600;
             "
           >
@@ -127,14 +127,34 @@
 
 <script setup>
 import certificate from "../../../assets/certificate.png";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import { saveAs } from "file-saver";
 import { addLog } from "src/resources/lms/stores/course-store";
+import { useRoute } from "vue-router";
 
-const userName = ref("Allen Tiempo");
-const quizName = ref("Quiz 1");
+const route = useRoute();
+const logsId = ref(route.params.logsId);
+const logStore = addLog();
+
+logStore.getLogs(logsId.value);
+const userName = ref("");
+const quizName = ref("");
 const courseName = ref("Course 1");
+
+const loadLogs = async () => {
+  await logStore.getLogs(logsId.value);
+  if (logStore.logs) {
+    userName.value = `${logStore.logs.first_name} ${logStore.logs.last_name}`;
+    quizName.value = logStore.logs.quiz_name;
+  } else {
+    console.error("Logs could not be loaded.");
+  }
+};
+
+onMounted(() => {
+  loadLogs();
+});
 
 const generateCertificate = async () => {
   try {
@@ -150,10 +170,10 @@ const generateCertificate = async () => {
     const page = pdfDoc.getPages()[0];
 
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const fontSize = 24;
+    const fontSize = 12;
 
     page.drawText(userName.value, {
-      x: 160,
+      x: 210,
       y: 200,
       size: fontSize,
       font,
@@ -161,7 +181,7 @@ const generateCertificate = async () => {
     });
 
     page.drawText(quizName.value, {
-      x: 170,
+      x: 115,
       y: 150,
       size: fontSize,
       font,

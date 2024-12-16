@@ -6,7 +6,7 @@
         {
           label: 'Learning Management System',
           // icon: 'home',
-          to: { name: 'Nav1' },
+          to: { name: 'Course Management' },
         },
         {
           label: 'Course Management',
@@ -16,7 +16,10 @@
         {
           label: 'View Course Details',
           // icon: 'home',
-          to: { name: 'View Course Details' },
+          to: {
+            name: 'View Course Details',
+            params: { course_id: route.params.course_id },
+          },
         },
         {
           label: 'View Quiz',

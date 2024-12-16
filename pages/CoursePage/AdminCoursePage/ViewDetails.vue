@@ -54,7 +54,10 @@
             <!---->
             <div class="q-my-md">
               <p class="q-mb-sm">No of Quizzes:</p>
-              <p class="q-mb-sm text-weight-light">3</p>
+              <q-skeleton v-if="!course.course_name" square />
+              <p v-else class="q-mb-sm text-weight-light">
+                {{ quizzes.length }}
+              </p>
             </div>
           </div>
           <!---->
@@ -145,7 +148,10 @@
                           v-close-popup
                           :to="{
                             name: 'View Quiz',
-                            params: { quiz_id: props.row.id },
+                            params: {
+                              course_id: route.params.course_id,
+                              quiz_id: props.row.id,
+                            },
                           }"
                         >
                           <q-item-section>View</q-item-section>

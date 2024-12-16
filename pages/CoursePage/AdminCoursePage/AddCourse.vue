@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md column">
+  <q-page class="q-pa-md column">
     <page-breadcrumbs
       title="Course Management"
       :items="[
@@ -20,164 +20,87 @@
         },
       ]"
     />
-    <q-form ref="courseForm" greedy>
-      <div class="col-grow items-start justify-start column">
-        <div
-          class="bg-white q-my-lg q-py-lg q-px-xl items-start justify-start column"
-          style="width: 100%"
-        >
-          <header class="q-mb-lg">
-            <h6 class="q-ma-none">Add Course</h6>
-            <p class="text-weight-thin">
-              Please fill out the required fields
-              <span class="text-red">*</span>
-            </p>
-          </header>
-
-          <div class="row full-width">
-            <div class="col-4 q-px-sm">
-              <div>
-                <label>Course Name <span class="text-red">*</span></label>
-                <q-input
-                  outlined
-                  v-model="form.course_name"
-                  dense
-                  class="q-mt-sm"
-                  :rules="[(val) => !!val || 'Field is required']"
-                  lazy-rules
-                />
-              </div>
-
-              <div>
-                <label>Status <span class="text-red">*</span></label>
-                <q-select
-                  outlined
-                  dense
-                  v-model="form.status"
-                  :options="options"
-                  option-label="name"
-                  option-value="id"
-                  map-options
-                  emit-value
-                  class="q-mt-sm"
-                  :rules="[(val) => val === 0 || !!val || 'Field is required']"
-                  lazy-rules
-                />
-              </div>
-            </div>
-
-            <div class="col-4 q-px-sm">
-              <label>Video Embed Link <span class="text-red">*</span></label>
-              <q-input
-                outlined
-                v-model="form.video_link"
-                dense
-                class="q-mt-sm"
-                :rules="[(val) => !!val || 'Field is required']"
-                lazy-rules
-              />
-            </div>
-
-            <div class="col-4 q-px-sm">
-              <label>Description <span class="text-red">*</span></label>
-              <q-input
-                type="textarea"
-                outlined
-                v-model="form.course_description"
-                dense
-                class="q-mt-sm"
-                :rules="[(val) => !!val || 'Field is required']"
-                lazy-rules
-              />
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="col-grow items-start justify-start column">
       <div
-        v-for="(quiz, index) in form.quizzes"
-        :key="index"
-        class="col-grow items-start justify-start column"
+        class="bg-white q-my-lg q-py-lg q-px-xl items-start justify-start column"
+        style="width: 100%"
       >
-        <div
-          class="bg-white q-my-lg q-py-lg q-px-xl items-start justify-start column full-width"
-        >
-          <header class="q-mb-lg full-width">
-            <div class="flex justify-between">
-              <div>
-                <h6 class="q-ma-none">Add Quiz</h6>
-                <p class="text-weight-thin">
-                  Please fill out the required fields
-                  <span class="text-red">*</span>
-                </p>
-              </div>
-              <div>
-                <q-icon
-                  @click="removeQuiz(index)"
-                  v-if="index !== 0"
-                  name="delete"
-                  size="sm"
-                  class="cursor-pointer"
-                ></q-icon>
-              </div>
-            </div>
-          </header>
-          <!---->
-          <div class="row full-width">
-            <!---->
-            <div class="col-6 q-px-sm">
-              <div>
-                <label>Quiz Name <span class="text-red">*</span></label>
-                <q-input
-                  outlined
-                  v-model="quiz.quiz_name"
-                  dense
-                  class="q-mt-sm"
-                  :rules="[(val) => !!val || 'Field is required']"
-                  lazy-rules
-                />
-              </div>
-            </div>
-            <!---->
-            <div class="col-6 q-px-sm">
-              <label>Passing Percentage <span class="text-red">*</span></label>
+        <header class="q-mb-lg">
+          <h6 class="q-ma-none">Add Course</h6>
+          <p class="text-weight-thin">
+            Please fill out the required fields
+            <span class="text-red">*</span>
+          </p>
+        </header>
+
+        <q-form class="row full-width" ref="courseForm" greedy>
+          <div class="col-4 q-px-sm">
+            <div>
+              <label>Course Name <span class="text-red">*</span></label>
               <q-input
                 outlined
-                v-model="quiz.passing_percentage"
-                type="number"
+                v-model="form.course_name"
                 dense
                 class="q-mt-sm"
+                :rules="[(val) => !!val || 'Field is required']"
                 lazy-rules
-                :rules="[
-                  (val) => !!val || 'Field is required',
-                  (val) => val >= 1 || 'Value must be at least 1',
-                  (val) => val <= 100 || 'Value must not exceed 100',
-                ]"
-                :min="1"
-                :max="100"
+              />
+            </div>
+
+            <div>
+              <label>Status <span class="text-red">*</span></label>
+              <q-select
+                outlined
+                dense
+                v-model="form.status"
+                :options="options"
+                option-label="name"
+                option-value="id"
+                map-options
+                emit-value
+                class="q-mt-sm"
+                :rules="[(val) => val === 0 || !!val || 'Field is required']"
+                lazy-rules
               />
             </div>
           </div>
-        </div>
-      </div>
-      <div>
-        <q-btn
-          label="Add Quiz"
-          no-caps
-          flat
-          class="bg-primary text-white"
-          @click="addQuiz()"
-        />
+
+          <div class="col-4 q-px-sm">
+            <label>Video Embed Link <span class="text-red">*</span></label>
+            <q-input
+              outlined
+              v-model="form.video_link"
+              dense
+              class="q-mt-sm"
+              :rules="[(val) => !!val || 'Field is required']"
+              lazy-rules
+            />
+          </div>
+
+          <div class="col-4 q-px-sm">
+            <label>Description <span class="text-red">*</span></label>
+            <q-input
+              type="textarea"
+              outlined
+              v-model="form.course_description"
+              dense
+              class="q-mt-sm"
+              :rules="[(val) => !!val || 'Field is required']"
+              lazy-rules
+            />
+          </div>
+        </q-form>
       </div>
       <q-btn
-        @click="saveCourse()"
+        @click="saveCourse"
         :loading="btnLoadingState"
         label="Save"
         no-caps
         flat
-        class="bg-accent text-white q-px-xl q-mt-xl"
+        class="bg-accent text-white q-px-xl q-mt-lg"
       />
-    </q-form>
-  </div>
+    </div>
+  </q-page>
 </template>
 
 <script setup>
@@ -190,10 +113,14 @@ import { useCourseStore } from "src/resources/lms-frontend/stores/course-store";
 // Import Quasar's UI utilities
 import { useQuasar } from "quasar";
 
+import { useRouter } from "vue-router";
+
 // Initialize the course store to manage state and perform actions
 const store = useCourseStore();
 // Access Quasar's notification and UI functionalities
 const $q = useQuasar();
+
+const router = useRouter();
 
 // Define options for course status (Draft/Publish)
 let options = [
@@ -213,25 +140,7 @@ let form = ref({
   video_link: "", // Input for the course video link
   course_description: "", // Input for the course description
   status: "", // Input for the course status (Draft/Publish)
-  quizzes: [
-    {
-      quiz_name: "",
-      passing_percentage: "",
-    },
-  ],
 });
-
-const addQuiz = () => {
-  form.value.quizzes.push({
-    quiz_name: "",
-    passing_percentage: "",
-    total_marks: "",
-  });
-};
-
-const removeQuiz = (index) => {
-  form.value.quizzes.splice(index, 1);
-};
 
 // Reference to the form component, used for validation
 const courseForm = ref(null);
@@ -275,19 +184,16 @@ const saveCourse = () => {
 
           // Reset the form fields if the save was successful
           if (status) {
-            form.value = {
-              course_name: "",
-              video_link: "",
-              course_description: "",
-              status: "",
-              quizzes: [
-                {
-                  quiz_name: "",
-                  passing_percentage: "",
-                  total_marks: "",
-                },
-              ],
-            };
+            router.push({
+              name: "Add Quiz",
+              params: { course_id: response.data[0].id },
+            });
+            // form.value = {
+            //   course_name: "",
+            //   video_link: "",
+            //   course_description: "",
+            //   status: "",
+            // };
           }
         })
         .finally(() => {

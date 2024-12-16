@@ -23,7 +23,7 @@
         style="width: 100%"
       >
         <header class="q-mb-lg">
-          <h6 class="q-ma-none">Add Course</h6>
+          <h6 class="q-ma-none">Edit Course</h6>
           <p class="text-weight-thin">
             Please fill out the required fields
             <span class="text-red">*</span>
@@ -103,7 +103,7 @@
       <q-btn
         @click="saveCourse"
         :loading="btnLoadingState"
-        label="Save"
+        label="Update"
         no-caps
         flat
         class="bg-accent text-white q-px-xl q-mt-lg"

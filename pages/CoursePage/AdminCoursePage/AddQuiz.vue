@@ -6,17 +6,12 @@
         {
           label: 'Learning Management System',
           // icon: 'home',
-          to: { name: 'Nav1' },
+          to: { name: 'Course Management' },
         },
         {
           label: 'Course Management',
           // icon: 'home',
           to: { name: 'Course Management' },
-        },
-        {
-          label: 'View Course Details',
-          // icon: 'home',
-          to: { name: 'View Course Details' },
         },
         {
           label: 'Add Quiz',
@@ -31,10 +26,12 @@
       greedy
     >
       <div
-        class="bg-white q-my-lg q-py-lg q-px-xl items-start justify-start column full-width"
+        class="bg-white q-my-lg q-py-lg q-px-xl items-start justify-start full-width"
       >
+        <h5 class="q-ma-none q-mb-lg">{{ store.Course.name }}</h5>
+        <hr />
         <header class="q-mb-lg">
-          <h6 class="q-ma-none">Add Quiz</h6>
+          <h6 class="q-ma-none q-mt-lg">Add Quiz</h6>
           <p class="text-weight-thin">
             Please fill out the required fields
             <span class="text-red">*</span>
@@ -96,7 +93,7 @@
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { useCourseStore } from "src/resources/lms-frontend/stores/course-store";
+import { useCourseStore } from "../../../stores/course-store";
 // Import Quasar's UI utilities
 import { useQuasar } from "quasar";
 
@@ -125,7 +122,7 @@ const saveQuiz = () => {
       btnLoadingState.value = true;
 
       // bind course_id to the quiz data
-      form.value.course_id = route.params.course_id;
+      form.value.course_id = store.Course.id;
       // Call the store's PostCourse method to save the course data
       store
         .PostQuiz(form.value)
@@ -137,9 +134,7 @@ const saveQuiz = () => {
           $q.notify({
             message: `<p class='q-mb-none'><span class='text-weight-bold'>${
               status ? "Success" : "Fail"
-            }!</span>. The record ${
-              status ? "has been" : "was not"
-            } added.</p>`,
+            }!</span>. The quiz ${status ? "has been" : "was not"} added.</p>`,
             color: `${status ? "green-2" : "red-2"}`, // Set notification color
             position: "top-right", // Notification position
             textColor: `${status ? "green" : "red"}`, // Set text color
@@ -157,8 +152,9 @@ const saveQuiz = () => {
           if (status) {
             router.push({
               name: "Add Question",
-              params: { course_id: response.data[0].id },
             });
+            store.Quiz.id = response.data[0].id;
+            store.Quiz.name = form.value.quiz_name;
           }
         })
         .finally(() => {

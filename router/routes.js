@@ -27,13 +27,13 @@ const routes = [
           import("../pages/CoursePage/AdminCoursePage/AddCourse.vue"),
       },
       {
-        path: "view_course_details",
+        path: "view_course_details/:course_id",
         name: "View Course Details",
         component: () =>
           import("../pages/CoursePage/AdminCoursePage/ViewDetails.vue"),
       },
       {
-        path: "edit_course",
+        path: "edit_course/:id?",
         name: "Edit Course",
         component: () =>
           import("../pages/CoursePage/AdminCoursePage/EditCourse.vue"),

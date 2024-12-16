@@ -6,7 +6,7 @@
         {
           label: 'Learning Management System',
           // icon: 'home',
-          to: { name: 'Nav1' },
+          to: { name: 'Course Management' },
         },
         {
           label: 'Course Management',
@@ -109,7 +109,7 @@ import { ref } from "vue";
 // Import a breadcrumb component for navigation
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 // Import the store for managing course data
-import { useCourseStore } from "src/resources/lms-frontend/stores/course-store";
+import { useCourseStore } from "../../../stores/course-store";
 // Import Quasar's UI utilities
 import { useQuasar } from "quasar";
 
@@ -166,7 +166,7 @@ const saveCourse = () => {
           $q.notify({
             message: `<p class='q-mb-none'><span class='text-weight-bold'>${
               status ? "Success" : "Fail"
-            }!</span>. The record ${
+            }!</span>. The course ${
               status ? "has been" : "was not"
             } added.</p>`,
             color: `${status ? "green-2" : "red-2"}`, // Set notification color
@@ -182,18 +182,12 @@ const saveCourse = () => {
             html: true, // Enable HTML content
           });
 
-          // Reset the form fields if the save was successful
           if (status) {
             router.push({
               name: "Add Quiz",
-              params: { course_id: response.data[0].id },
             });
-            // form.value = {
-            //   course_name: "",
-            //   video_link: "",
-            //   course_description: "",
-            //   status: "",
-            // };
+            store.Course.id = response.data[0].id;
+            store.Course.name = form.value.course_name;
           }
         })
         .finally(() => {

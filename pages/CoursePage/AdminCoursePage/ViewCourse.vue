@@ -6,7 +6,7 @@
         {
           label: 'Learning Management System',
           // icon: 'home',
-          to: { name: 'Nav1' },
+          to: { name: 'Course Management' },
         },
         {
           label: 'Course Management',
@@ -55,13 +55,24 @@
                 <q-btn dense icon="more_vert" flat round>
                   <q-menu style="width: 100px">
                     <q-list>
-                      <!-- <q-item
-                              :to="{ name: 'route-name-here', params: { id: props.row.id } }"
-                            > -->
-                      <q-item clickable v-close-popup to="">
+                      <q-item
+                        clickable
+                        v-close-popup
+                        :to="{
+                          name: 'View Course Details',
+                          params: { course_id: props.row.id },
+                        }"
+                      >
                         <q-item-section>View</q-item-section>
                       </q-item>
-                      <q-item clickable v-close-popup to="">
+                      <q-item
+                        clickable
+                        v-close-popup
+                        :to="{
+                          name: 'Edit Course',
+                          params: { id: props.row.id },
+                        }"
+                      >
                         <q-item-section>Edit</q-item-section>
                       </q-item>
                       <q-item
@@ -131,7 +142,7 @@ import { ref, onMounted, nextTick } from "vue";
 import { date } from "quasar";
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { useRouter } from "vue-router";
-import { useCourseStore } from "src/resources/lms-frontend/stores/course-store";
+import { useCourseStore } from "../../../stores/course-store";
 
 // Initialize the Vue Router instance
 const router = useRouter();

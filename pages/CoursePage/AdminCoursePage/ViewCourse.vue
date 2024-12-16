@@ -60,7 +60,7 @@
                         v-close-popup
                         :to="{
                           name: 'View Course Details',
-                          params: { course_id: props.row.course_id },
+                          params: { course_id: props.row.id },
                         }"
                       >
                         <q-item-section>View</q-item-section>
@@ -70,7 +70,7 @@
                         v-close-popup
                         :to="{
                           name: 'Edit Course',
-                          params: { id: props.row.id },
+                          params: { course_id: props.row.id },
                         }"
                       >
                         <q-item-section>Edit</q-item-section>

@@ -33,7 +33,7 @@ const routes = [
           import("../pages/CoursePage/AdminCoursePage/ViewDetails.vue"),
       },
       {
-        path: "edit_course/:id?",
+        path: "edit_course/:course_id?",
         name: "Edit Course",
         component: () =>
           import("../pages/CoursePage/AdminCoursePage/EditCourse.vue"),

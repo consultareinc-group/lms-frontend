@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-md column">
+  <div class="q-pa-md column">
     <page-breadcrumbs
       title="Course Management"
       :items="[
@@ -25,183 +25,147 @@
         },
       ]"
     />
-    <div class="col-grow items-start justify-start column">
+    <q-form
+      class="col-grow items-start justify-start column"
+      ref="quizForm"
+      greedy
+    >
       <div
-        class="bg-white q-my-lg q-py-lg q-px-xl items-start justify-start column"
-        style="width: 100%"
+        class="bg-white q-my-lg q-py-lg q-px-xl items-start justify-start column full-width"
       >
         <header class="q-mb-lg">
-          <h6 class="q-ma-none">Quiz Details</h6>
+          <h6 class="q-ma-none">Add Quiz</h6>
           <p class="text-weight-thin">
             Please fill out the required fields
             <span class="text-red">*</span>
           </p>
         </header>
         <!---->
-        <div class="row" style="width: 100%">
+        <div class="row full-width">
           <!---->
           <div class="col-6 q-px-sm">
             <div>
               <label>Quiz Name <span class="text-red">*</span></label>
               <q-input
                 outlined
-                v-model="form.input_text"
+                v-model="form.quiz_name"
                 dense
                 class="q-mt-sm"
                 :rules="[(val) => !!val || 'Field is required']"
+                lazy-rules
               />
             </div>
             <!---->
-            <div>
-              <label>Total Marks <span class="text-red">*</span></label>
-              <q-input
-                outlined
-                v-model="form.input_text"
-                dense
-                class="q-mt-sm"
-                :rules="[(val) => !!val || 'Field is required']"
-              />
-            </div>
           </div>
           <!---->
           <div class="col-6 q-px-sm">
             <label>Passing Percentage <span class="text-red">*</span></label>
             <q-input
               outlined
-              v-model="form.input_text"
+              v-model="form.passing_percentage"
+              type="number"
               dense
               class="q-mt-sm"
-              :rules="[(val) => !!val || 'Field is required']"
+              :rules="[
+                (val) => !!val || 'Field is required',
+                (val) => val >= 1 || 'Value must be at least 1',
+                (val) => val <= 100 || 'Value must not exceed 100',
+              ]"
+              :min="1"
+              :max="100"
+              lazy-rules
             />
           </div>
         </div>
       </div>
 
-      <!-- Quizzes -->
-      <div
-        class="bg-white q-my-lg q-py-md q-px-lg items-start justify-start column"
-        style="width: 100%"
-      >
-        <h6 class="q-ma-none text-primary text-weight-bold q-px-sm">
-          Questions
-        </h6>
-        <table-page
-          :isViewOption="false"
-          :isBasicTable="false"
-          :showOptions="true"
-          :rows="rows"
-          :columns="columns"
-        />
-        <q-btn
-          :to="{ name: 'Add Question', query: { origin: 'AddQuiz' } }"
-          label="Add Question"
-          no-caps
-          flat
-          class="bg-primary text-white q-mt-lg"
-        />
-      </div>
-
-      <!--Success modal-->
-      <!-- <div
-        style="width: 100%; border: solid 1px green"
-        class="items-center justify-between row bg-green-2 q-pa-md rounded-borders"
-        v-if="isSuccessModalOpen"
-      >
-        <p class="q-mb-none text-green">
-          <span class="text-weight-bold">Success!</span> The record has been
-          saved.
-        </p>
-        <q-icon
-          class="text-green"
-          name="close"
-          @click="handleCloseSuccesModal"
-          style="cursor: pointer"
-        />
-      </div> -->
-
       <!-- Button -->
       <q-btn
-        @click="handleSave"
+        @click="saveQuiz()"
+        :loading="btnLoadingState"
         label="Save"
         no-caps
         flat
         class="bg-accent text-white q-px-xl q-mt-lg"
       />
-    </div>
-  </q-page>
+    </q-form>
+  </div>
 </template>
 
 <script setup>
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
-import TablePage from "../../../components/TablePage.vue";
-import { useNotification } from "../Composables/UseNotification";
 import { ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useCourseStore } from "src/resources/lms-frontend/stores/course-store";
+// Import Quasar's UI utilities
+import { useQuasar } from "quasar";
 
-const { showNotif } = useNotification();
-
-function handleSave() {
-  showNotif(
-    "<p class='q-mb-none text-green'><span class='text-weight-bold'>Success</span>. The record has been added.</p>",
-    "green-2"
-  );
-}
+const route = useRoute();
+const router = useRouter();
+const store = useCourseStore();
+// Access Quasar's notification and UI functionalities
+const $q = useQuasar();
 
 let form = ref({
-  input_text: null,
-  input_date: null,
-  input_file: null,
+  quiz_name: "",
+  passing_percentage: "",
 });
 
-const columns = [
-  {
-    name: "name",
-    required: true,
-    label: "No.",
-    align: "left",
-    field: (row) => row.name,
-    format: (val) => `${val}`,
-    sortable: true,
-  },
-  {
-    name: "Question",
-    align: "center",
-    label: "Question",
-    field: "question",
-  },
-  { name: "Marks", label: "Marks", field: "marks" },
-  { name: "action", field: "action" },
-];
+// Reference to the form component, used for validation
+const quizForm = ref(null);
+// Reactive state to manage the loading state of the save button
+const btnLoadingState = ref(false);
 
-const rows = [
-  // {
-  //   id: 1,
-  //   name: "1",
-  //   question: "Question 1",
-  //   marks: "1",
-  // },
-  // {
-  //   id: 2,
-  //   name: "2",
-  //   question: "Question 2",
-  //   marks: "1",
-  // },
-  // {
-  //   id: 3,
-  //   name: "3",
-  //   question: "Question 3",
-  //   marks: "1",
-  // },
-  // {
-  //   id: 4,
-  //   name: "4",
-  //   question: "Question 4",
-  //   marks: "1",
-  // },
-  // {
-  //   id: 5,
-  //   name: "5",
-  //   question: "Question 5",
-  //   marks: "1",
-  // },
-];
+// Define the saveQuiz function to handle form submission
+const saveQuiz = () => {
+  // Validate the form fields
+  quizForm.value.validate().then((success) => {
+    if (success) {
+      // Indicate the save process is in progress
+      btnLoadingState.value = true;
+
+      // bind course_id to the quiz data
+      form.value.course_id = route.params.course_id;
+      // Call the store's PostCourse method to save the course data
+      store
+        .PostQuiz(form.value)
+        .then((response) => {
+          // Check if the response indicates success
+          const status = Boolean(response.status === "success");
+
+          // Show a notification based on the response status
+          $q.notify({
+            message: `<p class='q-mb-none'><span class='text-weight-bold'>${
+              status ? "Success" : "Fail"
+            }!</span>. The record ${
+              status ? "has been" : "was not"
+            } added.</p>`,
+            color: `${status ? "green-2" : "red-2"}`, // Set notification color
+            position: "top-right", // Notification position
+            textColor: `${status ? "green" : "red"}`, // Set text color
+            actions: [
+              {
+                icon: "close", // Close icon
+                color: `${status ? "green" : "red"}`, // Icon color
+                round: true, // Rounded icon
+              },
+            ],
+            html: true, // Enable HTML content
+          });
+
+          // Reset the form fields if the save was successful
+          if (status) {
+            router.push({
+              name: "Add Question",
+              params: { course_id: response.data[0].id },
+            });
+          }
+        })
+        .finally(() => {
+          // Reset the loading state regardless of the response outcome
+          btnLoadingState.value = false;
+        });
+    }
+  });
+};
 </script>

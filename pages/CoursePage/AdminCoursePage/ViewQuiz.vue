@@ -39,40 +39,48 @@
           <div class="col-4 q-px-sm">
             <div class="q-my-md">
               <p class="q-mb-sm">Quiz ID:</p>
-              <p class="q-mb-sm text-weight-light">1111</p>
+              <q-skeleton v-if="!quiz.id" square />
+              <p v-else class="q-mb-sm text-weight-light">{{ quiz.id }}</p>
             </div>
             <!---->
             <div class="q-my-md">
               <p class="q-mb-sm">Date Added:</p>
-              <p class="q-mb-sm text-weight-light">2024-10-4</p>
-            </div>
-            <!---->
-            <div class="q-my-md">
-              <p class="q-mb-sm">No of Questions:</p>
-              <p class="q-mb-sm text-weight-light">3</p>
+              <q-skeleton v-if="!quiz.date_time_added" square />
+              <p v-else class="q-mb-sm text-weight-light">
+                {{ date.formatDate(quiz.date_time_added, "YYYY-MM-DD") }}
+              </p>
             </div>
           </div>
           <!---->
           <div class="col-4 q-px-sm">
             <div class="q-my-md">
               <p class="q-mb-sm">Quiz Name:</p>
-              <p class="q-mb-sm text-weight-light">Quiz 1</p>
+              <q-skeleton v-if="!quiz.quiz_name" square />
+              <p v-else class="q-mb-sm text-weight-light">
+                {{ quiz.quiz_name }}
+              </p>
             </div>
             <!---->
             <div class="q-my-md">
               <p class="q-mb-sm">Last Updated:</p>
-              <p class="q-mb-sm text-weight-light">2024-10-4</p>
+              <q-skeleton v-if="!quiz.date_time_updated" square />
+              <p v-else class="q-mb-sm text-weight-light">
+                {{ quiz.date_time_updated }}
+              </p>
             </div>
           </div>
           <!---->
           <div class="col-4 q-px-sm">
             <div class="q-my-md">
               <p class="q-mb-sm">Passing Percentage:</p>
-              <p class="q-mb-sm text-weight-light">100%</p>
+              <q-skeleton v-if="!quiz.passing_percentage" square />
+              <p v-else class="q-mb-sm text-weight-light">
+                {{ quiz.passing_percentage }}%
+              </p>
             </div>
             <!---->
             <div class="q-my-md">
-              <p class="q-mb-sm">Total Marks</p>
+              <p class="q-mb-sm">No of Questions:</p>
               <p class="q-mb-sm text-weight-light">3</p>
             </div>
           </div>
@@ -87,31 +95,13 @@
         <h6 class="q-ma-none text-primary text-weight-bold q-px-sm">
           Questions
         </h6>
-        <table-page
+        <!-- <table-page
           :isViewOption="false"
           :isSearchTable="false"
           :showOptions="false"
           :rows="rows"
           :columns="columns"
-        />
-      </div>
-
-      <!--Success modal-->
-      <div
-        style="width: 100%; border: solid 1px green"
-        class="items-center justify-between row bg-green-2 q-pa-md rounded-borders"
-        v-if="isSuccessModalOpen"
-      >
-        <p class="q-mb-none text-green">
-          <span class="text-weight-bold">Success!</span> The record has been
-          saved.
-        </p>
-        <q-icon
-          class="text-green"
-          name="close"
-          @click="handleCloseSuccesModal"
-          style="cursor: pointer"
-        />
+        /> -->
       </div>
 
       <!-- Button -->
@@ -134,26 +124,14 @@
 </template>
 
 <script setup>
+import { date } from "quasar";
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
-import TablePage from "../../../components/TablePage.vue";
+import { ref, onMounted } from "vue";
+import { useCourseStore } from "../../../stores/course-store";
+import { useRoute } from "vue-router";
 
-import { ref } from "vue";
-
-let isSuccessModalOpen = ref(false);
-
-const handleOpenSuccesModal = () => {
-  isSuccessModalOpen.value = true;
-};
-
-const handleCloseSuccesModal = () => {
-  isSuccessModalOpen.value = false;
-};
-
-let form = ref({
-  input_text: null,
-  input_date: null,
-  input_file: null,
-});
+const store = useCourseStore();
+const route = useRoute();
 
 const columns = [
   {
@@ -175,24 +153,22 @@ const columns = [
   { name: "action", field: "action" },
 ];
 
-const rows = [
-  {
-    id: 1,
-    name: "1",
-    question: "Question 1",
-    marks: "1",
-  },
-  {
-    id: 2,
-    name: "2",
-    question: "Question 2",
-    marks: "1",
-  },
-  {
-    id: 3,
-    name: "3",
-    question: "Question 3",
-    marks: "1",
-  },
-];
+const quiz = ref({
+  id: "",
+  quiz_name: "",
+  passing_percentage: "",
+  date_time_added: "",
+  date_time_updated: "",
+  id: "",
+});
+
+onMounted(() => {
+  store.GetQuiz({ id: route.params.quiz_id }).then((response) => {
+    if (response.status === "success") {
+      if (response.data.length) {
+        quiz.value = response.data[0];
+      }
+    }
+  });
+});
 </script>

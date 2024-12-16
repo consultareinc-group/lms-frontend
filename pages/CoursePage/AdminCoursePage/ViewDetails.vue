@@ -144,8 +144,8 @@
                           clickable
                           v-close-popup
                           :to="{
-                            name: 'View Course Details',
-                            params: { course_id: props.row.id },
+                            name: 'View Quiz',
+                            params: { quiz_id: props.row.id },
                           }"
                         >
                           <q-item-section>View</q-item-section>

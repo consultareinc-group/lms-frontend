@@ -26,7 +26,7 @@ export const useCourseStore = defineStore('course', {
         });
       });
     },
-    // Action to fetch courses from the API with pagination support
+    // Action to fetch specific course from the API
     GetCourse(request) {
       return new Promise((resolve, reject) => {
         // Make a GET request to fetch courses based on the offset
@@ -59,10 +59,10 @@ export const useCourseStore = defineStore('course', {
         });
       });
     },
-    // Action to fetch courses from the API with pagination support
+    // Action to fetch quizzes from the API with pagination support
     GetQuizzes(request) {
       return new Promise((resolve, reject) => {
-        // Make a GET request to fetch courses based on the offset
+        // Make a GET request to fetch quizzes based on the offset
         api.get(`lms/quiz?offset="${request.offset}"`).then((response) => {
           resolve(response.data); // Resolve the promise with the API response data
         }).catch((response) => {
@@ -70,10 +70,21 @@ export const useCourseStore = defineStore('course', {
         });
       });
     },
-    // Action to search for courses using a keyword
+    // Action to fetch specific quiz from the API
+    GetQuiz(request) {
+      return new Promise((resolve, reject) => {
+        // Make a GET request to fetch courses based on the offset
+        api.get(`lms/quiz/${request.id}`).then((response) => {
+          resolve(response.data); // Resolve the promise with the API response data
+        }).catch((response) => {
+          reject(response.data); // Reject the promise if the API request fails
+        });
+      });
+    },
+    // Action to search for quizzes using a keyword
     SearchQuizzes(request) {
       return new Promise((resolve, reject) => {
-        // Make a GET request to fetch courses matching the search keyword
+        // Make a GET request to fetch quizzes matching the search keyword
         api.get(`lms/quiz?search_keyword="${request.keyword}"`).then((response) => {
           resolve(response.data); // Resolve the promise with the API response data
         }).catch((response) => {

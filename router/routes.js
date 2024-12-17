@@ -83,19 +83,19 @@ const routes = [
       import("../pages/CoursePage/UserCoursePage/UserLayout.vue"),
     children: [
       {
-        path: "/list_quizzes",
+        path: "/list_quizzes/:course_id",
         name: "List of Quizzes",
         component: () =>
           import("../pages/CoursePage/UserCoursePage/ListQuizzes.vue"),
       },
       {
-        path: "/quiz_page/:quizId",
+        path: "/quiz_page/:quiz_id",
         name: "Quiz Page",
         component: () =>
           import("../pages/CoursePage/UserCoursePage/QuizPage.vue"),
       },
       {
-        path: "/certification_page/:logsId",
+        path: "/certification_page/:logs_id",
         name: "Certification Page",
         component: () =>
           import("../pages/CoursePage/UserCoursePage/CertificationPage.vue"),

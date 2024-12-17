@@ -1,9 +1,10 @@
 import { defineStore } from "pinia";
 import { api } from "src/boot/axios.js";
+import { LocalStorage } from "quasar";
 
-export const addLog = defineStore("logStore", {
+export const useLogStore = defineStore("logStore", {
   state: () => ({
-    logs: null,
+    logs: { quiz_name: null },
   }),
 
   actions: {
@@ -16,6 +17,7 @@ export const addLog = defineStore("logStore", {
 
         const logsId = response.data.data[0].id;
         console.log("logsId: ", logsId);
+
         return logsId;
       } catch (error) {
         console.error("Error submitting logs:", error);
@@ -31,9 +33,9 @@ export const addLog = defineStore("logStore", {
 
         // Ensure quizzes are loaded in quizStore
         const quizStore = useQuizStore();
-        if (quizStore.quizzes.length === 0) {
-          await quizStore.fetchQuizData(this.logs.course_id); // Assuming `course_id` is available in logs
-        }
+        // if (quizStore.quizzes.length === 0) {
+        //   await quizStore.fetchQuizData(this.logs.course_id);
+        // }
 
         // Match the quiz name
         const matchedQuiz = quizStore.quizzes.find(
@@ -47,6 +49,42 @@ export const addLog = defineStore("logStore", {
         }
       } catch (error) {
         console.error("Error fetching logs:", error);
+      }
+    },
+    loadLogsFromStorage() {
+      const storedLogs = LocalStorage.getItem("logs");
+      if (storedLogs) {
+        this.logs = storedLogs;
+        console.log("Logs loaded from local storage:", this.logs);
+      } else {
+        console.log("error");
+      }
+    },
+  },
+});
+
+export const useCourseStore = defineStore("courseStore", {
+  state: () => ({
+    course: [],
+  }),
+
+  actions: {
+    async fetchCourseData(courseId) {
+      try {
+        const response = await api.get("course-management/course", {
+          params: {
+            id: courseId,
+          },
+        });
+        console.log("Course: ", response.data.data);
+        this.course = response.data.data;
+        try {
+          LocalStorage.set("course", this.course);
+        } catch (error) {
+          console.error("Error saving course to local storage: ", error);
+        }
+      } catch (error) {
+        console.error("Error fetching course: ", error);
       }
     },
   },

@@ -130,23 +130,23 @@ import certificate from "../../../assets/certificate.png";
 import { ref, onMounted } from "vue";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import { saveAs } from "file-saver";
-import { addLog } from "src/resources/lms/stores/course-store";
+import { useLogStore } from "../../../stores/course-store";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
 const logsId = ref(route.params.logsId);
-const logStore = addLog();
+const logStore = useLogStore();
 
 logStore.getLogs(logsId.value);
 const userName = ref("");
-const quizName = ref("");
+const quizName = ref("Cybersecurity Lesson 1");
 const courseName = ref("Course 1");
 
 const loadLogs = async () => {
   await logStore.getLogs(logsId.value);
   if (logStore.logs) {
     userName.value = `${logStore.logs.first_name} ${logStore.logs.last_name}`;
-    quizName.value = logStore.logs.quiz_name;
+    // quizName.value = logStore.logs.quiz_name;
   } else {
     console.error("Logs could not be loaded.");
   }

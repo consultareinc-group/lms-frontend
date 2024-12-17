@@ -6,9 +6,10 @@
         style="width: 100%"
       >
         <h5 class="col-12 text-center q-mt-sm q-mb-xl">
-          You are about to take a quiz for the [Course Name]. Passing the quiz
-          will qualify you to receive a certificate of completion. Take your
-          time, and Good luck!
+          You are about to take a quiz for the
+          {{ courseStore.course[0].course_name }} course. Passing the quiz will
+          qualify you to receive a certificate of completion. Take your time,
+          and Good luck!
         </h5>
         <h5 class="col-12 q-my-none q-px-sm text-primary">LIST OF QUIZZES</h5>
       </div>
@@ -24,13 +25,24 @@
 </template>
 
 <script setup>
+import { useRoute } from "vue-router";
 import TablePage from "../../../components/TablePage.vue";
-import { useQuizStore } from "src/resources/lms/stores/course-store";
+import {
+  useQuizStore,
+  useCourseStore,
+} from "src/resources/lms/stores/course-store";
+import { onMounted } from "vue";
 
-const courseId = 3;
-
+const route = useRoute();
 const quizStore = useQuizStore();
-quizStore.fetchQuizData(courseId);
+const courseStore = useCourseStore();
+
+const courseId = route.params.course_id;
+
+onMounted(() => {
+  quizStore.fetchQuizData(courseId);
+  courseStore.fetchCourseData(courseId);
+});
 
 const columns = [
   {

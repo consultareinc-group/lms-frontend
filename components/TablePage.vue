@@ -266,11 +266,12 @@
 import { ref, computed } from "vue";
 import AddDialog from "../pages/CoursePage/AdminCoursePage/Components/AddDialog.vue";
 import ViewDialog from "../pages/CoursePage/AdminCoursePage/Components/ViewDialog.vue";
-import { addLog } from "src/resources/lms/stores/course-store";
+import { useLogStore } from "src/resources/lms/stores/course-store";
 import { useRouter } from "vue-router";
+import { LocalStorage } from "quasar";
 
 const router = useRouter();
-const logStore = addLog();
+const logStore = useLogStore();
 
 const userDetails = ref({
   first_name: "",
@@ -348,6 +349,7 @@ const onFieldChange = (field, value) => {
 };
 
 const confirmAndNavigate = () => {
+  LocalStorage.set("userDetails", userDetails.value);
   userDetails.value.quiz_id = selectedQuizId.value;
   logStore.logs = userDetails.value;
   console.log("Logs ", logStore.logs);

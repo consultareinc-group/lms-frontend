@@ -94,11 +94,11 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import {
   useQuestionStore,
   useQuizStore,
-  addLog,
+  useLogStore,
 } from "src/resources/lms/stores/course-store";
 import { useRoute, useRouter } from "vue-router";
 
@@ -107,19 +107,23 @@ const route = useRoute();
 let alert = ref(false);
 const questionStore = useQuestionStore();
 const quizStore = useQuizStore();
-const logStore = addLog();
+const logStore = useLogStore();
 
-const quizId = ref(route.params.quizId);
+const quizId = ref(route.params.quiz_id);
 const userAnswers = ref({});
 const logsId = ref(null);
 
-questionStore.fetchQuestionAndChoices(quizId.value);
+onMounted(() => {
+  logStore.loadLogsFromStorage();
+  questionStore.fetchQuestionAndChoices(quizId.value);
+});
 
 const submitQuiz = async () => {
   await quizStore.submitAnswers(userAnswers.value);
-  if (quizStore.status === "passed") {
-    logsId.value = await logStore.postLogs();
-  }
+  // if (quizStore.status === "passed") {
+  //   logsId.value = await logStore.postLogs();
+  // }
+  logsId.value = 1;
   alert.value = true;
 };
 

@@ -106,8 +106,19 @@ export const useCourseStore = defineStore('course', {
     // Action to insert quiz
     PostQuiz(request) {
       return new Promise((resolve, reject) => {
-        // Make a POST request to insert courses in the database courses table
+        // Make a POST request to insert quiz in the database quiz table
         api.post(`lms/quiz`, request).then((response) => {
+          resolve(response.data); // Resolve the promise with the API response data
+        }).catch((response) => {
+          reject(response.data); // Reject the promise if the API request fails
+        });
+      });
+    },
+    // Action to update quiz
+    PutQuiz(request) {
+      return new Promise((resolve, reject) => {
+        // Make a PUT request to update quiz in the database quiz table
+        api.put(`lms/quiz/${request.id}`, request).then((response) => {
           resolve(response.data); // Resolve the promise with the API response data
         }).catch((response) => {
           reject(response.data); // Reject the promise if the API request fails

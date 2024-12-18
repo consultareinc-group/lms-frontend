@@ -24,7 +24,13 @@
         {
           label: 'View Quiz',
           // icon: 'home',
-          to: { name: 'View Quiz' },
+          to: {
+            name: 'View Quiz',
+            params: {
+              course_id: route.params.course_id,
+              quiz_id: route.params.quiz_id,
+            },
+          },
         },
       ]"
     />

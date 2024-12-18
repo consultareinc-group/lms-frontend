@@ -51,7 +51,7 @@ const routes = [
           import("../pages/CoursePage/AdminCoursePage/ViewQuiz.vue"),
       },
       {
-        path: "edit_quiz",
+        path: "edit_quiz/:course_id?/:quiz_id?",
         name: "Edit Quiz",
         component: () =>
           import("../pages/CoursePage/AdminCoursePage/EditQuiz.vue"),

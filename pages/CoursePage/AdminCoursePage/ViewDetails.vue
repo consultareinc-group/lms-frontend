@@ -161,7 +161,10 @@
                           v-close-popup
                           :to="{
                             name: 'Edit Quiz',
-                            params: { quiz_id: props.row.id },
+                            params: {
+                              course_id: route.params.course_id,
+                              quiz_id: props.row.id,
+                            },
                           }"
                         >
                           <q-item-section>Edit</q-item-section>

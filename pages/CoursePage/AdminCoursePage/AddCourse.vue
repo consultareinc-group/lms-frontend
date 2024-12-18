@@ -186,7 +186,7 @@ const saveCourse = () => {
             router.push({
               name: "Add Quiz",
             });
-            store.Course.id = response.data[0].id;
+            store.Course.id = response.data.id;
             store.Course.name = form.value.course_name;
           }
         })

@@ -48,7 +48,7 @@
 
             <div>
               <label>Status <span class="text-red">*</span></label>
-              <q-skeleton v-if="!form.status" type="QInput" />
+              <q-skeleton v-if="form.status === ''" type="QInput" />
               <q-select
                 v-else
                 outlined
@@ -174,9 +174,13 @@ const saveCourse = () => {
       // Indicate the save process is in progress
       btnLoadingState.value = true;
 
+      // remove uncessary properties
+      delete form.value.date_time_added;
+      delete form.value.date_time_updated;
+
       // Call the store's PostCourse method to save the course data
       store
-        .PostCourse(form.value)
+        .PutCourse(form.value)
         .then((response) => {
           // Check if the response indicates success
           const status = Boolean(response.status === "success");
@@ -187,7 +191,7 @@ const saveCourse = () => {
               status ? "Success" : "Fail"
             }!</span>. The record ${
               status ? "has been" : "was not"
-            } added.</p>`,
+            } updated.</p>`,
             color: `${status ? "green-2" : "red-2"}`, // Set notification color
             position: "top-right", // Notification position
             textColor: `${status ? "green" : "red"}`, // Set text color
@@ -200,16 +204,6 @@ const saveCourse = () => {
             ],
             html: true, // Enable HTML content
           });
-
-          // Reset the form fields if the save was successful
-          if (status) {
-            form.value = {
-              course_name: "",
-              video_link: "",
-              course_description: "",
-              status: "",
-            };
-          }
         })
         .finally(() => {
           // Reset the loading state regardless of the response outcome

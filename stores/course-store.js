@@ -59,6 +59,17 @@ export const useCourseStore = defineStore('course', {
         });
       });
     },
+    // Action to insert courses
+    PutCourse(request) {
+      return new Promise((resolve, reject) => {
+        // Make a POST request to insert courses in the database courses table
+        api.put(`lms/course/${request.id}`, request).then((response) => {
+          resolve(response.data); // Resolve the promise with the API response data
+        }).catch((response) => {
+          reject(response.data); // Reject the promise if the API request fails
+        });
+      });
+    },
     // Action to fetch quizzes from the API with pagination support
     GetQuizzes(request) {
       return new Promise((resolve, reject) => {
@@ -118,7 +129,7 @@ export const useCourseStore = defineStore('course', {
     SearchQuestions(request) {
       return new Promise((resolve, reject) => {
         // Make a GET request to fetch questions matching the search keyword
-        api.get(`lms/question?search_keyword="${request.keyword}"`).then((response) => {
+        api.get(`lms/question?search_keyword="${request.keyword}&quiz_id=${request.quiz_id}"`).then((response) => {
           resolve(response.data); // Resolve the promise with the API response data
         }).catch((response) => {
           reject(response.data); // Reject the promise if the API request fails

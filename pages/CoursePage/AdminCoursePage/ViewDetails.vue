@@ -328,7 +328,7 @@ const columns = [
     name: "date_time_added",
     align: "left",
     label: "Date Added",
-    field: "date_time_added",
+    field: (row) => date.formatDate(row.date_time_added, "YYYY-MM-DD"),
     style: "width: 100px",
   },
   { name: "action", field: "action" },

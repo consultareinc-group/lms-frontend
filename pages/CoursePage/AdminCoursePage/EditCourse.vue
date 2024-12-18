@@ -118,7 +118,7 @@ import { onMounted, ref } from "vue";
 // Import a breadcrumb component for navigation
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 // Import the store for managing course data
-import { useCourseStore } from "src/resources/lms-frontend/stores/course-store";
+import { useCourseStore } from "../../../stores/course-store";
 // Import Quasar's UI utilities
 import { useQuasar } from "quasar";
 

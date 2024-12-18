@@ -63,7 +63,7 @@ export const useCourseStore = defineStore('course', {
     GetQuizzes(request) {
       return new Promise((resolve, reject) => {
         // Make a GET request to fetch quizzes based on the offset
-        api.get(`lms/quiz?offset="${request.offset}"`).then((response) => {
+        api.get(`lms/quiz?offset="${request.offset}"&course_id=${request.course_id}`).then((response) => {
           resolve(response.data); // Resolve the promise with the API response data
         }).catch((response) => {
           reject(response.data); // Reject the promise if the API request fails
@@ -97,6 +97,28 @@ export const useCourseStore = defineStore('course', {
       return new Promise((resolve, reject) => {
         // Make a POST request to insert courses in the database courses table
         api.post(`lms/quiz`, request).then((response) => {
+          resolve(response.data); // Resolve the promise with the API response data
+        }).catch((response) => {
+          reject(response.data); // Reject the promise if the API request fails
+        });
+      });
+    },
+    // Action to fetch questions from the API with pagination support
+    GetQuestions(request) {
+      return new Promise((resolve, reject) => {
+        // Make a GET request to fetch questions based on the offset
+        api.get(`lms/question?offset="${request.offset}"&quiz_id=${request.quiz_id}"`).then((response) => {
+          resolve(response.data); // Resolve the promise with the API response data
+        }).catch((response) => {
+          reject(response.data); // Reject the promise if the API request fails
+        });
+      });
+    },
+    // Action to search for questions using a keyword
+    SearchQuestions(request) {
+      return new Promise((resolve, reject) => {
+        // Make a GET request to fetch questions matching the search keyword
+        api.get(`lms/question?search_keyword="${request.keyword}"`).then((response) => {
           resolve(response.data); // Resolve the promise with the API response data
         }).catch((response) => {
           reject(response.data); // Reject the promise if the API request fails

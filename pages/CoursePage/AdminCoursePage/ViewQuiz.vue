@@ -84,7 +84,10 @@
             <!---->
             <div class="q-my-md">
               <p class="q-mb-sm">No of Questions:</p>
-              <p class="q-mb-sm text-weight-light">3</p>
+              <q-skeleton v-if="!quiz.quiz_name" square />
+              <p v-else class="q-mb-sm text-weight-light">
+                {{ questions.length }}
+              </p>
             </div>
           </div>
         </div>
@@ -98,13 +101,116 @@
         <h6 class="q-ma-none text-primary text-weight-bold q-px-sm">
           Questions
         </h6>
-        <!-- <table-page
-          :isViewOption="false"
-          :isSearchTable="false"
-          :showOptions="false"
-          :rows="rows"
-          :columns="columns"
-        /> -->
+        <div class="full-width">
+          <div class="flex justify-end q-mb-md">
+            <div class="flex justify-end items-center">
+              <div class="q-mr-md">Search:</div>
+              <q-input
+                outlined
+                dense
+                class="bg-white"
+                debounce="1000"
+                v-model="search_keyword"
+                @update:model-value="search()"
+              />
+            </div>
+          </div>
+          <q-table
+            flat
+            bordered
+            :rows="questions"
+            :columns="columns"
+            row-key="id"
+            table-header-class="bg-dark text-white"
+            class="sticky-table-header"
+            :loading="tableLoadingState"
+          >
+            <template v-slot:body-cell-number="props">
+              <q-td :props="props">{{ props.pageIndex + 1 }}</q-td>
+            </template>
+
+            <template v-slot:body-cell-action="props">
+              <q-td :props="props">
+                <div class="table-menu">
+                  <q-btn dense icon="more_vert" flat round>
+                    <q-menu style="width: 100px">
+                      <q-list>
+                        <q-item
+                          clickable
+                          v-close-popup
+                          :to="{
+                            name: 'View Quiz',
+                            params: {
+                              course_id: route.params.course_id,
+                              quiz_id: props.row.id,
+                            },
+                          }"
+                        >
+                          <q-item-section>View</q-item-section>
+                        </q-item>
+                        <q-item
+                          clickable
+                          v-close-popup
+                          :to="{
+                            name: 'Edit Quiz',
+                            params: { quiz_id: props.row.id },
+                          }"
+                        >
+                          <q-item-section>Edit</q-item-section>
+                        </q-item>
+                        <q-item clickable v-close-popup>
+                          <q-item-section>Archive</q-item-section>
+                        </q-item>
+                      </q-list>
+                    </q-menu>
+                  </q-btn>
+                </div>
+              </q-td>
+            </template>
+          </q-table>
+          <q-dialog v-model="alert">
+            <q-card class="q-px-xl relative-position">
+              <q-icon
+                name="cancel"
+                color="grey"
+                size="sm"
+                class="absolute-top-right q-mt-sm q-mr-sm cursor-pointer"
+                @click="alert = false"
+              />
+              <q-card-section class="text-center q-mt-lg">
+                <!-- <q-icon name="delete" color="red" size="lg" /> -->
+                <q-icon name="archive" color="orange-10" size="lg" />
+                <!-- <div class="text-h6 text-weight-bold">Delete Confirmation</div> -->
+                <div class="text-h6 text-weight-bold">Archive Confirmation</div>
+              </q-card-section>
+
+              <q-card-section class="q-pt-none text-center">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit?
+              </q-card-section>
+
+              <q-card-section class="q-pt-none text-center">
+                <span class="text-bold">Code: </span> CD-100001
+              </q-card-section>
+
+              <q-card-section class="flex justify-center q-my-lg">
+                <q-btn
+                  flat
+                  no-caps
+                  label="Cancel"
+                  class="border-000000-all q-px-lg"
+                  v-close-popup
+                />
+                <div class="q-mx-md"></div>
+                <q-btn
+                  flat
+                  no-caps
+                  label="Confirm"
+                  class="bg-accent text-white q-px-lg"
+                />
+              </q-card-section>
+            </q-card>
+          </q-dialog>
+        </div>
       </div>
 
       <!-- Button -->
@@ -137,22 +243,14 @@ const store = useCourseStore();
 const route = useRoute();
 
 const columns = [
+  { name: "number", label: "No.", align: "left", field: "number" },
   {
-    name: "name",
-    required: true,
-    label: "No.",
+    name: "question_text",
     align: "left",
-    field: (row) => row.name,
-    format: (val) => `${val}`,
-    sortable: true,
-  },
-  {
-    name: "Question",
-    align: "center",
     label: "Question",
-    field: "question",
+    field: "question_text",
   },
-  { name: "Marks", label: "Marks", field: "marks" },
+  { name: "marks", label: "Marks", field: "marks" },
   { name: "action", field: "action" },
 ];
 
@@ -165,6 +263,32 @@ const quiz = ref({
   id: "",
 });
 
+const questions = ref([]);
+
+// Reactive variable to manage the loading state of the table
+const tableLoadingState = ref(false);
+
+// Function to fetch the list of questions, recursively fetching until all are loaded
+const getQuestions = () => {
+  store
+    .GetQuestions({
+      offset: questions.value.length,
+      quiz_id: route.params.quiz_id,
+    })
+    .then((response) => {
+      tableLoadingState.value = false;
+      if (response.status === "success") {
+        response.data.forEach((data) => {
+          questions.value.push(data);
+        });
+
+        if (response.data.length) {
+          getQuestions(); // Continue fetching if more data is available
+        }
+      }
+    });
+};
+
 onMounted(() => {
   store.GetQuiz({ id: route.params.quiz_id }).then((response) => {
     if (response.status === "success") {
@@ -173,5 +297,39 @@ onMounted(() => {
       }
     }
   });
+
+  tableLoadingState.value = true;
+  // reset question list on page render
+  getQuestions();
 });
+
+// Reactive variable for handling search keyword input
+let search_keyword = ref("");
+
+// Function to search for questions based on the search keyword
+const search = () => {
+  tableLoadingState.value = true;
+  if (search_keyword.value) {
+    store
+      .SearchQuestions({ keyword: search_keyword.value })
+      .then((response) => {
+        tableLoadingState.value = false;
+        if (response.status === "success") {
+          questions.value = response.data;
+        }
+      });
+  } else {
+    questions.value = []; // Reset course list if no keyword is provided
+    getQuestions(); // Reload all questions
+  }
+};
+
+// Reactive variable to manage the visibility state of the alert dialog
+let alert = ref(false);
+
+// Function to show an archive dialog with the selected course ID
+const showArchiveDialog = (id) => {
+  alert.value = true;
+  console.log("id ", id); // Log the selected course ID for debugging
+};
 </script>

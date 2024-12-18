@@ -4,62 +4,20 @@ import { LocalStorage } from "quasar";
 
 export const useLogStore = defineStore("logStore", {
   state: () => ({
-    logs: { quiz_name: null },
+    logs: null,
   }),
 
   actions: {
     async postLogs() {
       try {
-        console.log("Logs ", this.logs);
+        this.logs = LocalStorage.getItem("userDetails");
 
         const response = await api.post(`course-management/logs`, this.logs);
-        console.log("Logs submitted successfully:", response.data.data);
-
-        const logsId = response.data.data[0].id;
-        console.log("logsId: ", logsId);
-
-        return logsId;
       } catch (error) {
         console.error("Error submitting logs:", error);
       }
     },
-    async getLogs(logsId) {
-      try {
-        const response = await api.get(`course-management/logs/${logsId}`);
-        this.logs = response.data.data[0];
-
-        // Fetch the quiz name based on the quiz_id from logs
-        const quizId = this.logs.quiz_id;
-
-        // Ensure quizzes are loaded in quizStore
-        const quizStore = useQuizStore();
-        // if (quizStore.quizzes.length === 0) {
-        //   await quizStore.fetchQuizData(this.logs.course_id);
-        // }
-
-        // Match the quiz name
-        const matchedQuiz = quizStore.quizzes.find(
-          (quiz) => quiz.id === quizId
-        );
-        if (matchedQuiz) {
-          this.logs.quiz_name = matchedQuiz.quiz_name;
-          console.log("Quiz Name:", matchedQuiz.quiz_name);
-        } else {
-          console.warn("Quiz not found for quiz_id:", quizId);
-        }
-      } catch (error) {
-        console.error("Error fetching logs:", error);
-      }
-    },
-    loadLogsFromStorage() {
-      const storedLogs = LocalStorage.getItem("logs");
-      if (storedLogs) {
-        this.logs = storedLogs;
-        console.log("Logs loaded from local storage:", this.logs);
-      } else {
-        console.log("error");
-      }
-    },
+    async getLogs() {},
   },
 });
 
@@ -71,13 +29,8 @@ export const useCourseStore = defineStore("courseStore", {
   actions: {
     async fetchCourseData(courseId) {
       try {
-        const response = await api.get("course-management/course", {
-          params: {
-            id: courseId,
-          },
-        });
-        console.log("Course: ", response.data.data);
-        this.course = response.data.data;
+        const response = await api.get(`course-management/course/${courseId}`);
+        this.course = response.data.data[0];
         try {
           LocalStorage.set("course", this.course);
         } catch (error) {
@@ -92,19 +45,30 @@ export const useCourseStore = defineStore("courseStore", {
 
 export const useQuizStore = defineStore("quizStore", {
   state: () => ({
+    quiz: [],
     quizzes: [],
     score: null,
     status: null,
   }),
 
   actions: {
-    async fetchQuizData(courseId) {
+    async fetchQuizDataByCourse(courseId) {
       try {
-        const response = await api.get(`course-management/quiz/${courseId}`);
-        console.log(response.data.data);
+        const response = await api.get(
+          `course-management/quiz_by_course/${courseId}`
+        );
         this.quizzes = response.data.data;
       } catch (error) {
         console.error("Error getting quiz:", error);
+      }
+    },
+    async fetchQuizData(quizId) {
+      try {
+        const response = await api.get(`course-management/quiz/${quizId}`);
+        this.quiz = response.data.data[0];
+        LocalStorage.set("quiz", this.quiz);
+      } catch (error) {
+        console.error("Error getting quiz: ", error);
       }
     },
     async submitAnswers(answers) {
@@ -114,7 +78,6 @@ export const useQuizStore = defineStore("quizStore", {
         });
         this.score = response.data.score;
         this.status = response.data.status;
-        console.log("Result:", response.data);
       } catch (error) {
         console.error(error);
       }
@@ -131,8 +94,8 @@ export const useQuestionStore = defineStore("questionStore", {
     async fetchQuestionAndChoices(quizId) {
       try {
         const response = await api.get(`course-management/questions/${quizId}`);
-        console.log(response.data);
         this.questions = response.data;
+        LocalStorage.set("questions", this.questions);
       } catch (error) {
         console.error("Error fetching quiz data:", error);
       }

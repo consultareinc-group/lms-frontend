@@ -5,7 +5,9 @@
       style="width: 60vw"
     >
       <header class="q-ma-none q-px-xl q-pt-lg" style="width: 100%">
-        <h5 class="q-ma-none">{{ logStore.logs.quiz_name || "Quiz Name" }}</h5>
+        <h5 v-if="quizStore.quiz && quizStore.quiz.quiz_name" class="q-ma-none">
+          {{ quizStore.quiz.quiz_name || "Quiz Name" }}
+        </h5>
       </header>
       <q-separator dark />
       <div
@@ -99,7 +101,7 @@ import {
   useQuestionStore,
   useQuizStore,
   useLogStore,
-} from "src/resources/lms/stores/course-store";
+} from "../../../stores/course-store";
 import { useRoute, useRouter } from "vue-router";
 
 const router = useRouter();
@@ -111,28 +113,29 @@ const logStore = useLogStore();
 
 const quizId = ref(route.params.quiz_id);
 const userAnswers = ref({});
-const logsId = ref(null);
 
 onMounted(() => {
-  logStore.loadLogsFromStorage();
   questionStore.fetchQuestionAndChoices(quizId.value);
+  quizStore.fetchQuizData(quizId.value);
 });
 
 const submitQuiz = async () => {
   await quizStore.submitAnswers(userAnswers.value);
-  // if (quizStore.status === "passed") {
-  //   logsId.value = await logStore.postLogs();
-  // }
-  logsId.value = 1;
+  if (quizStore.status === "passed") {
+    await logStore.postLogs();
+  }
+  // logsId.value = 1;
   alert.value = true;
 };
 
 const navigateToCertification = () => {
-  router.push({ name: "Certification Page", params: { logsId: logsId.value } });
+  router.push({
+    name: "Certification Page",
+  });
 };
 
 const retakeQuiz = () => {
-  questionStore.questions = questionStore.questions.sort(
+  questionStore.questions = [...questionStore.questions].sort(
     () => Math.random() - 0.5
   );
   userAnswers.value = {};

@@ -10,7 +10,6 @@
       <q-table
         flat
         bordered
-        :separator="isViewOption ? 'cell' : ''"
         :rows="props.rows"
         :columns="props.columns"
         row-key="name"
@@ -21,14 +20,7 @@
         <template v-slot:body-cell-action="props" v-if="showOptions">
           <q-td :props="props">
             <div class="table-menu">
-              <q-btn
-                rounded
-                color="primary"
-                label="View"
-                v-if="isViewOption"
-                @click="showUserDetailsDialog(props.row)"
-              />
-              <q-btn dense icon="more_vert" flat round v-else>
+              <q-btn dense icon="more_vert" flat round>
                 <q-menu>
                   <q-list>
                     <!-- <q-item
@@ -89,129 +81,6 @@
         </template>
       </q-table>
 
-      <!-- User Details Dialog -->
-      <q-dialog v-model="showUserDetails">
-        <q-card class="relative-position" style="min-width: 40vw">
-          <div
-            class="row justify-between"
-            style="width: 100%; border-bottom: solid 1px #e6e6e6"
-          >
-            <q-card-section class="text-center">
-              <div class="text-h6 text-weight-regular">User Information</div>
-            </q-card-section>
-            <q-icon
-              name="cancel"
-              color="grey"
-              size="sm"
-              class="q-mt-md q-mr-md cursor-pointer"
-              @click="showUserDetails = false"
-            />
-          </div>
-
-          <div class="q-gutter-sm q-pa-md">
-            <div class="row">
-              <div class="col-6 q-px-sm">
-                <label>First Name <span class="text-red">*</span></label>
-                <q-input
-                  outlined
-                  dense
-                  class="q-mt-sm"
-                  v-model="userDetails.first_name"
-                  @change="onFieldChange('first_name', $event)"
-                  :rules="[(val) => !!val || 'Field is required']"
-                />
-              </div>
-              <div class="col-6 q-px-sm">
-                <label>Middle Name</label>
-                <q-input
-                  outlined
-                  dense
-                  class="q-mt-sm"
-                  v-model="userDetails.middle_name"
-                  @change="onFieldChange('middle_name', $event)"
-                />
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-10 q-px-sm">
-                <label>Last Name <span class="text-red">*</span></label>
-                <q-input
-                  outlined
-                  dense
-                  class="q-mt-sm"
-                  v-model="userDetails.last_name"
-                  @change="onFieldChange('last_name', $event)"
-                  :rules="[(val) => !!val || 'Field is required']"
-                />
-              </div>
-              <div class="col-2 q-px-sm">
-                <label>Suffix</label>
-                <q-input
-                  outlined
-                  dense
-                  class="q-mt-sm"
-                  v-model="userDetails.suffix"
-                  @change="onFieldChange('suffix', $event)"
-                />
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-6 q-px-sm">
-                <label>Phone <span class="text-red">*</span></label>
-                <q-input
-                  outlined
-                  dense
-                  class="q-mt-sm"
-                  v-model="userDetails.phone"
-                  @change="onFieldChange('phone', $event)"
-                  :rules="[(val) => !!val || 'Field is required']"
-                />
-              </div>
-              <div class="col-6 q-px-sm">
-                <label>Company <span class="text-red">*</span></label>
-                <q-input
-                  outlined
-                  dense
-                  class="q-mt-sm"
-                  v-model="userDetails.company"
-                  @change="onFieldChange('company', $event)"
-                  :rules="[(val) => !!val || 'Field is required']"
-                />
-              </div>
-            </div>
-            <div class="q-px-sm">
-              <label>Email <span class="text-red">*</span></label>
-              <q-input
-                outlined
-                dense
-                class="q-mt-sm"
-                v-model="userDetails.email"
-                @change="onFieldChange('email', $event)"
-                :rules="[(val) => !!val || 'Field is required']"
-              />
-            </div>
-            <q-card-section class="flex justify-end q-my-sm q-py-none">
-              <q-btn
-                flat
-                no-caps
-                label="Close"
-                class="border-000000-all q-px-lg"
-                v-close-popup
-              />
-              <div class="q-mx-md"></div>
-              <q-btn
-                flat
-                no-caps
-                label="Confirm"
-                class="bg-accent text-white q-px-lg"
-                :disable="!isFormValid"
-                @click="confirmAndNavigate"
-              />
-            </q-card-section>
-          </div>
-        </q-card>
-      </q-dialog>
-
       <!-- Archive Dialog -->
       <q-dialog v-model="showArchive">
         <q-card class="q-px-xl relative-position">
@@ -263,26 +132,9 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import AddDialog from "../pages/CoursePage/AdminCoursePage/Components/AddDialog.vue";
 import ViewDialog from "../pages/CoursePage/AdminCoursePage/Components/ViewDialog.vue";
-import { useLogStore } from "src/resources/lms/stores/course-store";
-import { useRouter } from "vue-router";
-import { LocalStorage } from "quasar";
-
-const router = useRouter();
-const logStore = useLogStore();
-
-const userDetails = ref({
-  first_name: "",
-  last_name: "",
-  middle_name: "",
-  suffix: "",
-  phone: "",
-  company: "",
-  email: "",
-  status: "",
-});
 
 const props = defineProps({
   isDialog: {
@@ -290,10 +142,6 @@ const props = defineProps({
     required: false,
   },
   showOptions: {
-    type: Boolean,
-    required: false,
-  },
-  isViewOption: {
     type: Boolean,
     required: false,
   },
@@ -321,11 +169,7 @@ const props = defineProps({
 
 const viewQuestionDialog = ref(false);
 const editQuestionDialog = ref(false);
-const showUserDetails = ref(false);
 const showArchive = ref(false);
-const selectedQuizId = ref(null);
-
-const requiredFields = ["first_name", "last_name", "phone", "company", "email"];
 
 const showViewQuestionDialog = () => {
   viewQuestionDialog.value = true;
@@ -333,27 +177,6 @@ const showViewQuestionDialog = () => {
 
 const showEditQuestionDialog = () => {
   editQuestionDialog.value = true;
-};
-
-const showUserDetailsDialog = (row) => {
-  selectedQuizId.value = row.id;
-  showUserDetails.value = true;
-};
-
-const isFormValid = computed(() => {
-  return requiredFields.every((field) => !!userDetails.value[field]);
-});
-
-const onFieldChange = (field, value) => {
-  userDetails.value[field] = value;
-};
-
-const confirmAndNavigate = () => {
-  LocalStorage.set("userDetails", userDetails.value);
-  userDetails.value.quiz_id = selectedQuizId.value;
-  logStore.logs = userDetails.value;
-  console.log("Logs ", logStore.logs);
-  router.push({ name: "Quiz Page", params: { quizId: selectedQuizId.value } });
 };
 
 const showArchiveDialog = (id) => {

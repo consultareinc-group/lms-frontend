@@ -129,6 +129,17 @@
               <q-td :props="props">{{ props.pageIndex + 1 }}</q-td>
             </template>
 
+            <template v-slot:body-cell-choices="props">
+              <q-td :props="props">
+                <div v-for="(choice, index) in props.row.choices" :key="index">
+                  <span
+                    >{{ alphabet[index] }}. {{ choice.choice_text }}
+                    <q-icon name="check" color="green" v-if="choice.is_correct"
+                  /></span>
+                </div>
+              </q-td>
+            </template>
+
             <template v-slot:body-cell-action="props">
               <q-td :props="props">
                 <div class="table-menu">
@@ -139,20 +150,7 @@
                           clickable
                           v-close-popup
                           :to="{
-                            name: 'View Quiz',
-                            params: {
-                              course_id: route.params.course_id,
-                              quiz_id: props.row.id,
-                            },
-                          }"
-                        >
-                          <q-item-section>View</q-item-section>
-                        </q-item>
-                        <q-item
-                          clickable
-                          v-close-popup
-                          :to="{
-                            name: 'Edit Quiz',
+                            name: 'Edit Question',
                             params: { quiz_id: props.row.id },
                           }"
                         >
@@ -250,9 +248,16 @@ const columns = [
     label: "Question",
     field: "question_text",
   },
-  { name: "marks", label: "Marks", field: "marks" },
+  {
+    name: "choices",
+    align: "left",
+    label: "Choices",
+    field: "choices",
+  },
   { name: "action", field: "action" },
 ];
+
+const alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"];
 
 const quiz = ref({
   id: "",
@@ -281,10 +286,6 @@ const getQuestions = () => {
         response.data.forEach((data) => {
           questions.value.push(data);
         });
-
-        if (response.data.length) {
-          getQuestions(); // Continue fetching if more data is available
-        }
       }
     });
 };
@@ -311,7 +312,10 @@ const search = () => {
   tableLoadingState.value = true;
   if (search_keyword.value) {
     store
-      .SearchQuestions({ keyword: search_keyword.value })
+      .SearchQuestions({
+        keyword: search_keyword.value,
+        quiz_id: route.params.quiz_id,
+      })
       .then((response) => {
         tableLoadingState.value = false;
         if (response.status === "success") {

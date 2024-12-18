@@ -253,18 +253,23 @@ const tableLoadingState = ref(false);
 
 // Function to fetch the list of quizzes, recursively fetching until all are loaded
 const getQuizzes = () => {
-  store.GetQuizzes({ offset: quizzes.value.length }).then((response) => {
-    tableLoadingState.value = false;
-    if (response.status === "success") {
-      response.data.forEach((data) => {
-        quizzes.value.push(data);
-      });
+  store
+    .GetQuizzes({
+      offset: quizzes.value.length,
+      course_id: route.params.course_id,
+    })
+    .then((response) => {
+      tableLoadingState.value = false;
+      if (response.status === "success") {
+        response.data.forEach((data) => {
+          quizzes.value.push(data);
+        });
 
-      if (response.data.length) {
-        getQuizzes(); // Continue fetching if more data is available
+        if (response.data.length) {
+          getQuizzes(); // Continue fetching if more data is available
+        }
       }
-    }
-  });
+    });
 };
 
 onMounted(() => {

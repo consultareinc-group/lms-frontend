@@ -48,32 +48,41 @@
           />
           <q-card-section class="text-center q-mt-lg">
             <q-icon
-              :name="quizStore.status === 'passed' ? 'celebration' : 'error'"
-              :color="quizStore.status === 'passed' ? 'orange-10' : 'red-10'"
+              :name="
+                quizStore.quizResult.status === 'passed'
+                  ? 'celebration'
+                  : 'error'
+              "
+              :color="
+                quizStore.quizResult.status === 'passed'
+                  ? 'orange-10'
+                  : 'red-10'
+              "
               size="lg"
             />
             <div class="text-h5 text-weight-bold">
               {{
-                quizStore.status === "passed"
+                quizStore.quizResult.status === "passed"
                   ? "Congratulations"
                   : "Almost there"
               }}
             </div>
           </q-card-section>
           <q-card-section class="q-pt-none text-center">
-            <p v-if="quizStore.status === 'passed'">
-              You have achieved a {{ quizStore.score }}% score! You are now
-              eligible to receive your certification.
+            <p v-if="quizStore.quizResult.status === 'passed'">
+              You have achieved a {{ quizStore.quizResult.score }}% score! You
+              are now eligible to receive your certification.
             </p>
             <p v-else>
               You didn’t quite make it this time. Your score is
-              {{ quizStore.score }}%. You need to get 100% to earn your
+              {{ quizStore.quizResult.score }}%. You need to get
+              {{ quizStore.quizResult.passing_percentage }}% to earn your
               certification.
             </p>
           </q-card-section>
           <q-card-section class="flex justify-center q-mb-lg">
             <q-btn
-              v-if="quizStore.status === 'passed'"
+              v-if="quizStore.quizResult.status === 'passed'"
               flat
               no-caps
               @click="navigateToCertification"
@@ -120,7 +129,7 @@ onMounted(() => {
 });
 
 const submitQuiz = async () => {
-  await quizStore.submitAnswers(userAnswers.value);
+  await quizStore.submitAnswers(userAnswers.value, quizId.value);
   if (quizStore.status === "passed") {
     await logStore.postLogs();
   }

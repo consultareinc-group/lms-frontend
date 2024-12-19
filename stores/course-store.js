@@ -47,8 +47,11 @@ export const useQuizStore = defineStore("quizStore", {
   state: () => ({
     quiz: [],
     quizzes: [],
-    score: null,
-    status: null,
+    quizResult: {
+      passing_percentage: null,
+      score: null,
+      status: null,
+    },
   }),
 
   actions: {
@@ -71,13 +74,16 @@ export const useQuizStore = defineStore("quizStore", {
         console.error("Error getting quiz: ", error);
       }
     },
-    async submitAnswers(answers) {
+    async submitAnswers(answers, quizId) {
       try {
         const response = await api.post(`course-management/answers`, {
           answers,
+          quiz_id: quizId,
         });
-        this.score = response.data.score;
-        this.status = response.data.status;
+        this.quizResult.passing_percentage = response.data.passing_percentage;
+        this.quizResult.score = response.data.score;
+        this.quizResult.status = response.data.status;
+        console.log("Result: ", this.quizResult);
       } catch (error) {
         console.error(error);
       }
@@ -96,6 +102,7 @@ export const useQuestionStore = defineStore("questionStore", {
         const response = await api.get(`course-management/questions/${quizId}`);
         this.questions = response.data;
         LocalStorage.set("questions", this.questions);
+        console.log(this.questions);
       } catch (error) {
         console.error("Error fetching quiz data:", error);
       }

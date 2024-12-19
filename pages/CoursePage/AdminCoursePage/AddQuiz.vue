@@ -153,7 +153,7 @@ const saveQuiz = () => {
             router.push({
               name: "Add Question",
             });
-            store.Quiz.id = response.dataid;
+            store.Quiz.id = response.data.id;
             store.Quiz.name = form.value.quiz_name;
           }
         })

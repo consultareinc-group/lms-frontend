@@ -253,6 +253,7 @@ const columns = [
     align: "left",
     label: "Question",
     field: "question_text",
+    style: "width: 400px",
   },
   {
     name: "choices",

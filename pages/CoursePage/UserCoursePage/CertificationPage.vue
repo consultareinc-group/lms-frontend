@@ -61,13 +61,28 @@
             max-width: 500px;
           "
         >
-          <img :src="certificate" alt="certificate-image" style="width: 100%" />
-
+          <img
+            :src="certificateTemplate"
+            alt="certificate-image"
+            style="width: 100%"
+          />
           <div
             style="
               position: absolute;
-              top: 35%;
-              left: 48%;
+              top: 27%;
+              left: 36%;
+              transform: translate(-50%, -50%);
+              font-size: 1.5em;
+              font-weight: 600;
+            "
+          >
+            {{ certificateName }}
+          </div>
+          <div
+            style="
+              position: absolute;
+              top: 39%;
+              left: 12%;
               transform: translate(-50%, -50%);
               font-size: 1em;
               font-weight: 600;
@@ -78,16 +93,22 @@
           <div
             style="
               position: absolute;
-              top: 51%;
-              left: 43%;
-              transform: translate(-80%, -50%);
-              font-size: 1em;
-              font-weight: 600;
+              top: 49%;
+              left: 45%;
+              transform: translate(-45%, -36%);
+              font-size: 0.7em;
+              font-weight: 300;
+              text-align: justify;
+              width: 90%;
             "
           >
-            {{ quizName }}
+            has successfully completed the {{ quizName }}. This course covered
+            essential topics related: {{ courseDescription }}. Participants
+            engaged in a comprehensive learning experience designed to equip
+            them with the necessary skills and knowledge to navigate the
+            complexities of {{ courseName }}.
           </div>
-          <div
+          <!-- <div
             style="
               position: absolute;
               top: 60%;
@@ -98,7 +119,7 @@
             "
           >
             {{ courseName }}
-          </div>
+          </div> -->
           <!-- <div
             style="
               position: absolute;
@@ -126,7 +147,7 @@
 </template>
 
 <script setup>
-import certificate from "../../../assets/certificate.png";
+import certificateTemplate from "../../../assets/certificate-template.png";
 import { ref } from "vue";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import { saveAs } from "file-saver";
@@ -139,15 +160,19 @@ const userDetails = LocalStorage.getItem("userDetails");
 const quizDetails = LocalStorage.getItem("quiz");
 const courseDetails = LocalStorage.getItem("course");
 
-const capitalize = (string) => {
-  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-};
-
+// const capitalize = (string) => {
+//   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+// };
+const certificate_name = "Familiarization Certificate";
+const certificateName = ref(certificate_name.toUpperCase());
 const userName = ref(
-  `${capitalize(userDetails.first_name)} ${capitalize(userDetails.last_name)}`
+  `${userDetails.first_name.toUpperCase()} ${userDetails.last_name.toUpperCase()}`
 );
-const quizName = ref(`${quizDetails.quiz_name}`);
-const courseName = ref(`${courseDetails.course_name}`);
+const courseDescription = ref(
+  "The practice of protecting systems, networks, and programs from digital attacks."
+);
+const quizName = ref(quizDetails.quiz_name.toUpperCase());
+const courseName = ref(courseDetails.course_name.toUpperCase());
 
 const navigateToQuizzes = () => {
   router.push({
@@ -161,7 +186,7 @@ const navigateToQuizzes = () => {
 const generateCertificate = async () => {
   try {
     const templateUrl = new URL(
-      "../../../assets/certificate.pdf",
+      "../../../assets/certificate-template.pdf",
       import.meta.url
     ).href;
     const templateBytes = await fetch(templateUrl).then((res) =>
@@ -176,7 +201,7 @@ const generateCertificate = async () => {
 
     page.drawText(userName.value, {
       x: 210,
-      y: 200,
+      y: 120,
       size: fontSize,
       font,
       color: rgb(0, 0, 0),
@@ -184,7 +209,7 @@ const generateCertificate = async () => {
 
     page.drawText(quizName.value, {
       x: 115,
-      y: 150,
+      y: 50,
       size: fontSize,
       font,
       color: rgb(0, 0, 0),

@@ -73,7 +73,7 @@
               position: absolute;
               top: 27%;
               left: 36%;
-              transform: translate(-50%, -50%);
+              transform: translate(-51%, -50%);
               font-size: 1.5em;
               font-weight: 600;
             "
@@ -86,8 +86,8 @@
             style="
               position: absolute;
               top: 39%;
-              left: 10%;
-              transform: translate(-38%, -50%);
+              left: 16%;
+              transform: translate(-50%, -50%);
               font-size: 1em;
               font-weight: 600;
               color: #585d67;
@@ -184,8 +184,13 @@ const courseDetails = LocalStorage.getItem("course");
 const certificate_name = "Familiarization Certificate";
 const certificateName = ref(certificate_name.toUpperCase());
 const userName = ref(
-  `${userDetails.first_name.toUpperCase()} ${userDetails.last_name.toUpperCase()}`
+  `${userDetails.first_name.toUpperCase()} ${
+    userDetails.middle_name && userDetails.middle_name.toUpperCase()
+  } ${userDetails.last_name.toUpperCase()} ${
+    userDetails.suffix && userDetails.suffix.toUpperCase()
+  }`
 );
+
 // const userName = ref("");
 const courseDescription = ref(
   "The practice of protecting systems, networks, and programs from digital attacks"
@@ -228,7 +233,7 @@ const generateCertificate = async () => {
     const color = rgb(88 / 255, 93 / 255, 103 / 255);
 
     page.drawText(certificateName.value, {
-      x: 25,
+      x: 23,
       y: 255,
       size: 20,
       font,
@@ -236,7 +241,7 @@ const generateCertificate = async () => {
     });
 
     page.drawText(userName.value, {
-      x: 25,
+      x: 23,
       y: 210,
       size: fontSize,
       fontRegular,
@@ -272,7 +277,9 @@ const generateCertificate = async () => {
     const pdfBytes = await pdfDoc.save();
     saveAs(
       new Blob([pdfBytes], { type: "application/pdf" }),
-      "certificate.pdf"
+      `${courseDetails.course_name.toUpperCase()} CERTIFICATE - ${
+        userName.value
+      }.pdf`
     );
   } catch (error) {
     console.error("Error generating certificate:", error);

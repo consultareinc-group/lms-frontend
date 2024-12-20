@@ -222,6 +222,7 @@ const quizStore = useQuizStore();
 const courseStore = useCourseStore();
 const showUserDetails = ref(false);
 const selectedQuizId = ref(null);
+const localUserDetails = ref(LocalStorage.getItem("userDetails"));
 
 const courseId = route.params.course_id;
 
@@ -234,9 +235,16 @@ onMounted(() => {
 
 const showUserDetailsDialog = (row) => {
   selectedQuizId.value = row.id;
-  console.log("userDetails.value.first_name ", userDetails.value);
-  if (!userDetails.value.first_name) {
+
+  if (localUserDetails.value && localUserDetails.value.first_name) {
+    showUserDetails.value = false;
+    router.push({
+      name: "Quiz Page",
+      params: { quiz_id: selectedQuizId.value },
+    });
+  } else {
     showUserDetails.value = true;
+    console.log("userDetails.value.first_name is empty or null");
   }
 };
 

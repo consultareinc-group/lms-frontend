@@ -234,7 +234,10 @@ onMounted(() => {
 
 const showUserDetailsDialog = (row) => {
   selectedQuizId.value = row.id;
-  showUserDetails.value = true;
+  console.log("userDetails.value.first_name ", userDetails.value);
+  if (!userDetails.value.first_name) {
+    showUserDetails.value = true;
+  }
 };
 
 const isFormValid = computed(() => {

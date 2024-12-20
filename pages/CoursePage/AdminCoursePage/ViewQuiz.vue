@@ -157,7 +157,11 @@
                           v-close-popup
                           :to="{
                             name: 'Edit Question',
-                            params: { quiz_id: props.row.id },
+                            params: {
+                              course_id: route.params.course_id,
+                              quiz_id: route.params.quiz_id,
+                              question_id: props.row.id,
+                            },
                           }"
                         >
                           <q-item-section>Edit</q-item-section>
@@ -300,9 +304,7 @@ const getQuestions = () => {
 onMounted(() => {
   store.GetQuiz({ id: route.params.quiz_id }).then((response) => {
     if (response.status === "success") {
-      if (response.data.length) {
-        quiz.value = response.data[0];
-      }
+      quiz.value = response.data;
     }
   });
 

@@ -136,6 +136,17 @@ export const useCourseStore = defineStore('course', {
         });
       });
     },
+    // Action to fetch question from the API
+    GetQuestion(request) {
+      return new Promise((resolve, reject) => {
+        // Make a GET request to fetch question based on the offset
+        api.get(`lms/question/${request.id}`).then((response) => {
+          resolve(response.data); // Resolve the promise with the API response data
+        }).catch((response) => {
+          reject(response.data); // Reject the promise if the API request fails
+        });
+      });
+    },
     // Action to search for questions using a keyword
     SearchQuestions(request) {
       return new Promise((resolve, reject) => {
@@ -152,6 +163,17 @@ export const useCourseStore = defineStore('course', {
       return new Promise((resolve, reject) => {
         // Make a POST request to insert courses in the database courses table
         api.post(`lms/question`, request).then((response) => {
+          resolve(response.data); // Resolve the promise with the API response data
+        }).catch((response) => {
+          reject(response.data); // Reject the promise if the API request fails
+        });
+      });
+    },
+    // Action to update quiz
+    PutQuestion(request) {
+      return new Promise((resolve, reject) => {
+        // Make a PUT request to update quiz in the database quiz table
+        api.put(`lms/question/${request.id}`, request).then((response) => {
           resolve(response.data); // Resolve the promise with the API response data
         }).catch((response) => {
           reject(response.data); // Reject the promise if the API request fails

@@ -130,7 +130,7 @@ onMounted(() => {
 
 const submitQuiz = async () => {
   await quizStore.submitAnswers(userAnswers.value, quizId.value);
-  if (quizStore.status === "passed") {
+  if (quizStore.quizResult.status === "passed") {
     await logStore.postLogs();
   }
   // logsId.value = 1;

@@ -13,11 +13,12 @@ export const useLogStore = defineStore("logStore", {
         this.logs = LocalStorage.getItem("userDetails");
 
         const response = await api.post(`course-management/logs`, this.logs);
+        console.log("Post Logs", response.data.data);
+        LocalStorage.set("userDetails", response.data.data[0]);
       } catch (error) {
         console.error("Error submitting logs:", error);
       }
     },
-    async getLogs() {},
   },
 });
 

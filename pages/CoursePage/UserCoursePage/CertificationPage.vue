@@ -66,6 +66,8 @@
             alt="certificate-image"
             style="width: 100%"
           />
+
+          <!-- Certificate Name -->
           <div
             style="
               position: absolute;
@@ -78,18 +80,23 @@
           >
             {{ certificateName }}
           </div>
+
+          <!-- Full Name -->
           <div
             style="
               position: absolute;
               top: 39%;
-              left: 12%;
-              transform: translate(-50%, -50%);
+              left: 10%;
+              transform: translate(-38%, -50%);
               font-size: 1em;
               font-weight: 600;
+              color: #585d67;
             "
           >
             {{ userName }}
           </div>
+
+          <!-- Body -->
           <div
             style="
               position: absolute;
@@ -100,38 +107,48 @@
               font-weight: 300;
               text-align: justify;
               width: 90%;
+              font-family: serif;
+              color: #585d67;
             "
           >
-            has successfully completed the {{ quizName }}. This course covered
-            essential topics related: {{ courseDescription }}. Participants
-            engaged in a comprehensive learning experience designed to equip
-            them with the necessary skills and knowledge to navigate the
-            complexities of {{ courseName }}.
+            {{ certificateBody }}
           </div>
-          <!-- <div
+
+          <!-- Date of Completion -->
+          <div
             style="
               position: absolute;
-              top: 60%;
-              left: 48%;
-              transform: translate(-50%, -50%);
-              font-size: 1em;
-              font-weight: 600;
+              top: 67%;
+              left: 66%;
+              transform: translate(-45%, -23%);
+              font-size: 0.6em;
+              font-weight: 300;
+              text-align: justify;
+              width: 90%;
+              font-family: serif;
+              color: #585d67;
             "
           >
-            {{ courseName }}
-          </div> -->
-          <!-- <div
+            {{ dateCompleted }}
+          </div>
+
+          <!-- Certificate No. -->
+          <div
             style="
               position: absolute;
-              bottom: 10%;
-              left: 50%;
-              transform: translate(-50%, 0);
-              font-size: 1.1em;
-              font-style: italic;
+              top: 70%;
+              left: 68%;
+              transform: translate(-45%, -23%);
+              font-size: 0.6em;
+              font-weight: 300;
+              text-align: justify;
+              width: 90%;
+              font-family: serif;
+              color: #585d67;
             "
           >
-            Signature
-          </div> -->
+            {{ certificateNo }}
+          </div>
         </div>
 
         <q-btn
@@ -151,28 +168,37 @@ import certificateTemplate from "../../../assets/certificate-template.png";
 import { ref } from "vue";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import { saveAs } from "file-saver";
-import { LocalStorage } from "quasar";
+import { LocalStorage, date } from "quasar";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
+
+const padId = (id, length) => {
+  return id.toString().padStart(length, "0");
+};
 
 const userDetails = LocalStorage.getItem("userDetails");
 const quizDetails = LocalStorage.getItem("quiz");
 const courseDetails = LocalStorage.getItem("course");
 
-// const capitalize = (string) => {
-//   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-// };
 const certificate_name = "Familiarization Certificate";
 const certificateName = ref(certificate_name.toUpperCase());
 const userName = ref(
   `${userDetails.first_name.toUpperCase()} ${userDetails.last_name.toUpperCase()}`
 );
+// const userName = ref("");
 const courseDescription = ref(
-  "The practice of protecting systems, networks, and programs from digital attacks."
+  "The practice of protecting systems, networks, and programs from digital attacks"
 );
 const quizName = ref(quizDetails.quiz_name.toUpperCase());
 const courseName = ref(courseDetails.course_name.toUpperCase());
+const certificateBody = ref(
+  `has successfully completed the ${quizName.value}. This course covered essential topics related: ${courseDescription.value}. Participants engaged in a comprehensive learning experience designed to equip them with the necessary skills and knowledge to navigate the complexities of ${courseName.value}.`
+);
+const dateCompleted = ref(
+  date.formatDate(userDetails.date_time_completed, "YYYY-MM-DD")
+);
+const certificateNo = ref(padId(courseDetails.id, 4));
 
 const navigateToQuizzes = () => {
   router.push({
@@ -197,30 +223,50 @@ const generateCertificate = async () => {
     const page = pdfDoc.getPages()[0];
 
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const fontRegular = await pdfDoc.embedFont(StandardFonts.TimesRoman);
     const fontSize = 12;
+    const color = rgb(88 / 255, 93 / 255, 103 / 255);
+
+    page.drawText(certificateName.value, {
+      x: 25,
+      y: 255,
+      size: 20,
+      font,
+      color: rgb(0, 0, 0),
+    });
 
     page.drawText(userName.value, {
-      x: 210,
-      y: 120,
+      x: 25,
+      y: 210,
       size: fontSize,
-      font,
-      color: rgb(0, 0, 0),
+      fontRegular,
+      color: color,
     });
 
-    page.drawText(quizName.value, {
-      x: 115,
-      y: 50,
-      size: fontSize,
-      font,
-      color: rgb(0, 0, 0),
+    page.drawText(certificateBody.value, {
+      x: 25,
+      y: 190,
+      size: 10,
+      font: fontRegular,
+      color: color,
+      lineHeight: 15,
+      maxWidth: 450,
     });
 
-    page.drawText(courseName.value, {
-      x: 190,
-      y: 120,
-      size: fontSize,
-      font,
-      color: rgb(0, 0, 0),
+    page.drawText(dateCompleted.value, {
+      x: 130,
+      y: 109,
+      size: 9,
+      font: fontRegular,
+      color: color,
+    });
+
+    page.drawText(certificateNo.value, {
+      x: 140,
+      y: 98,
+      size: 9,
+      font: fontRegular,
+      color: color,
     });
 
     const pdfBytes = await pdfDoc.save();

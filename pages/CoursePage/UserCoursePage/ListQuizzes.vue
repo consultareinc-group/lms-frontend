@@ -212,6 +212,7 @@ const userDetails = ref({
   company: "",
   email: "",
   status: "",
+  date_time_completed: "",
 });
 
 const router = useRouter();

@@ -45,7 +45,7 @@ const routes = [
           import("../pages/CoursePage/AdminCoursePage/AddQuiz.vue"),
       },
       {
-        path: "view_quiz/:course_id?/:quiz_id?",
+        path: "view_quiz/:course_id/:quiz_id",
         name: "View Quiz",
         component: () =>
           import("../pages/CoursePage/AdminCoursePage/ViewQuiz.vue"),
@@ -69,7 +69,7 @@ const routes = [
           import("../pages/CoursePage/AdminCoursePage/ViewQuestion.vue"),
       },
       {
-        path: "edit_question",
+        path: "edit_question/:course_id/:quiz_id/:question_id",
         name: "Edit Question",
         component: () =>
           import("../pages/CoursePage/AdminCoursePage/EditQuestion.vue"),

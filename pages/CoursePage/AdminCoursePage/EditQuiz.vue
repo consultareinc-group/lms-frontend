@@ -129,9 +129,7 @@ let form = ref({
 onMounted(() => {
   store.GetQuiz({ id: route.params.quiz_id }).then((response) => {
     if (response.status === "success") {
-      if (response.data.length) {
-        form.value = response.data;
-      }
+      form.value = response.data;
     }
   });
 });

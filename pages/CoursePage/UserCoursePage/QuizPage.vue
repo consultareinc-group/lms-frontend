@@ -40,13 +40,6 @@
       </div>
       <q-dialog v-model="alert">
         <q-card class="q-px-xl relative-position">
-          <q-icon
-            name="cancel"
-            color="grey"
-            size="sm"
-            class="absolute-top-right q-mt-sm q-mr-sm cursor-pointer"
-            @click="alert = false"
-          />
           <q-card-section class="text-center q-mt-lg">
             <q-icon
               :name="

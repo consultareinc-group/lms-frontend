@@ -13,7 +13,6 @@ export const useLogStore = defineStore("logStore", {
         this.logs = LocalStorage.getItem("userDetails");
 
         const response = await api.post(`course-management/logs`, this.logs);
-        console.log("Post Logs", response.data.data);
         LocalStorage.set("userDetails", response.data.data[0]);
       } catch (error) {
         console.error("Error submitting logs:", error);
@@ -84,7 +83,6 @@ export const useQuizStore = defineStore("quizStore", {
         this.quizResult.passing_percentage = response.data.passing_percentage;
         this.quizResult.score = response.data.score;
         this.quizResult.status = response.data.status;
-        console.log("Result: ", this.quizResult);
       } catch (error) {
         console.error(error);
       }
@@ -103,7 +101,6 @@ export const useQuestionStore = defineStore("questionStore", {
         const response = await api.get(`course-management/questions/${quizId}`);
         this.questions = response.data;
         LocalStorage.set("questions", this.questions);
-        console.log(this.questions);
       } catch (error) {
         console.error("Error fetching quiz data:", error);
       }

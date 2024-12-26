@@ -5,25 +5,41 @@
       style="width: 60vw"
     >
       <header class="q-ma-none q-px-xl q-pt-lg" style="width: 100%">
-        <h5 v-if="quizStore.quiz && quizStore.quiz.quiz_name" class="q-ma-none">
+        <q-skeleton
+          v-if="!quizStore.quiz.quiz_name"
+          square
+          height="30px"
+          width="100%"
+          class="q-mb-md"
+        />
+        <h5 v-else class="q-ma-none">
           {{ quizStore.quiz.quiz_name || "Quiz Name" }}
         </h5>
       </header>
       <q-separator dark />
-      <div
-        v-for="(question, index) in questionStore.questions"
-        :key="question.question_id"
-        class="q-my-lg q-px-xl q-mx-none"
-      >
-        <p>{{ index + 1 }}. {{ question.question_text }}</p>
-        <q-option-group
-          class="q-mb-md"
-          :options="question.choices"
-          option-label="choice_text"
-          option-value="id"
-          v-model="userAnswers[question.question_id]"
-          type="radio"
-        />
+      <q-skeleton
+        v-if="!questionStore.questions.length"
+        square
+        height="30px"
+        width="50%"
+        class="q-mb-md"
+      />
+      <div v-else>
+        <div
+          v-for="(question, index) in questionStore.questions"
+          :key="question.question_id"
+          class="q-my-lg q-px-xl q-mx-none"
+        >
+          <p>{{ index + 1 }}. {{ question.question_text }}</p>
+          <q-option-group
+            class="q-mb-md"
+            :options="question.choices"
+            option-label="choice_text"
+            option-value="id"
+            v-model="userAnswers[question.question_id]"
+            type="radio"
+          />
+        </div>
       </div>
       <div
         class="row justify-end q-mb-xl q-px-xl q-mx-none"
@@ -120,8 +136,8 @@ const quizId = ref(route.params.quiz_id);
 const userAnswers = ref({});
 
 onMounted(() => {
-  questionStore.fetchQuestionAndChoices(quizId.value);
   quizStore.fetchQuizData(quizId.value);
+  questionStore.fetchQuestionAndChoices(quizId.value);
 });
 
 const btnloadingState = ref(false);

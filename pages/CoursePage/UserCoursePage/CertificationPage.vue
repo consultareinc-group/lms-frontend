@@ -15,7 +15,7 @@
           style="text-align: center; margin: 0 auto; max-width: 400px"
         >
           You have demonstrated exceptional knowledge and mastery by completing
-          the quiz {{ quizName }} as part of the {{ courseName }} course.
+          the {{ quizName }} as part of the {{ courseName }} course.
         </p>
       </div>
       <div class="q-gutter-md">

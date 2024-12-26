@@ -35,6 +35,7 @@
           flat
           class="bg-accent text-white q-px-xl q-mt-lg"
           @click="submitQuiz"
+          :loading="btnloadingState"
         />
       </div>
       <q-dialog v-model="alert">
@@ -128,13 +129,16 @@ onMounted(() => {
   quizStore.fetchQuizData(quizId.value);
 });
 
+const btnloadingState = ref(false);
 const submitQuiz = async () => {
+  btnloadingState.value = true;
   await quizStore.submitAnswers(userAnswers.value, quizId.value);
   if (quizStore.quizResult.status === "passed") {
     await logStore.postLogs();
   }
   // logsId.value = 1;
   alert.value = true;
+  btnloadingState.value = false;
 };
 
 const navigateToCertification = () => {

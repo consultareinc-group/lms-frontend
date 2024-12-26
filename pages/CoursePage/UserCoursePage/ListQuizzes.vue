@@ -41,6 +41,7 @@
             table-header-class="bg-dark text-white"
             class="sticky-table-header"
             style="height: auto"
+            :loading="tblLoadingState"
           >
             <template v-slot:body-cell-action="props">
               <q-td :props="props">
@@ -228,8 +229,13 @@ const courseId = route.params.course_id;
 
 const requiredFields = ["first_name", "last_name", "phone", "company", "email"];
 
+const tblLoadingState = ref(true);
 onMounted(() => {
-  quizStore.fetchQuizDataByCourse(courseId);
+  let response = quizStore.fetchQuizDataByCourse(courseId);
+  response.then((data) => {
+    tblLoadingState.value = false;
+  });
+
   courseStore.fetchCourseData(courseId);
 });
 

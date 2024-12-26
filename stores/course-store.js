@@ -61,6 +61,7 @@ export const useQuizStore = defineStore("quizStore", {
           `course-management/quiz_by_course/${courseId}`
         );
         this.quizzes = response.data.data;
+        return this.quizzes;
       } catch (error) {
         console.error("Error getting quiz:", error);
       }

@@ -113,6 +113,7 @@ import {
   useLogStore,
 } from "../../../stores/course-store";
 import { useRoute, useRouter } from "vue-router";
+import { useQuasar } from "quasar";
 
 const router = useRouter();
 const route = useRoute();
@@ -120,6 +121,7 @@ let alert = ref(false);
 const questionStore = useQuestionStore();
 const quizStore = useQuizStore();
 const logStore = useLogStore();
+const $q = useQuasar();
 
 const quizId = ref(route.params.quiz_id);
 const userAnswers = ref({});
@@ -131,12 +133,22 @@ onMounted(() => {
 
 const btnloadingState = ref(false);
 const submitQuiz = async () => {
+  const unansweredQuestions = questionStore.questions.filter(
+    (question) => !userAnswers.value[question.question_id]
+  );
+
+  if (unansweredQuestions.length > 0) {
+    $q.notify("Please answer all the questions before submitting.");
+    return;
+  }
+
   btnloadingState.value = true;
   await quizStore.submitAnswers(userAnswers.value, quizId.value);
+
   if (quizStore.quizResult.status === "passed") {
     await logStore.postLogs();
   }
-  // logsId.value = 1;
+
   alert.value = true;
   btnloadingState.value = false;
 };

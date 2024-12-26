@@ -23,7 +23,9 @@ export const useLogStore = defineStore("logStore", {
 
 export const useCourseStore = defineStore("courseStore", {
   state: () => ({
-    course: [],
+    course: {
+      course_name: ''
+    },
   }),
 
   actions: {

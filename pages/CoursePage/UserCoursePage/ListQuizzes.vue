@@ -5,10 +5,14 @@
         class="q-px-sm q-mb-lg row items-start justify-start"
         style="width: 100%"
       >
-        <h5
-          v-if="courseStore.course && courseStore.course.course_name"
-          class="col-12 text-center q-mt-sm q-mb-xl"
-        >
+        <q-skeleton
+          v-if="!courseStore.course.course_name"
+          square
+          height="150px"
+          width="100%"
+          class="q-mb-md"
+        />
+        <h5 v-else class="col-12 text-center q-mt-sm q-mb-xl">
           You are about to take a quiz for the
           {{ courseStore.course.course_name }} course. Passing the quiz will
           qualify you to receive a certificate of completion. Take your time,
@@ -231,12 +235,11 @@ const requiredFields = ["first_name", "last_name", "phone", "company", "email"];
 
 const tblLoadingState = ref(true);
 onMounted(() => {
+  courseStore.fetchCourseData(courseId);
   let response = quizStore.fetchQuizDataByCourse(courseId);
   response.then((data) => {
     tblLoadingState.value = false;
   });
-
-  courseStore.fetchCourseData(courseId);
 });
 
 const showUserDetailsDialog = (row) => {

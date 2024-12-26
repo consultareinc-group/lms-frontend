@@ -86,7 +86,7 @@
             style="
               position: absolute;
               top: 39%;
-              left: 16%;
+              left: 90px;
               transform: translate(-50%, -50%);
               font-size: 1em;
               font-weight: 600;

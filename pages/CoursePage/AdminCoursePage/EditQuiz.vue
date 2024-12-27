@@ -42,7 +42,8 @@
       <div
         class="bg-white q-my-lg q-py-lg q-px-xl items-start justify-start full-width"
       >
-        <!-- <h5 class="q-ma-none q-mb-lg">{{ store.Course.name }}</h5> -->
+        <q-skeleton height="100px" width="100%" v-if="!store.Course.name" />
+        <h5 v-else class="q-ma-none q-mb-lg">{{ store.Course.name }}</h5>
         <hr />
         <header class="q-mb-lg">
           <h6 class="q-ma-none q-mt-lg">Edit Quiz</h6>
@@ -128,6 +129,11 @@ let form = ref({
 });
 
 onMounted(() => {
+  store.GetCourse({ id: route.params.course_id }).then((response) => {
+    if (response.status === "success") {
+      store.Course.name = response.data.course_name;
+    }
+  });
   store.GetQuiz({ id: route.params.quiz_id }).then((response) => {
     if (response.status === "success") {
       form.value = response.data;

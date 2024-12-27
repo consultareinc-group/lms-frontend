@@ -193,19 +193,9 @@ export const useCourseStore = defineStore('course', {
         });
       });
     },
-    async postLogs() {
-      try {
-        this.logs = LocalStorage.getItem("userDetails");
-
-        const response = await api.post(`lms/logs`, this.logs);
-        LocalStorage.set("userDetails", response.data.data[0]);
-      } catch (error) {
-        console.error("Error submitting logs:", error);
-      }
-    },
     async fetchCourseData(courseId) {
       try {
-        const response = await api.get(`lms/course/${courseId}`);
+        const response = await api.get(`lms/examinee/course/${courseId}`);
         this.course = response.data.data[0];
         try {
           LocalStorage.set("course", this.course);
@@ -219,43 +209,12 @@ export const useCourseStore = defineStore('course', {
     async fetchQuizDataByCourse(courseId) {
       try {
         const response = await api.get(
-          `lms/quiz_by_course/${courseId}`
+          `lms/examinee/quiz_by_course/${courseId}`
         );
         this.quizzes = response.data.data;
         return this.quizzes;
       } catch (error) {
         console.error("Error getting quiz:", error);
-      }
-    },
-    async fetchQuizData(quizId) {
-      try {
-        const response = await api.get(`lms/quiz/${quizId}`);
-        this.quiz = response.data.data[0];
-        LocalStorage.set("quiz", this.quiz);
-      } catch (error) {
-        console.error("Error getting quiz: ", error);
-      }
-    },
-    async submitAnswers(answers, quizId) {
-      try {
-        const response = await api.post(`lms/answers`, {
-          answers,
-          quiz_id: quizId,
-        });
-        this.quizResult.passing_percentage = response.data.passing_percentage;
-        this.quizResult.score = response.data.score;
-        this.quizResult.status = response.data.status;
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    async fetchQuestionAndChoices(quizId) {
-      try {
-        const response = await api.get(`lms/questions/${quizId}`);
-        this.questions = response.data;
-        LocalStorage.set("questions", this.questions);
-      } catch (error) {
-        console.error("Error fetching quiz data:", error);
       }
     },
   },

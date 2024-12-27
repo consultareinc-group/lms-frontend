@@ -116,11 +116,9 @@
 
 <script setup>
 import { onMounted, ref } from "vue";
-import {
-  useQuestionStore,
-  useQuizStore,
-  useLogStore,
-} from "../../../stores/course-store";
+import { useQuestionStore } from "../../../stores/question-store";
+import { useQuizStore } from "../../../stores/quiz-store";
+import { useLogStore } from "../../../stores/log-store";
 import { useRoute, useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 

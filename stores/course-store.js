@@ -12,7 +12,7 @@ export const useLogStore = defineStore("logStore", {
       try {
         this.logs = LocalStorage.getItem("userDetails");
 
-        const response = await api.post(`course-management/logs`, this.logs);
+        const response = await api.post(`lms/logs`, this.logs);
         LocalStorage.set("userDetails", response.data.data[0]);
       } catch (error) {
         console.error("Error submitting logs:", error);
@@ -31,7 +31,7 @@ export const useCourseStore = defineStore("courseStore", {
   actions: {
     async fetchCourseData(courseId) {
       try {
-        const response = await api.get(`course-management/course/${courseId}`);
+        const response = await api.get(`lms/course/${courseId}`);
         this.course = response.data.data[0];
         try {
           LocalStorage.set("course", this.course);
@@ -60,7 +60,7 @@ export const useQuizStore = defineStore("quizStore", {
     async fetchQuizDataByCourse(courseId) {
       try {
         const response = await api.get(
-          `course-management/quiz_by_course/${courseId}`
+          `lms/quiz_by_course/${courseId}`
         );
         this.quizzes = response.data.data;
         return this.quizzes;
@@ -70,7 +70,7 @@ export const useQuizStore = defineStore("quizStore", {
     },
     async fetchQuizData(quizId) {
       try {
-        const response = await api.get(`course-management/quiz/${quizId}`);
+        const response = await api.get(`lms/quiz/${quizId}`);
         this.quiz = response.data.data[0];
         LocalStorage.set("quiz", this.quiz);
       } catch (error) {
@@ -79,7 +79,7 @@ export const useQuizStore = defineStore("quizStore", {
     },
     async submitAnswers(answers, quizId) {
       try {
-        const response = await api.post(`course-management/answers`, {
+        const response = await api.post(`lms/answers`, {
           answers,
           quiz_id: quizId,
         });
@@ -101,7 +101,7 @@ export const useQuestionStore = defineStore("questionStore", {
   actions: {
     async fetchQuestionAndChoices(quizId) {
       try {
-        const response = await api.get(`course-management/questions/${quizId}`);
+        const response = await api.get(`lms/questions/${quizId}`);
         this.questions = response.data;
         LocalStorage.set("questions", this.questions);
       } catch (error) {

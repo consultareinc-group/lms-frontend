@@ -21,19 +21,13 @@
             time and give it your best shot—good luck!
           </h6>
         </div>
-
-        <h5 class="col-12 q-my-none q-px-sm text-primary">LIST OF QUIZZES</h5>
       </div>
-      <!-- <table-page
-        :isViewOption="true"
-        :isSearchTable="true"
-        :showOptions="true"
-        :rows="quizStore.quizzes"
-        :columns="columns"
-      /> -->
       <div class="q-pa-sm" style="width: 100%">
         <div>
-          <div class="flex justify-end q-mb-md">
+          <div class="flex justify-between items-center q-mb-md">
+            <h6 class="col-12 q-my-none q-px-sm text-primary">
+              LIST OF QUIZZES
+            </h6>
             <div class="flex justify-end items-center">
               <div class="q-mr-md">Search:</div>
               <q-input outlined dense class="bg-white" />

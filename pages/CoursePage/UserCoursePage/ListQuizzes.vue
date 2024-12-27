@@ -12,12 +12,16 @@
           width="100%"
           class="q-mb-md"
         />
-        <h5 v-else class="col-12 text-center q-mt-sm q-mb-xl">
-          You are about to take a quiz for the
-          {{ courseStore.course.course_name }} course. Passing the quiz will
-          qualify you to receive a certificate of completion. Take your time,
-          and Good luck!
-        </h5>
+        <div v-else class="col-12 q-mt-sm q-mb-xl">
+          <h5 class="q-ma-none text-grey-9">
+            <b>Course: {{ courseStore.course.course_name }}</b>
+          </h5>
+          <h6 class="q-ma-none">
+            Passing the quiz earns you a Certificate of Completion. Take your
+            time and give it your best shot—good luck!
+          </h6>
+        </div>
+
         <h5 class="col-12 q-my-none q-px-sm text-primary">LIST OF QUIZZES</h5>
       </div>
       <!-- <table-page
@@ -51,9 +55,12 @@
               <q-td :props="props">
                 <div class="table-menu">
                   <q-btn
+                    dense
                     rounded
                     color="primary"
                     label="View"
+                    class="q-px-lg"
+                    no-caps
                     @click="showUserDetailsDialog(props.row)"
                   />
                 </div>

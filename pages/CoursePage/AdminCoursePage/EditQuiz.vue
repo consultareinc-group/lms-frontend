@@ -108,6 +108,7 @@
 </template>
 
 <script setup>
+import AddDialog from "./Components/AddDialog.vue";
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";

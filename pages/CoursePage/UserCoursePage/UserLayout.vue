@@ -19,7 +19,7 @@
 
         <div class="q-ml-auto q-px-xl full-height flex items-center">
           <q-btn
-            label="Browse More Topics"
+            label="Browse More Courses"
             no-caps
             rounded
             class="bg-accent text-white q-px-xl q-py-sm"

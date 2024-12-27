@@ -83,13 +83,13 @@ const routes = [
       import("../pages/CoursePage/UserCoursePage/UserLayout.vue"),
     children: [
       {
-        path: "/list_quizzes",
+        path: "/list_quizzes/:course_id",
         name: "List of Quizzes",
         component: () =>
           import("../pages/CoursePage/UserCoursePage/ListQuizzes.vue"),
       },
       {
-        path: "/quiz_page",
+        path: "/quiz_page/:quiz_id",
         name: "Quiz Page",
         component: () =>
           import("../pages/CoursePage/UserCoursePage/QuizPage.vue"),

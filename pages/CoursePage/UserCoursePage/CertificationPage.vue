@@ -15,7 +15,7 @@
           style="text-align: center; margin: 0 auto; max-width: 400px"
         >
           You have demonstrated exceptional knowledge and mastery by completing
-          the quiz {{ quizName }} as part of the {{ courseName }} course.
+          the {{ quizName }} as part of the {{ courseName }} course.
         </p>
       </div>
       <div class="q-gutter-md">
@@ -27,7 +27,7 @@
         />
         <q-btn
           label="Take Another Quiz"
-          :to="{ name: 'List of Quizzes' }"
+          @click="navigateToQuizzes"
           no-caps
           rounded
           class="bg-accent text-white q-px-xl"
@@ -61,56 +61,93 @@
             max-width: 500px;
           "
         >
-          <img :src="certificate" alt="certificate-image" style="width: 100%" />
+          <img
+            :src="certificateTemplate"
+            alt="certificate-image"
+            style="width: 100%"
+          />
 
+          <!-- Certificate Name -->
           <div
             style="
               position: absolute;
-              top: 35%;
-              left: 48%;
-              transform: translate(-50%, -50%);
+              top: 27%;
+              left: 36%;
+              transform: translate(-51%, -50%);
               font-size: 1.5em;
               font-weight: 600;
+            "
+          >
+            {{ certificateName }}
+          </div>
+
+          <!-- Full Name -->
+          <div
+            style="
+              position: absolute;
+              top: 36%;
+              left: 5%;
+              font-size: 1em;
+              font-weight: 600;
+              color: #585d67;
             "
           >
             {{ userName }}
           </div>
+
+          <!-- Body -->
           <div
             style="
               position: absolute;
-              top: 51%;
-              left: 43%;
-              transform: translate(-50%, -50%);
-              font-size: 1.5em;
-              font-weight: 600;
+              top: 49%;
+              left: 45%;
+              transform: translate(-45%, -36%);
+              font-size: 0.7em;
+              font-weight: 300;
+              text-align: justify;
+              width: 90%;
+              font-family: serif;
+              color: #585d67;
             "
           >
-            {{ quizName }}
+            {{ certificateBody }}
           </div>
+
+          <!-- Date of Completion -->
           <div
             style="
               position: absolute;
-              top: 60%;
-              left: 48%;
-              transform: translate(-50%, -50%);
-              font-size: 1.5em;
-              font-weight: 600;
+              top: 67%;
+              left: 66%;
+              transform: translate(-45%, -23%);
+              font-size: 0.6em;
+              font-weight: 300;
+              text-align: justify;
+              width: 90%;
+              font-family: serif;
+              color: #585d67;
             "
           >
-            {{ courseName }}
+            {{ dateCompleted }}
           </div>
-          <!-- <div
+
+          <!-- Certificate No. -->
+          <div
             style="
               position: absolute;
-              bottom: 10%;
-              left: 50%;
-              transform: translate(-50%, 0);
-              font-size: 1.1em;
-              font-style: italic;
+              top: 70%;
+              left: 68%;
+              transform: translate(-45%, -23%);
+              font-size: 0.6em;
+              font-weight: 300;
+              text-align: justify;
+              width: 90%;
+              font-family: serif;
+              color: #585d67;
             "
           >
-            Signature
-          </div> -->
+            {{ certificateNo }}
+          </div>
         </div>
 
         <q-btn
@@ -126,19 +163,60 @@
 </template>
 
 <script setup>
-import certificate from "../../../assets/certificate.png";
+import certificateTemplate from "../../../assets/certificate-template.png";
 import { ref } from "vue";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import { saveAs } from "file-saver";
+import { LocalStorage, date } from "quasar";
+import { useRouter } from "vue-router";
 
-const userName = ref("Allen Tiempo");
-const quizName = ref("Quiz 1");
-const courseName = ref("Course 1");
+const router = useRouter();
+
+const padId = (id, length) => {
+  return id.toString().padStart(length, "0");
+};
+
+const userDetails = LocalStorage.getItem("userDetails");
+const quizDetails = LocalStorage.getItem("quiz");
+const courseDetails = LocalStorage.getItem("course");
+
+const certificate_name = "Familiarization Certificate";
+const certificateName = ref(certificate_name.toUpperCase());
+const userName = ref(
+  `${userDetails.first_name.toUpperCase()} ${
+    userDetails.middle_name ? userDetails.middle_name.toUpperCase() : ""
+  } ${userDetails.last_name.toUpperCase()} ${
+    userDetails.suffix ? userDetails.suffix.toUpperCase() : ""
+  }`
+);
+
+// const userName = ref("");
+const courseDescription = ref(
+  "The practice of protecting systems, networks, and programs from digital attacks"
+);
+const quizName = ref(quizDetails.quiz_name.toUpperCase());
+const courseName = ref(courseDetails.course_name.toUpperCase());
+const certificateBody = ref(
+  `has successfully completed the ${quizName.value}. This course covered essential topics related: ${courseDescription.value}. Participants engaged in a comprehensive learning experience designed to equip them with the necessary skills and knowledge to navigate the complexities of ${courseName.value}.`
+);
+const dateCompleted = ref(
+  date.formatDate(userDetails.date_time_completed, "YYYY-MM-DD")
+);
+const certificateNo = ref(padId(courseDetails.id, 4));
+
+const navigateToQuizzes = () => {
+  router.push({
+    name: "List of Quizzes",
+    params: {
+      course_id: courseDetails.id,
+    },
+  });
+};
 
 const generateCertificate = async () => {
   try {
     const templateUrl = new URL(
-      "../../../assets/certificate.pdf",
+      "../../../assets/certificate-template.pdf",
       import.meta.url
     ).href;
     const templateBytes = await fetch(templateUrl).then((res) =>
@@ -149,36 +227,58 @@ const generateCertificate = async () => {
     const page = pdfDoc.getPages()[0];
 
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const fontSize = 24;
+    const fontRegular = await pdfDoc.embedFont(StandardFonts.TimesRoman);
+    const fontSize = 12;
+    const color = rgb(88 / 255, 93 / 255, 103 / 255);
+
+    page.drawText(certificateName.value, {
+      x: 23,
+      y: 255,
+      size: 20,
+      font,
+      color: rgb(0, 0, 0),
+    });
 
     page.drawText(userName.value, {
-      x: 160,
-      y: 200,
+      x: 23,
+      y: 210,
       size: fontSize,
-      font,
-      color: rgb(0, 0, 0),
+      fontRegular,
+      color: color,
     });
 
-    page.drawText(quizName.value, {
-      x: 170,
-      y: 150,
-      size: fontSize,
-      font,
-      color: rgb(0, 0, 0),
+    page.drawText(certificateBody.value, {
+      x: 25,
+      y: 190,
+      size: 10,
+      font: fontRegular,
+      color: color,
+      lineHeight: 15,
+      maxWidth: 450,
     });
 
-    page.drawText(courseName.value, {
-      x: 190,
-      y: 120,
-      size: fontSize,
-      font,
-      color: rgb(0, 0, 0),
+    page.drawText(dateCompleted.value, {
+      x: 130,
+      y: 109,
+      size: 9,
+      font: fontRegular,
+      color: color,
+    });
+
+    page.drawText(certificateNo.value, {
+      x: 140,
+      y: 98,
+      size: 9,
+      font: fontRegular,
+      color: color,
     });
 
     const pdfBytes = await pdfDoc.save();
     saveAs(
       new Blob([pdfBytes], { type: "application/pdf" }),
-      "certificate.pdf"
+      `${courseDetails.course_name.toUpperCase()} CERTIFICATE - ${
+        userName.value
+      }.pdf`
     );
   } catch (error) {
     console.error("Error generating certificate:", error);

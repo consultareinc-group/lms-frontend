@@ -85,9 +85,8 @@
           <div
             style="
               position: absolute;
-              top: 39%;
-              left: 90px;
-              transform: translate(-50%, -50%);
+              top: 36%;
+              left: 5%;
               font-size: 1em;
               font-weight: 600;
               color: #585d67;
@@ -185,9 +184,9 @@ const certificate_name = "Familiarization Certificate";
 const certificateName = ref(certificate_name.toUpperCase());
 const userName = ref(
   `${userDetails.first_name.toUpperCase()} ${
-    userDetails.middle_name && userDetails.middle_name.toUpperCase()
+    userDetails.middle_name ? userDetails.middle_name.toUpperCase() : ""
   } ${userDetails.last_name.toUpperCase()} ${
-    userDetails.suffix && userDetails.suffix.toUpperCase()
+    userDetails.suffix ? userDetails.suffix.toUpperCase() : ""
   }`
 );
 

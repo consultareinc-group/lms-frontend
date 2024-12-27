@@ -29,8 +29,8 @@
               LIST OF QUIZZES
             </h6>
             <div class="flex justify-end items-center">
-              <div class="q-mr-md">Search:</div>
-              <q-input outlined dense class="bg-white" />
+              <!-- <div class="q-mr-md">Search:</div>
+              <q-input outlined dense class="bg-white" /> -->
             </div>
           </div>
           <q-table
@@ -201,11 +201,9 @@
 
 <script setup>
 import { useRoute, useRouter } from "vue-router";
-import {
-  useQuizStore,
-  useCourseStore,
-  useLogStore,
-} from "../../../stores/course-store";
+import { useCourseStore } from "../../../stores/course-store";
+import { useQuizStore } from "../../../stores/quiz-store";
+import { useLogStore } from "../../../stores/log-store";
 import { onMounted, ref, computed } from "vue";
 import { LocalStorage } from "quasar";
 

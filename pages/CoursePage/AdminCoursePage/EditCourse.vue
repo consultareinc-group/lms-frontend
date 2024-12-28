@@ -154,9 +154,7 @@ let form = ref({
 onMounted(() => {
   store.GetCourse({ id: route.params.course_id }).then((response) => {
     if (response.status === "success") {
-      if (response.data.length) {
-        form.value = response.data[0];
-      }
+      form.value = response.data;
     }
   });
 });

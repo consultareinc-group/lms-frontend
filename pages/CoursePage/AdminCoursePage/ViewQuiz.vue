@@ -104,9 +104,22 @@
         class="bg-white q-my-lg q-py-md q-px-lg items-start justify-start column"
         style="width: 100%"
       >
-        <h6 class="q-ma-none text-primary text-weight-bold q-px-sm">
-          Questions
-        </h6>
+        <div class="flex justify-between items-center full-width q-mb-lg">
+          <h6 class="q-ma-none text-primary text-weight-bold q-px-sm">
+            Questions
+          </h6>
+          <q-btn
+            label="Add New"
+            no-caps
+            flat
+            class="bg-primary text-white"
+            :to="{
+              name: 'Add Question',
+              params: { quiz_id: route.params.quiz_id },
+            }"
+          />
+        </div>
+
         <div class="full-width">
           <div class="flex justify-end q-mb-md">
             <div class="flex justify-end items-center">

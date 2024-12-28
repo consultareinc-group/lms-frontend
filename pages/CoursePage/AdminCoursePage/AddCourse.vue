@@ -185,9 +185,8 @@ const saveCourse = () => {
           if (status) {
             router.push({
               name: "Add Quiz",
+              params: { course_id: response.data.id },
             });
-            store.Course.id = response.data.id;
-            store.Course.name = form.value.course_name;
           }
         })
         .finally(() => {

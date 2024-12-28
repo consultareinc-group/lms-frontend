@@ -28,6 +28,12 @@
       <div
         class="bg-white q-my-lg q-py-lg q-px-xl items-start justify-start full-width"
       >
+        <q-skeleton
+          v-if="!store.Course.name"
+          square
+          height="50px"
+          width="100%"
+        />
         <h5 class="q-ma-none q-mb-lg">{{ store.Course.name }}</h5>
         <hr />
         <header class="q-mb-lg">
@@ -92,7 +98,7 @@
 <script setup>
 import AddDialog from "./Components/AddDialog.vue";
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useCourseStore } from "../../../stores/course-store";
 // Import Quasar's UI utilities
@@ -109,6 +115,12 @@ let form = ref({
   passing_percentage: "",
 });
 
+onMounted(() => {
+  store.GetCourse({ id: route.params.course_id }).then((response) => {
+    store.Course.name = response.data.course_name;
+  });
+});
+
 // Reference to the form component, used for validation
 const quizForm = ref(null);
 // Reactive state to manage the loading state of the save button
@@ -123,7 +135,7 @@ const saveQuiz = () => {
       btnLoadingState.value = true;
 
       // bind course_id to the quiz data
-      form.value.course_id = store.Course.id;
+      form.value.course_id = route.params.course_id;
       // Call the store's PostCourse method to save the course data
       store
         .PostQuiz(form.value)
@@ -153,9 +165,8 @@ const saveQuiz = () => {
           if (status) {
             router.push({
               name: "Add Question",
+              params: { quiz_id: response.data.id },
             });
-            store.Quiz.id = response.data.id;
-            store.Quiz.name = form.value.quiz_name;
           }
         })
         .finally(() => {

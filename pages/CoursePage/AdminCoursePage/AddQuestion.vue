@@ -22,7 +22,8 @@
         class="bg-white q-my-lg q-py-lg q-px-xl items-start justify-start"
         style="width: 100%"
       >
-        <h5 class="q-ma-none q-mb-lg">{{ store.Quiz.name }}</h5>
+        <q-skeleton v-if="!store.Quiz.name" square height="50px" width="100%" />
+        <h5 v-else class="q-ma-none q-mb-lg">{{ store.Quiz.name }}</h5>
         <hr />
         <header class="q-mb-lg q-mt-lg">
           <h6 class="q-ma-none">Add Question</h6>
@@ -61,6 +62,7 @@
                 dense
                 class="q-mt-sm"
                 :rules="[(val) => !!val || 'Field is required']"
+                lazy-rules
               />
             </div>
             <!---->
@@ -82,6 +84,7 @@
                   dense
                   class="q-mt-sm q-pb-none"
                   :rules="[(val) => !!val || 'Field is required']"
+                  lazy-rules
                 />
                 <!---->
                 <div>
@@ -159,7 +162,7 @@
 <script setup>
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { useRoute, useRouter } from "vue-router";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useCourseStore } from "../../../stores/course-store";
 // Import Quasar's UI utilities
 import { useQuasar } from "quasar";
@@ -181,6 +184,12 @@ let form = ref({
       ],
     },
   ],
+});
+
+onMounted(() => {
+  store.GetQuiz({ id: route.params.quiz_id }).then((response) => {
+    store.Quiz.name = response.data.quiz_name;
+  });
 });
 
 const addQuestion = () => {
@@ -224,7 +233,7 @@ const saveQuestion = () => {
       btnLoadingState.value = true;
 
       // bind course_id to the quiz data
-      form.value.quiz_id = store.Quiz.id;
+      form.value.quiz_id = route.params.quiz_id;
       // Call the store's PostCourse method to save the course data
       store
         .PostQuestion(form.value)
@@ -254,10 +263,18 @@ const saveQuestion = () => {
 
           // Reset the form fields if the save was successful
           if (status) {
-            router.push({
-              name: "View Course Details",
-              params: { course_id: store.Course.id },
-            });
+            form.value = {
+              questions: [
+                {
+                  question_text: "",
+                  choices: [
+                    { choice_text: "", explanation: "", is_correct: 0 },
+                    { choice_text: "", explanation: "", is_correct: 0 },
+                    { choice_text: "", explanation: "", is_correct: 0 },
+                  ],
+                },
+              ],
+            };
           }
         })
         .finally(() => {

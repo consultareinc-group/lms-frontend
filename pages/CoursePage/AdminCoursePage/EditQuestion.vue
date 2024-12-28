@@ -214,6 +214,13 @@ onMounted(() => {
     .then((response) => {
       if (response.status === "success") {
         form.value = response.data[0];
+        if (!response.data[0].choices.length) {
+          form.value.choices = [
+            { choice_text: "", explanation: "", is_correct: 0 },
+            { choice_text: "", explanation: "", is_correct: 0 },
+            { choice_text: "", explanation: "", is_correct: 0 },
+          ];
+        }
       }
     });
 });

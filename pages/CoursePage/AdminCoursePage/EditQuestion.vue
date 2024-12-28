@@ -64,7 +64,14 @@
             <!---->
             <div class="col-12 q-px-sm q-mb-md">
               <label>Question <span class="text-red">*</span></label>
+              <q-skeleton
+                v-if="!form.question_text"
+                square
+                height="150px"
+                width="100%"
+              />
               <q-input
+                v-else
                 type="textarea"
                 outlined
                 v-model="form.question_text"
@@ -74,56 +81,72 @@
               />
             </div>
             <!---->
-            <div
-              v-for="(choice, choice_index) in form.choices"
-              :key="choice_index"
-              class="row q-pa-sm"
-              style="width: 100%"
-            >
-              <div class="col-5 q-pr-md">
-                <label
-                  >Choice {{ choice_index + 1 }}
-                  <span class="text-red">*</span></label
-                >
-                <q-input
-                  type="textarea"
-                  outlined
-                  v-model="choice.choice_text"
-                  dense
-                  class="q-mt-sm q-pb-none"
-                  :rules="[(val) => !!val || 'Field is required']"
-                />
+            <!-- <q-skeleton v-if="!form.choices.length" square height="150px" />
+            <div v-else></div> -->
+            <div v-if="!form.choices.length" class="full-width">
+              <label>Choice <span class="text-red">*</span></label>
+              <div class="row q-pa-sm full-width">
+                <div class="col-5 q-pr-md">
+                  <q-skeleton square height="150px" />
+                </div>
                 <!---->
-                <div>
-                  <q-checkbox
-                    v-model="choice.is_correct"
-                    :true-value="1"
-                    :false-value="0"
-                    label="Is Correct"
-                  />
+                <div class="col-6 q-pr-md items-center">
+                  <q-skeleton square height="150px" />
                 </div>
               </div>
-              <!---->
-              <div class="col-6 q-pr-md">
-                <label>Explanation</label>
-                <q-input
-                  type="textarea"
-                  outlined
-                  v-model="choice.explanation"
-                  dense
-                  class="q-mt-sm"
-                />
-              </div>
-              <!---->
-              <div class="col-1 flex items-center justify-center">
-                <q-icon
-                  v-if="choice_index >= 2"
-                  size="sm"
-                  name="delete"
-                  color="red-8"
-                  class="q-mx-sm cursor-pointer"
-                  @click="removeChoice(choice_index)"
-                />
+            </div>
+            <div v-else class="full-width">
+              <div
+                v-for="(choice, choice_index) in form.choices"
+                :key="choice_index"
+                class="row q-pa-sm"
+                style="width: 100%"
+              >
+                <div class="col-5 q-pr-md">
+                  <label
+                    >Choice {{ choice_index + 1 }}
+                    <span class="text-red">*</span></label
+                  >
+                  <q-input
+                    type="textarea"
+                    outlined
+                    v-model="choice.choice_text"
+                    dense
+                    class="q-mt-sm q-pb-none"
+                    :rules="[(val) => !!val || 'Field is required']"
+                  />
+                  <!---->
+                  <div>
+                    <q-checkbox
+                      v-model="choice.is_correct"
+                      :true-value="1"
+                      :false-value="0"
+                      label="Is Correct"
+                    />
+                  </div>
+                </div>
+                <!---->
+                <div class="col-6 q-pr-md">
+                  <label>Explanation</label>
+                  <q-input
+                    type="textarea"
+                    outlined
+                    v-model="choice.explanation"
+                    dense
+                    class="q-mt-sm"
+                  />
+                </div>
+                <!---->
+                <div class="col-1 flex items-center justify-center">
+                  <q-icon
+                    v-if="choice_index >= 2"
+                    size="sm"
+                    name="delete"
+                    color="red-8"
+                    class="q-mx-sm cursor-pointer"
+                    @click="removeChoice(choice_index)"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -174,11 +197,7 @@ const $q = useQuasar();
 
 let form = ref({
   question_text: "",
-  choices: [
-    { choice_text: "", explanation: "", is_correct: 0 },
-    { choice_text: "", explanation: "", is_correct: 0 },
-    { choice_text: "", explanation: "", is_correct: 0 },
-  ],
+  choices: [],
 });
 
 onMounted(() => {

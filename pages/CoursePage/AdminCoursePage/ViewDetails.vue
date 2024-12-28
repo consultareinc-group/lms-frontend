@@ -278,9 +278,7 @@ const getQuizzes = () => {
 onMounted(() => {
   store.GetCourse({ id: route.params.course_id }).then((response) => {
     if (response.status === "success") {
-      if (response.data.length) {
-        course.value = response.data[0];
-      }
+      course.value = response.data;
     }
   });
 

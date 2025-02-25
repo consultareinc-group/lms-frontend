@@ -42,13 +42,7 @@ jobs:
           shopt -s extglob  # Enable extended globbing
           mv !(interlinkiq-frontend) interlinkiq-frontend/src/resources/lms/
           shopt -u extglob  # Disable extended globbing
-      
-      # - name: Debug Directory Structure
-      #   run: |
-      #     cd lms-frontend
-      #     ls -R ~/
           
-
       # Install dependencies
       - name: Install Dependencies
         run: |
@@ -56,6 +50,8 @@ jobs:
           npm install -g npm@11.0.0
           npm install -g @quasar/cli
           npm install
+          npm install pdf-lib
+          npm install file-saver
 
       # Update API URL in axios.js
       - name: Update API URL in axios.js

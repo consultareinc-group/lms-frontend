@@ -36,10 +36,11 @@ jobs:
           git clone https://USERNAME:${{ secrets.PERSONAL_TOKEN }}@github.com/consultareinc-group/interlinkiq-frontend.git
           cd interlinkiq-frontend
           git checkout staging
-          ls -R ~/
       
-      # # - name: Debug Directory Structure
-      # #   run: ls -R ~/
+      - name: Debug Directory Structure
+        run: |
+          cd lms-frontend
+          ls -R ~/
           
       # # Move lms frontend to InterlinkIQ/src/resources
       # - name: Move lms frontend to InterlinkIQ/src/resources

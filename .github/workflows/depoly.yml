@@ -34,55 +34,58 @@ jobs:
           git clone https://USERNAME:${{ secrets.PERSONAL_TOKEN }}@github.com/consultareinc-group/interlinkiq-frontend.git InterlinkIQ
           cd InterlinkIQ
           git checkout staging
+      
+      - name: Debug Directory Structure
+        run: ls -R ~/
           
-      # Move lms frontend to InterlinkIQ/src/resources
-      - name: Move lms frontend to InterlinkIQ/src/resources
-        run: |
-          cd ../
-          mv ~/* ~/InterlinkIQ/src/resources
-          cd InterlinkIQ
+      # # Move lms frontend to InterlinkIQ/src/resources
+      # - name: Move lms frontend to InterlinkIQ/src/resources
+      #   run: |
+      #     cd ../
+      #     mv ~/* ~/InterlinkIQ/src/resources
+      #     cd InterlinkIQ
 
-      # Install dependencies
-      - name: Install Dependencies
-        run: |
-          npm install -g npm@11.0.0
-          npm install -g @quasar/cli
-          npm install
+      # # Install dependencies
+      # - name: Install Dependencies
+      #   run: |
+      #     npm install -g npm@11.0.0
+      #     npm install -g @quasar/cli
+      #     npm install
 
-      # Update API URL in axios.js
-      - name: Update API URL in axios.js
-        run: |
-          sed -i "s|baseURL: '.*'|baseURL: '${{ secrets.STAGING_API_URL }}'|" src/boot/axios.js
-          sed -i "s|publicPath: '/'|publicPath: '/staging_frontend/'|" quasar.config.js
+      # # Update API URL in axios.js
+      # - name: Update API URL in axios.js
+      #   run: |
+      #     sed -i "s|baseURL: '.*'|baseURL: '${{ secrets.STAGING_API_URL }}'|" src/boot/axios.js
+      #     sed -i "s|publicPath: '/'|publicPath: '/staging_frontend/'|" quasar.config.js
 
-      # Build the Quasar app
-      - name: Build Quasar App
-        run: quasar build
+      # # Build the Quasar app
+      # - name: Build Quasar App
+      #   run: quasar build
 
-      # Deploy to cPanel using SSH
-      - name: Deploy to cPanel
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
-          CPANEL_USER: ${{ secrets.CPANEL_USER }}
-          SSH_PORT: ${{ secrets.CPANEL_PORT }}
-        run: |
-          # Start SSH agent
-          eval "$(ssh-agent -s)"
+      # # Deploy to cPanel using SSH
+      # - name: Deploy to cPanel
+      #   env:
+      #     SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+      #     CPANEL_USER: ${{ secrets.CPANEL_USER }}
+      #     SSH_PORT: ${{ secrets.CPANEL_PORT }}
+      #   run: |
+      #     # Start SSH agent
+      #     eval "$(ssh-agent -s)"
 
-          # Add SSH private key to the agent
-          echo "$SSH_PRIVATE_KEY" | ssh-add -
+      #     # Add SSH private key to the agent
+      #     echo "$SSH_PRIVATE_KEY" | ssh-add -
 
-          # Test SSH connection
-          ssh -o StrictHostKeyChecking=no -p $SSH_PORT $CPANEL_USER@$CPANEL_HOST "echo 'SSH connection successful!'"
+      #     # Test SSH connection
+      #     ssh -o StrictHostKeyChecking=no -p $SSH_PORT $CPANEL_USER@$CPANEL_HOST "echo 'SSH connection successful!'"
 
-          # Remove only specific files and folders from the cPanel web root
-          ssh -p $SSH_PORT $CPANEL_USER@$CPANEL_HOST << EOF
-            cd ~/public_html/staging_frontend
-            rm -rf assets icons favicon.ico index.html
-          EOF
+      #     # Remove only specific files and folders from the cPanel web root
+      #     ssh -p $SSH_PORT $CPANEL_USER@$CPANEL_HOST << EOF
+      #       cd ~/public_html/staging_frontend
+      #       rm -rf assets icons favicon.ico index.html
+      #     EOF
 
-          # Upload the build files to the cPanel server
-          rsync -avz -e "ssh -p $SSH_PORT" dist/spa/ $CPANEL_USER@$CPANEL_HOST:public_html/staging_frontend/
+      #     # Upload the build files to the cPanel server
+      #     rsync -avz -e "ssh -p $SSH_PORT" dist/spa/ $CPANEL_USER@$CPANEL_HOST:public_html/staging_frontend/
 
-          echo "Deployment to cPanel completed."
+      #     echo "Deployment to cPanel completed."

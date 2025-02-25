@@ -31,7 +31,7 @@ jobs:
       # Clone interlinkiq frontend repository
       - name: Clone interlinkiq frontend repository
         run: |
-          git clone https://USERNAME:${{ secrets.PERSONAL_TOKEN }}@github.com:consultareinc-group/interlinkiq-frontend.git InterlinkIQ
+          git clone https://USERNAME:${{ secrets.PERSONAL_TOKEN }}@github.com/consultareinc-group/interlinkiq-frontend.git InterlinkIQ
           cd InterlinkIQ
           git checkout staging
           

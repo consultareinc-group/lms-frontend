@@ -31,10 +31,11 @@ jobs:
       # Clone interlinkiq frontend repository
       - name: Clone interlinkiq frontend repository
         run: |
-          git clone https://USERNAME:${{ secrets.PERSONAL_TOKEN }}@github.com/consultareinc-group/interlinkiq-frontend.git InterlinkIQ
-          cd InterlinkIQ
+          mkdir -p ~/InterlinkIQ
+          cd ~/InterlinkIQ
+          git clone https://USERNAME:${{ secrets.PERSONAL_TOKEN }}@github.com/consultareinc-group/interlinkiq-frontend.git
+          cd interlinkiq-frontend
           git checkout staging
-          cd ../
       
       # - name: Debug Directory Structure
       #   run: ls -R ~/
@@ -43,7 +44,7 @@ jobs:
       - name: Move lms frontend to InterlinkIQ/src/resources
         run: |
           mv ~/* ~/InterlinkIQ/src/resources
-          cd InterlinkIQ
+          cd ~/InterlinkIQ
 
       # Install dependencies
       - name: Install Dependencies

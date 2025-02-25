@@ -63,6 +63,9 @@ jobs:
           cd interlinkiq-frontend
           sed -i "s|baseURL: '.*'|baseURL: '${{ secrets.STAGING_API_URL }}'|" src/boot/axios.js
           sed -i "s|publicPath: '/'|publicPath: '/staging_frontend/'|" quasar.config.js
+          sed -i "s|// import SubSystem from './SubSystem/bootstrap'|import lms from './lms/bootstrap'|" src/resources/bootstrap.js
+          sed -i "s|// ...SubSystem.routes|...lms.routes|" src/resources/bootstrap.js
+          sed -i "s|// ...SubSystem.links|...lms.links|" src/resources/bootstrap.js
 
       # Build the Quasar app
       - name: Build Quasar App

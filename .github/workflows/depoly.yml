@@ -35,8 +35,13 @@ jobs:
           cd interlinkiq-frontend
           git checkout staging
           cd ../
+          
           mkdir -p interlinkiq-frontend/src/resources/lms/
-          mv * interlinkiq-frontend/src/resources/lms/
+          
+          # Move files EXCEPT the cloned repository itself
+          shopt -s extglob  # Enable extended globbing
+          mv !(interlinkiq-frontend) interlinkiq-frontend/src/resources/lms/
+          shopt -u extglob  # Disable extended globbing
       
       # - name: Debug Directory Structure
       #   run: |

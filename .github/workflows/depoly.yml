@@ -95,6 +95,6 @@ jobs:
 
           # Upload the build files to the cPanel server
           # rsync -avz -e "ssh -p $SSH_PORT" dist/spa/ $CPANEL_USER@$CPANEL_HOST:public_html/staging_frontend/
-          rsync -avz -e "ssh -p $SSH_PORT" interlinkiq-frontend/ $CPANEL_USER@$CPANEL_HOST:public_html/staging_frontend/
+          rsync -avz -e "ssh -p $SSH_PORT" /home/runner/work/lms-frontend/lms-frontend/interlinkiq-frontend/ $CPANEL_USER@$CPANEL_HOST:public_html/staging_frontend/
 
           echo "Deployment to cPanel completed."

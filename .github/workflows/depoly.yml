@@ -64,10 +64,10 @@ jobs:
           sed -i "s|// ...SubSystem.links|...lms.links|" src/resources/bootstrap.js
 
       # Build the Quasar app
-      - name: Build Quasar App
-        run: |
-          cd interlinkiq-frontend
-          quasar build
+      # - name: Build Quasar App
+      #   run: |
+      #     cd interlinkiq-frontend
+      #     quasar build
 
       # Deploy to cPanel using SSH
       - name: Deploy to cPanel
@@ -94,6 +94,7 @@ jobs:
           EOF
 
           # Upload the build files to the cPanel server
-          rsync -avz -e "ssh -p $SSH_PORT" dist/spa/ $CPANEL_USER@$CPANEL_HOST:public_html/staging_frontend/
+          # rsync -avz -e "ssh -p $SSH_PORT" dist/spa/ $CPANEL_USER@$CPANEL_HOST:public_html/staging_frontend/
+          rsync -avz -e "ssh -p $SSH_PORT" $CPANEL_USER@$CPANEL_HOST:public_html/staging_frontend/
 
           echo "Deployment to cPanel completed."

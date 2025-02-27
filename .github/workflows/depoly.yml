@@ -64,10 +64,10 @@ jobs:
           sed -i "s|// ...SubSystem.links|...lms.links|" src/resources/bootstrap.js
 
       # Build the Quasar app
-      # - name: Build Quasar App
-      #   run: |
-      #     cd interlinkiq-frontend
-      #     quasar build
+      - name: Build Quasar App
+        run: |
+          cd interlinkiq-frontend
+          quasar build
 
       # Deploy to cPanel using SSH
       - name: Deploy to cPanel

@@ -1,4 +1,4 @@
-name: Deploy LMS Frontend to cPanel
+name: Deploy LMS Frontend Staging to cPanel
 
 on:
   push:

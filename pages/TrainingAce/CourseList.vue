@@ -6,16 +6,23 @@
       </h4>
 
       <div class="flex justify-end q-mb-md q-mt-xl">
-        <div class="flex justify-end items-center">
-          <div class="q-mr-md">Search:</div>
+        <div class="flex justify-end items-center q-gutter-x-md">
           <q-input
             v-model="search_keyword"
+            placeholder="Search a course"
             outlined
             dense
             class="bg-white"
             debounce="1000"
             @update:model-value="search"
             style="width: 400px"
+          />
+
+          <q-select
+            outlined
+            dense
+            v-model="category"
+            :options="categoryOptions"
           />
         </div>
       </div>
@@ -24,11 +31,22 @@
       <div v-else class="row justify-center q-mt-xl full-width">
         <div class="card-grid">
           <div v-for="course in courses" :key="course.id">
-            <q-card @click="viewCourseDetails" class="card">
-              <q-img :src="course.image" :alt="course.title" />
+            <q-card @click="viewCourseDetails(course.id)" class="card">
+              <iframe
+                :src="getEmbedUrl(course.video_link)"
+                :title="course.course_name"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                style="width: 100%; height: 200px"
+              ></iframe>
               <q-card-section>
-                <div class="clamp-title text-h6">{{ course.title }}</div>
-                <div class="clamp-description">{{ course.description }}</div>
+                <div class="clamp-title text-h6">
+                  {{ capitalizeCourseName(course.course_name) }}
+                </div>
+                <div class="clamp-description">
+                  {{ course.course_description }}
+                </div>
               </q-card-section>
             </q-card>
           </div>
@@ -41,71 +59,83 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import { useCourseStore } from "../../stores/course-store";
 
 import CardLoader from "./CardLoader.vue";
 
 // Variables
 const router = useRouter();
+const courseStore = useCourseStore();
+
 const courses = ref([]);
 const loading = ref(false);
 
 const search_keyword = ref("");
 
+const category = ref("All");
+const categoryOptions = [
+  { label: "All", value: "" },
+  { label: "Course 1", value: "Course 1" },
+  { label: "Course 2", value: "Course 2" },
+  { label: "Course 3", value: "Course 3" },
+];
+
+// Lifecycle Hooks
 onMounted(() => {
-  fetchSampleCourses();
+  getCourses();
 });
 
-const fetchSampleCourses = () => {
+// Functions
+const getCourses = () => {
   loading.value = true;
 
-  setTimeout(() => {
-    courses.value = [
-      {
-        id: 1,
-        title: "Course 1",
-        description:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        image: "https://cdn.quasar.dev/img/parallax1.jpg",
-      },
-      {
-        id: 2,
-        title: "Course 2",
-        description:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        image: "https://cdn.quasar.dev/img/parallax2.jpg",
-      },
-      {
-        id: 3,
-        title: "Course 3",
-        description:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        image: "https://cdn.quasar.dev/img/parallax2.jpg",
-      },
-      {
-        id: 4,
-        title: "Course 4",
-        description:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        image: "https://cdn.quasar.dev/img/parallax1.jpg",
-      },
-      {
-        id: 5,
-        title: "Course 5",
-        description: "Bla bla bla",
-        image: "https://cdn.quasar.dev/img/parallax1.jpg",
-      },
-    ];
+  courseStore
+    .GetCourses({ offset: courses.value.length })
+    .then((response) => {
+      if (response.status === "success") {
+        response.data.forEach((data) => {
+          if (data.status === 1) {
+            courseStore.GetCourse({ id: data.id }).then((response) => {
+              const courseDetails = {
+                ...response.data,
+              };
 
-    loading.value = false;
-  }, 1000);
+              courses.value.push(courseDetails);
+            });
+          }
+        });
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 };
 
 const search = () => {
   console.log(search_keyword.value);
 };
 
-const viewCourseDetails = () => {
-  router.push({ name: "CourseDetails", params: { id: 1 } });
+const getEmbedUrl = (url) => {
+  const videoId = url.split("v=")[1];
+  const ampersandPosition = videoId.indexOf("&");
+  if (ampersandPosition !== -1) {
+    return `https://www.youtube.com/embed/${videoId.substring(
+      0,
+      ampersandPosition
+    )}`;
+  }
+  return `https://www.youtube.com/embed/${videoId}`;
+};
+
+const viewCourseDetails = (id) => {
+  router.push({ name: "CourseDetails", params: { id } });
+};
+
+const capitalizeCourseName = (name) => {
+  return name.replace(/\b\w/g, (char) => char.toUpperCase());
 };
 </script>
 

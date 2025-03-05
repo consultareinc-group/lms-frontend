@@ -94,6 +94,7 @@
               type="textarea"
               outlined
               v-model="form.course_description"
+              autogrow
               dense
               class="q-mt-sm"
               :rules="[(val) => !!val || 'Field is required']"

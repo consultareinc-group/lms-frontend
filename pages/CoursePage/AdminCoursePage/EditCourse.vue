@@ -30,57 +30,59 @@
           </p>
         </header>
 
-        <q-form class="row full-width" ref="courseForm" greedy>
-          <div class="col-4 q-px-sm">
-            <div>
-              <label>Course Name <span class="text-red">*</span></label>
-              <q-skeleton v-if="!form.course_name" type="QInput" />
+        <q-form class="full-width" ref="courseForm" greedy>
+          <div class="row">
+            <div class="col-4">
+              <div>
+                <label>Course Name <span class="text-red">*</span></label>
+                <q-skeleton v-if="!form.course_name" type="QInput" />
+                <q-input
+                  v-else
+                  outlined
+                  v-model="form.course_name"
+                  dense
+                  class="q-mt-sm"
+                  :rules="[(val) => !!val || 'Field is required']"
+                  lazy-rules
+                />
+              </div>
+
+              <div>
+                <label>Status <span class="text-red">*</span></label>
+                <q-skeleton v-if="form.status === ''" type="QInput" />
+                <q-select
+                  v-else
+                  outlined
+                  dense
+                  v-model="form.status"
+                  :options="options"
+                  option-label="name"
+                  option-value="id"
+                  map-options
+                  emit-value
+                  class="q-mt-sm"
+                  :rules="[(val) => val === 0 || !!val || 'Field is required']"
+                  lazy-rules
+                />
+              </div>
+            </div>
+
+            <div class="col-4">
+              <label>Video Embed Link <span class="text-red">*</span></label>
+              <q-skeleton v-if="!form.video_link" type="QInput" />
               <q-input
                 v-else
                 outlined
-                v-model="form.course_name"
+                v-model="form.video_link"
                 dense
                 class="q-mt-sm"
                 :rules="[(val) => !!val || 'Field is required']"
                 lazy-rules
               />
             </div>
-
-            <div>
-              <label>Status <span class="text-red">*</span></label>
-              <q-skeleton v-if="form.status === ''" type="QInput" />
-              <q-select
-                v-else
-                outlined
-                dense
-                v-model="form.status"
-                :options="options"
-                option-label="name"
-                option-value="id"
-                map-options
-                emit-value
-                class="q-mt-sm"
-                :rules="[(val) => val === 0 || !!val || 'Field is required']"
-                lazy-rules
-              />
-            </div>
           </div>
 
-          <div class="col-4 q-px-sm">
-            <label>Video Embed Link <span class="text-red">*</span></label>
-            <q-skeleton v-if="!form.video_link" type="QInput" />
-            <q-input
-              v-else
-              outlined
-              v-model="form.video_link"
-              dense
-              class="q-mt-sm"
-              :rules="[(val) => !!val || 'Field is required']"
-              lazy-rules
-            />
-          </div>
-
-          <div class="col-4 q-px-sm">
+          <div>
             <label>Description <span class="text-red">*</span></label>
             <q-skeleton
               v-if="!form.course_description"
@@ -92,7 +94,7 @@
               type="textarea"
               outlined
               v-model="form.course_description"
-              dense
+              autogrow
               class="q-mt-sm"
               :rules="[(val) => !!val || 'Field is required']"
               lazy-rules

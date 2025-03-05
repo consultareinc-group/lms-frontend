@@ -5,74 +5,74 @@ const routes = [
     component: () => import("../layouts/MainLayout.vue"),
     children: [
       {
-        path: "",
-        name: "Home",
-        component: () => import("../pages/IndexPage.vue"),
-      },
-      {
-        path: "nav1",
-        name: "Nav1",
-        component: () => import("../pages/IndexPage.vue"),
-      },
-      {
         path: "course_management",
         name: "Course Management",
         component: () =>
           import("../pages/CoursePage/AdminCoursePage/ViewCourse.vue"),
+        meta: { role: 0 }
       },
       {
         path: "add_course",
         name: "Add Course",
         component: () =>
           import("../pages/CoursePage/AdminCoursePage/AddCourse.vue"),
+        meta: { role: 0 }
       },
       {
         path: "view_course_details/:course_id",
         name: "View Course Details",
         component: () =>
           import("../pages/CoursePage/AdminCoursePage/ViewDetails.vue"),
+        meta: { role: 0 }
       },
       {
         path: "edit_course/:course_id?",
         name: "Edit Course",
         component: () =>
           import("../pages/CoursePage/AdminCoursePage/EditCourse.vue"),
+        meta: { role: 0 }
       },
       {
         path: "add_quiz/:course_id",
         name: "Add Quiz",
         component: () =>
           import("../pages/CoursePage/AdminCoursePage/AddQuiz.vue"),
+        meta: { role: 0 }
       },
       {
         path: "view_quiz/:course_id/:quiz_id",
         name: "View Quiz",
         component: () =>
           import("../pages/CoursePage/AdminCoursePage/ViewQuiz.vue"),
+        meta: { role: 0 }
       },
       {
         path: "edit_quiz/:course_id?/:quiz_id?",
         name: "Edit Quiz",
         component: () =>
           import("../pages/CoursePage/AdminCoursePage/EditQuiz.vue"),
+        meta: { role: 0 }
       },
       {
         path: "add_question/:quiz_id",
         name: "Add Question",
         component: () =>
           import("../pages/CoursePage/AdminCoursePage/AddQuestion.vue"),
+        meta: { role: 0 }
       },
       {
         path: "view_question",
         name: "View Question",
         component: () =>
           import("../pages/CoursePage/AdminCoursePage/ViewQuestion.vue"),
+        meta: { role: 0 }
       },
       {
         path: "edit_question/:course_id/:quiz_id/:question_id",
         name: "Edit Question",
         component: () =>
           import("../pages/CoursePage/AdminCoursePage/EditQuestion.vue"),
+        meta: { role: 0 }
       },
     ],
   },

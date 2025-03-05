@@ -1,9 +1,9 @@
-name: Deploy LMS Frontend Staging to cPanel
+name: Deploy LMS Frontend Stable to cPanel
 
 on:
   push:
     branches:
-      - staging # Trigger on push to the staging branch
+      - stable # Trigger on push to the stable branch
 
 jobs:
   deploy:
@@ -57,8 +57,8 @@ jobs:
       - name: Update API URL in axios.js
         run: |
           cd interlinkiq-frontend
-          sed -i "s|baseURL: '.*'|baseURL: '${{ secrets.STAGING_API_URL }}'|" src/boot/axios.js
-          sed -i "s|// publicPath: '/'|publicPath: '/staging_frontend/'|" quasar.config.js
+          sed -i "s|baseURL: '.*'|baseURL: '${{ secrets.API_URL }}'|" src/boot/axios.js
+          sed -i "s|// publicPath: '/'|publicPath: '/certification/'|" quasar.config.js
           sed -i "s|// import SubSystem from './SubSystem/bootstrap'|import lms from './lms/bootstrap'|" src/resources/bootstrap.js
           sed -i "s|// ...SubSystem.routes|...lms.routes|" src/resources/bootstrap.js
           sed -i "s|// ...SubSystem.links|...lms.links|" src/resources/bootstrap.js
@@ -89,11 +89,11 @@ jobs:
 
           # Remove only specific files and folders from the cPanel web root
           ssh -p $SSH_PORT $CPANEL_USER@$CPANEL_HOST << EOF
-            cd ~/public_html/staging_frontend
+            cd ~/public_html/certification
             rm -rf assets icons favicon.ico index.html
           EOF
 
           # Upload the build files to the cPanel server
-          rsync -avz -e "ssh -p $SSH_PORT" dist/spa/ $CPANEL_USER@$CPANEL_HOST:public_html/staging_frontend/
+          rsync -avz -e "ssh -p $SSH_PORT" dist/spa/ $CPANEL_USER@$CPANEL_HOST:public_html/certification/
 
           echo "Deployment to cPanel completed."

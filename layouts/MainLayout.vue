@@ -30,9 +30,9 @@
         <div class="q-ml-auto q-px-md full-height">
           <q-btn-dropdown flat :ripple="false" no-caps class="full-height">
             <template v-slot:label>
-              <q-avatar>
+              <!-- <q-avatar>
                 <img src="https://cdn.quasar.dev/img/avatar.png" />
-              </q-avatar>
+              </q-avatar> -->
               <span class="q-ml-md text-grey-9"
                 >{{ authStore.UserInformation.first_name }},
                 {{ authStore.UserInformation.last_name }}</span

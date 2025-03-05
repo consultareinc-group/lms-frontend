@@ -102,6 +102,24 @@ const routes = [
       },
     ],
   },
+  {
+    path: "/training_ace",
+    name: "Training Ace",
+    component: () =>
+      import("../pages/CoursePage/UserCoursePage/UserLayout.vue"),
+    children: [
+      {
+        path: "/courses",
+        name: "Courses",
+        component: () => import("../pages/TrainingAce/CourseList.vue"),
+      },
+      {
+        path: "/courses/:id",
+        name: "CourseDetails",
+        component: () => import("../pages/TrainingAce/CourseDetails.vue"),
+      },
+    ],
+  },
 ];
 
 export default routes;

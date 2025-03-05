@@ -33,9 +33,9 @@
           </p>
         </header>
 
-        <q-form class="row full-width" ref="courseForm" greedy>
-          <div class="col-4 q-px-sm">
-            <div>
+        <q-form class="full-width" ref="courseForm" greedy>
+          <div class="row">
+            <div class="col-4">
               <label>Course Name <span class="text-red">*</span></label>
               <q-input
                 outlined
@@ -46,8 +46,7 @@
                 lazy-rules
               />
             </div>
-
-            <div>
+            <div class="col-4 q-px-sm">
               <label>Status <span class="text-red">*</span></label>
               <q-select
                 outlined
@@ -63,21 +62,21 @@
                 lazy-rules
               />
             </div>
+
+            <div class="col-4">
+              <label>Video Embed Link <span class="text-red">*</span></label>
+              <q-input
+                outlined
+                v-model="form.video_link"
+                dense
+                class="q-mt-sm"
+                :rules="[(val) => !!val || 'Field is required']"
+                lazy-rules
+              />
+            </div>
           </div>
 
-          <div class="col-4 q-px-sm">
-            <label>Video Embed Link <span class="text-red">*</span></label>
-            <q-input
-              outlined
-              v-model="form.video_link"
-              dense
-              class="q-mt-sm"
-              :rules="[(val) => !!val || 'Field is required']"
-              lazy-rules
-            />
-          </div>
-
-          <div class="col-4 q-px-sm">
+          <div>
             <label>Description <span class="text-red">*</span></label>
             <q-input
               type="textarea"

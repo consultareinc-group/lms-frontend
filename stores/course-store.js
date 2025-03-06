@@ -196,7 +196,7 @@ export const useCourseStore = defineStore('course', {
     async fetchCourseData(courseId) {
       try {
         const response = await api.get(`lms/examinee/course/${courseId}`);
-        this.course = response.data.data[0];
+        this.course = response.data.data;
         try {
           LocalStorage.set("course", this.course);
         } catch (error) {

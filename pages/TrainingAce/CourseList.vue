@@ -36,7 +36,7 @@
           <div class="card-grid">
             <div v-for="course in courses" :key="course.id">
               <q-card @click="viewCourseDetails(course.id)" class="card">
-                <div v-if="course.video_link">
+                <div v-if="isValidVideo(course.video_link)">
                   <iframe
                     :src="getEmbedUrl(course.video_link)"
                     :title="course.course_name"
@@ -48,9 +48,9 @@
                 </div>
                 <div v-else>
                   <img
-                    src="src/assets/images/placeholder.png"
+                    src="../../assets/video image placeholder.jpg"
                     :alt="course.course_name"
-                    style="width: 100%; height: 200px; object-fit: cover"
+                    style="width: 100%; height: 200px; object-fit: fill"
                   />
                 </div>
                 <q-card-section>
@@ -150,6 +150,14 @@ const getEmbedUrl = (url) => {
   return url;
 };
 
+const isValidVideo = (url) => {
+  return (
+    url.includes("youtube.com") ||
+    url.includes("youtu.be") ||
+    url.includes("drive.google.com")
+  );
+};
+
 const viewCourseDetails = (id) => {
   router.push({ name: "CourseDetails", params: { id } });
 };
@@ -196,6 +204,7 @@ const capitalizeCourseName = (name) => {
   width: 100%;
   transition: transform 0.1s ease;
   cursor: pointer;
+  width: 400px !important;
 }
 
 .card:hover {

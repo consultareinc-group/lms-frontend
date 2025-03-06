@@ -1,31 +1,54 @@
 <template>
-  <div v-if="course" class="row justify-center q-pa-xl">
-    <div class="col items-center q-mt-sm q-mb-xl" style="max-width: 1200px">
-      <h4 class="q-ma-none text-grey-9 text-center q-mb-lg">
-        <b>{{ capitalizeCourseName(course.course_name) }}</b>
-      </h4>
+  <div>
+    <CardDetailsLoader v-if="loading" />
+    <div v-else>
+      <div v-if="course" class="row justify-center q-pa-xl">
+        <div
+          v-if="Object.keys(course).length"
+          class="col items-center q-mt-sm q-mb-xl"
+          style="max-width: 1200px"
+        >
+          <h4 class="q-ma-none text-grey-9 text-center q-mb-lg">
+            <b>{{ capitalizeCourseName(course.course_name) }}</b>
+          </h4>
 
-      <iframe
-        :src="getEmbedUrl(course.video_link)"
-        :title="course.course_name"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
-        style="width: 100%; height: 600px"
-      ></iframe>
+          <iframe
+            :src="getEmbedUrl(course.video_link)"
+            :title="course.course_name"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            style="width: 100%; height: 600px"
+          ></iframe>
 
-      <div
-        v-html="convertDescription(course.course_description)"
-        class="q-mt-lg"
-      ></div>
+          <div
+            v-html="convertDescription(course.course_description)"
+            class="q-mt-lg"
+          ></div>
 
-      <q-btn
-        color="primary"
-        label="Start Familiarization Certification"
-        class="q-mt-xl hover-scale text-capitalize"
-        :to="{ name: 'List of Quizzes', params: { course_id: course.id } }"
-        icon-right="arrow_forward"
-      />
+          <q-btn
+            color="primary"
+            label="Start Familiarization Certification"
+            class="q-mt-xl hover-scale text-capitalize"
+            :to="{ name: 'List of Quizzes', params: { course_id: course.id } }"
+            icon-right="arrow_forward"
+          />
+        </div>
+        <div v-else class="column items-center q-mt-sm q-mb-xl full-width">
+          <h4 class="q-ma-none text-grey-9 q-mb-lg">
+            <b>Course not found...</b>
+          </h4>
+          <q-icon name="warning" color="red" size="lg" />
+          <q-btn
+            color="secondary"
+            class="q-mt-xl hover-scale text-capitalize"
+            :to="{ name: 'Courses' }"
+          >
+            <q-icon name="arrow_back" class="q-mr-md" />
+            Back to Course List
+          </q-btn>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -35,11 +58,14 @@ import { onMounted, ref } from "vue";
 import { useCourseStore } from "../../stores/course-store";
 import { useRoute } from "vue-router";
 
+import CardDetailsLoader from "./CardDetailsLoader.vue";
+
 // variables
 const courseStore = useCourseStore();
 const route = useRoute();
 
 const course = ref({});
+const loading = ref(false);
 
 // lifecycle hooks
 onMounted(() => {
@@ -48,9 +74,19 @@ onMounted(() => {
 
 // functions
 const getCourse = () => {
-  courseStore.GetPublishedCourse({ id: +route.params.id }).then((res) => {
-    course.value = res.data;
-  });
+  loading.value = true;
+
+  courseStore
+    .GetPublishedCourse({ id: +route.params.id })
+    .then((res) => {
+      course.value = res.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching course:", error);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 };
 
 const getEmbedUrl = (url) => {

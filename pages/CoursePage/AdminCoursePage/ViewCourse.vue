@@ -78,7 +78,7 @@
                       <q-item
                         clickable
                         v-close-popup
-                        @click="showArchiveDialog(props.row.id)"
+                        @click="showArchiveDialog(props.row)"
                       >
                         <q-item-section>Archive</q-item-section>
                       </q-item>
@@ -106,11 +106,9 @@
             </q-card-section>
 
             <q-card-section class="q-pt-none text-center">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit?
-            </q-card-section>
-
-            <q-card-section class="q-pt-none text-center">
-              <span class="text-bold">Code: </span> CD-100001
+              Are you sure you want to archive the
+              <b>{{ courseDetails.course_name }}</b
+              >?
             </q-card-section>
 
             <q-card-section class="flex justify-center q-my-lg">
@@ -127,6 +125,8 @@
                 no-caps
                 label="Confirm"
                 class="bg-accent text-white q-px-lg"
+                @click="archiveCourse()"
+                :loading="archiveLoadingState"
               />
             </q-card-section>
           </q-card>
@@ -143,9 +143,11 @@ import { date } from "quasar";
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { useRouter } from "vue-router";
 import { useCourseStore } from "../../../stores/course-store";
+import { useQuasar } from "quasar";
 
 // Initialize the Vue Router instance
 const router = useRouter();
+const $q = useQuasar();
 
 // Access the course store for managing course-related data
 const store = useCourseStore();
@@ -234,10 +236,50 @@ const search = () => {
 
 // Reactive variable to manage the visibility state of the alert dialog
 let alert = ref(false);
-
+const courseDetails = ref({});
 // Function to show an archive dialog with the selected course ID
-const showArchiveDialog = (id) => {
+const showArchiveDialog = (course) => {
   alert.value = true;
-  console.log("id ", id); // Log the selected course ID for debugging
+  courseDetails.value = course;
+};
+
+const archiveLoadingState = ref(false);
+const archiveCourse = () => {
+  archiveLoadingState.value = true;
+  store
+    .ArchiveCourse({ id: courseDetails.value.id })
+    .then((response) => {
+      // Check if the response indicates success
+      const status = Boolean(response.status === "success");
+
+      if (status) {
+        let index = courses.value.findIndex(
+          (course) => course.id === courseDetails.value.id
+        );
+        index != -1 && courses.value.splice(index, 1);
+      }
+
+      // Show a notification based on the response status
+      $q.notify({
+        message: `<p class='q-mb-none'><span class='text-weight-bold'>${
+          status ? "Success" : "Fail"
+        }!</span>. The course ${status ? "has been" : "was not"} archived.</p>`,
+        color: `${status ? "green-2" : "red-2"}`, // Set notification color
+        position: "top-right", // Notification position
+        textColor: `${status ? "green" : "red"}`, // Set text color
+        actions: [
+          {
+            icon: "close", // Close icon
+            color: `${status ? "green" : "red"}`, // Icon color
+            round: true, // Rounded icon
+          },
+        ],
+        html: true, // Enable HTML content
+      });
+    })
+    .finally(() => {
+      archiveLoadingState.value = false;
+      alert.value = false;
+    });
 };
 </script>

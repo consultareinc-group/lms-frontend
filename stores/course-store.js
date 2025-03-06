@@ -105,6 +105,17 @@ export const useCourseStore = defineStore('course', {
         });
       });
     },
+    // Action to archive courses
+    ArchiveCourse(request) {
+      return new Promise((resolve, reject) => {
+        // Make a POST request to archive courses in the database courses table
+        api.delete(`lms/course/${request.id}`, { data: request }).then((response) => {
+          resolve(response.data); // Resolve the promise with the API response data
+        }).catch((response) => {
+          reject(response.data); // Reject the promise if the API request fails
+        });
+      });
+    },
     // Action to fetch quizzes from the API with pagination support
     GetQuizzes(request) {
       return new Promise((resolve, reject) => {

@@ -32,7 +32,29 @@ export const useCourseStore = defineStore('course', {
     GetCourses(request) {
       return new Promise((resolve, reject) => {
         // Make a GET request to fetch courses based on the offset
-        api.get(`lms/course?offset="${request.offset}"`).then((response) => {
+        api.get(`lms/course?offset=${request.offset}`).then((response) => {
+          resolve(response.data); // Resolve the promise with the API response data
+        }).catch((response) => {
+          reject(response.data); // Reject the promise if the API request fails
+        });
+      });
+    },
+    // Action to fetch published courses from the API with pagination support
+    GetPublishedCourses(request) {
+      return new Promise((resolve, reject) => {
+        // Make a GET request to fetch published courses based on the offset
+        api.get(`lms/examinee/course?offset=${request.offset}`).then((response) => {
+          resolve(response.data); // Resolve the promise with the API response data
+        }).catch((response) => {
+          reject(response.data); // Reject the promise if the API request fails
+        });
+      });
+    },
+    // Action to fetch published course from the API with pagination support
+    GetPublishedCourse(request) {
+      return new Promise((resolve, reject) => {
+        // Make a GET request to fetch published course based on the offset
+        api.get(`lms/examinee/course/${request.id}`).then((response) => {
           resolve(response.data); // Resolve the promise with the API response data
         }).catch((response) => {
           reject(response.data); // Reject the promise if the API request fails
@@ -196,7 +218,7 @@ export const useCourseStore = defineStore('course', {
     async fetchCourseData(courseId) {
       try {
         const response = await api.get(`lms/examinee/course/${courseId}`);
-        this.course = response.data.data[0];
+        this.course = response.data.data;
         try {
           LocalStorage.set("course", this.course);
         } catch (error) {

@@ -48,7 +48,7 @@ onMounted(() => {
 
 // functions
 const getCourse = () => {
-  courseStore.GetCourse({ id: +route.params.id }).then((res) => {
+  courseStore.GetPublishedCourse({ id: +route.params.id }).then((res) => {
     course.value = res.data;
   });
 };

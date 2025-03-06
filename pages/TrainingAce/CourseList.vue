@@ -90,7 +90,7 @@ const getCourses = () => {
   loading.value = true;
 
   courseStore
-    .GetCourses({ offset: courses.value.length })
+    .GetPublishedCourses({ offset: courses.value.length })
     .then((response) => {
       if (response.status === "success") {
         response.data.forEach((data) => {

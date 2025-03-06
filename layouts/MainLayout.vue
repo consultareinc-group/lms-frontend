@@ -104,7 +104,8 @@ function toggleLeftDrawer() {
 }
 
 const logout = () => {
-  authStore.LogoutUser();
-  router.push("/signin");
+  authStore.LogoutUser().finally(() => {
+    router.push("/signin");
+  });
 };
 </script>

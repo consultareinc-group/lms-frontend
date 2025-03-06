@@ -32,14 +32,23 @@
         <div class="card-grid">
           <div v-for="course in courses" :key="course.id">
             <q-card @click="viewCourseDetails(course.id)" class="card">
-              <iframe
-                :src="getEmbedUrl(course.video_link)"
-                :title="course.course_name"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
-                style="width: 100%; height: 200px"
-              ></iframe>
+              <div v-if="course.video_link">
+                <iframe
+                  :src="getEmbedUrl(course.video_link)"
+                  :title="course.course_name"
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen
+                  style="width: 100%; height: 200px"
+                ></iframe>
+              </div>
+              <div v-else>
+                <img
+                  src="src/assets/images/placeholder.png"
+                  :alt="course.course_name"
+                  style="width: 100%; height: 200px; object-fit: cover"
+                />
+              </div>
               <q-card-section>
                 <div class="clamp-title text-h6">
                   {{ capitalizeCourseName(course.course_name) }}
@@ -92,6 +101,7 @@ const getCourses = () => {
   courseStore
     .GetPublishedCourses({ offset: courses.value.length })
     .then((response) => {
+      console.log(response.data);
       if (response.status === "success") {
         response.data.forEach((data) => {
           courses.value.push(data);
@@ -111,15 +121,24 @@ const search = () => {
 };
 
 const getEmbedUrl = (url) => {
-  const videoId = url.split("v=")[1];
-  const ampersandPosition = videoId.indexOf("&");
-  if (ampersandPosition !== -1) {
-    return `https://www.youtube.com/embed/${videoId.substring(
-      0,
-      ampersandPosition
-    )}`;
+  if (url.includes("youtube.com")) {
+    const videoId = url.split("v=")[1];
+    const ampersandPosition = videoId.indexOf("&");
+    if (ampersandPosition !== -1) {
+      return `https://www.youtube.com/embed/${videoId.substring(
+        0,
+        ampersandPosition
+      )}`;
+    }
+    return `https://www.youtube.com/embed/${videoId}`;
+  } else if (url.includes("youtu.be")) {
+    const videoId = url.split("youtu.be/")[1].split("?")[0];
+    return `https://www.youtube.com/embed/${videoId}`;
+  } else if (url.includes("drive.google.com")) {
+    const fileId = url.split("/file/d/")[1].split("/")[0];
+    return `https://drive.google.com/file/d/${fileId}/preview`;
   }
-  return `https://www.youtube.com/embed/${videoId}`;
+  return url;
 };
 
 const viewCourseDetails = (id) => {

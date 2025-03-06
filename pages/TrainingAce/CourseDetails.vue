@@ -55,16 +55,27 @@ const getCourse = () => {
 
 const getEmbedUrl = (url) => {
   if (!url) return "";
-  const videoId = url.split("v=")[1];
-  if (!videoId) return "";
-  const ampersandPosition = videoId.indexOf("&");
-  if (ampersandPosition !== -1) {
-    return `https://www.youtube.com/embed/${videoId.substring(
-      0,
-      ampersandPosition
-    )}`;
+
+  if (url.includes("youtube.com")) {
+    const videoId = url.split("v=")[1];
+    if (!videoId) return "";
+    const ampersandPosition = videoId.indexOf("&");
+    if (ampersandPosition !== -1) {
+      return `https://www.youtube.com/embed/${videoId.substring(
+        0,
+        ampersandPosition
+      )}`;
+    }
+    return `https://www.youtube.com/embed/${videoId}`;
+  } else if (url.includes("youtu.be")) {
+    const videoId = url.split("youtu.be/")[1].split("?")[0];
+    return `https://www.youtube.com/embed/${videoId}`;
+  } else if (url.includes("drive.google.com")) {
+    const fileId = url.split("/d/")[1].split("/")[0];
+    return `https://drive.google.com/file/d/${fileId}/preview`;
   }
-  return `https://www.youtube.com/embed/${videoId}`;
+
+  return "";
 };
 
 const capitalizeCourseName = (name) => {

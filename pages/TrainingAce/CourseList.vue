@@ -94,15 +94,7 @@ const getCourses = () => {
     .then((response) => {
       if (response.status === "success") {
         response.data.forEach((data) => {
-          if (data.status === 1) {
-            courseStore.GetCourse({ id: data.id }).then((response) => {
-              const courseDetails = {
-                ...response.data,
-              };
-
-              courses.value.push(courseDetails);
-            });
-          }
+          courses.value.push(data);
         });
       }
     })

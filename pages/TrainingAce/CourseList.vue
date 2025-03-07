@@ -35,7 +35,7 @@
         >
           <div class="card-grid">
             <div v-for="course in courses" :key="course.id">
-              <q-card @click="viewCourseDetails(course.id)" class="card">
+              <q-card class="card">
                 <div v-if="isValidVideo(course.video_link)">
                   <iframe
                     :src="getEmbedUrl(course.video_link)"
@@ -59,6 +59,13 @@
                   </div>
                   <div class="clamp-description">
                     {{ course.course_description }}
+                  </div>
+                  <div class="flex justify-end q-mt-xl">
+                    <q-btn
+                      color="primary"
+                      label="View Course"
+                      @click.stop="viewCourseDetails(course.id)"
+                    />
                   </div>
                 </q-card-section>
               </q-card>

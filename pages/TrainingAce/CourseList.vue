@@ -18,6 +18,14 @@
             style="width: 400px"
           />
 
+          <q-ajax-bar
+            ref="bar"
+            position="top"
+            color="accent"
+            size="15px"
+            skip-hijack
+          />
+
           <q-select
             outlined
             dense
@@ -28,28 +36,54 @@
       </div>
 
       <CardLoader v-if="loading" />
-      <div v-else class="row justify-center q-mt-xl full-width">
-        <div class="card-grid">
-          <div v-for="course in courses" :key="course.id">
-            <q-card @click="viewCourseDetails(course.id)" class="card">
-              <iframe
-                :src="getEmbedUrl(course.video_link)"
-                :title="course.course_name"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
-                style="width: 100%; height: 200px"
-              ></iframe>
-              <q-card-section>
-                <div class="clamp-title text-h6">
-                  {{ capitalizeCourseName(course.course_name) }}
+      <div v-else>
+        <div
+          v-if="courses.length > 0"
+          class="row justify-center q-mt-xl full-width"
+        >
+          <div class="card-grid">
+            <div v-for="course in courses" :key="course.id">
+              <q-card class="card">
+                <div v-if="isValidVideo(course.video_link)">
+                  <iframe
+                    :src="getEmbedUrl(course.video_link)"
+                    :title="course.course_name"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                    style="width: 100%; height: 200px"
+                  ></iframe>
                 </div>
-                <div class="clamp-description">
-                  {{ course.course_description }}
+                <div v-else>
+                  <img
+                    src="../../assets/video image placeholder.jpg"
+                    :alt="course.course_name"
+                    style="width: 100%; height: 200px; object-fit: fill"
+                  />
                 </div>
-              </q-card-section>
-            </q-card>
+                <q-card-section>
+                  <div class="clamp-title text-h6">
+                    {{ capitalizeCourseName(course.course_name) }}
+                  </div>
+                  <div class="clamp-description">
+                    {{ course.course_description }}
+                  </div>
+                  <div class="flex justify-end q-mt-xl">
+                    <q-btn
+                      color="primary"
+                      label="View Course"
+                      @click.stop="viewCourseDetails(course.id)"
+                    />
+                  </div>
+                </q-card-section>
+              </q-card>
+            </div>
           </div>
+        </div>
+        <div v-else class="text-center q-mt-xl">
+          <h5 class="text-grey-7">
+            <b>There are no courses found.</b>
+          </h5>
         </div>
       </div>
     </div>
@@ -71,6 +105,7 @@ const courses = ref([]);
 const loading = ref(false);
 
 const search_keyword = ref("");
+const bar = ref(null);
 
 const category = ref("All");
 const categoryOptions = [
@@ -107,19 +142,51 @@ const getCourses = () => {
 };
 
 const search = () => {
-  console.log(search_keyword.value);
+  const barRef = bar.value;
+  barRef.start();
+
+  courseStore
+    .SearchPublishedCourses({ keyword: search_keyword.value })
+    .then((response) => {
+      if (response.status === "success") {
+        courses.value = response.data;
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+    .finally(() => {
+      barRef.stop();
+    });
 };
 
 const getEmbedUrl = (url) => {
-  const videoId = url.split("v=")[1];
-  const ampersandPosition = videoId.indexOf("&");
-  if (ampersandPosition !== -1) {
-    return `https://www.youtube.com/embed/${videoId.substring(
-      0,
-      ampersandPosition
-    )}`;
+  if (url.includes("youtube.com")) {
+    const videoId = url.split("v=")[1];
+    const ampersandPosition = videoId.indexOf("&");
+    if (ampersandPosition !== -1) {
+      return `https://www.youtube.com/embed/${videoId.substring(
+        0,
+        ampersandPosition
+      )}`;
+    }
+    return `https://www.youtube.com/embed/${videoId}`;
+  } else if (url.includes("youtu.be")) {
+    const videoId = url.split("youtu.be/")[1].split("?")[0];
+    return `https://www.youtube.com/embed/${videoId}`;
+  } else if (url.includes("drive.google.com")) {
+    const fileId = url.split("/file/d/")[1].split("/")[0];
+    return `https://drive.google.com/file/d/${fileId}/preview`;
   }
-  return `https://www.youtube.com/embed/${videoId}`;
+  return url;
+};
+
+const isValidVideo = (url) => {
+  return (
+    url.includes("youtube.com") ||
+    url.includes("youtu.be") ||
+    url.includes("drive.google.com")
+  );
 };
 
 const viewCourseDetails = (id) => {
@@ -164,10 +231,11 @@ const capitalizeCourseName = (name) => {
 }
 
 .card {
-  height: 100%;
+  height: 440px;
   width: 100%;
   transition: transform 0.1s ease;
   cursor: pointer;
+  width: 400px !important;
 }
 
 .card:hover {

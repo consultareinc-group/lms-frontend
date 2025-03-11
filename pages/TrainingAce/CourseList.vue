@@ -18,6 +18,14 @@
             style="width: 400px"
           />
 
+          <q-ajax-bar
+            ref="bar"
+            position="top"
+            color="accent"
+            size="15px"
+            skip-hijack
+          />
+
           <q-select
             outlined
             dense
@@ -97,6 +105,7 @@ const courses = ref([]);
 const loading = ref(false);
 
 const search_keyword = ref("");
+const bar = ref(null);
 
 const category = ref("All");
 const categoryOptions = [
@@ -133,7 +142,22 @@ const getCourses = () => {
 };
 
 const search = () => {
-  console.log(search_keyword.value);
+  const barRef = bar.value;
+  barRef.start();
+
+  courseStore
+    .SearchPublishedCourses({ keyword: search_keyword.value })
+    .then((response) => {
+      if (response.status === "success") {
+        courses.value = response.data;
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+    .finally(() => {
+      barRef.stop();
+    });
 };
 
 const getEmbedUrl = (url) => {
@@ -207,7 +231,7 @@ const capitalizeCourseName = (name) => {
 }
 
 .card {
-  height: 100%;
+  height: 440px;
   width: 100%;
   transition: transform 0.1s ease;
   cursor: pointer;

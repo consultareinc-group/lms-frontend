@@ -96,7 +96,7 @@
 
             <div class="q-my-md">
               <p class="q-mb-sm">Category:</p>
-              <q-skeleton v-if="!course.category_name" square />
+              <q-skeleton v-if="!course.course_name" square />
               <p v-else class="q-mb-sm text-weight-light">
                 {{ course.category_name }}
               </p>

@@ -23,6 +23,7 @@
             no-caps
             rounded
             class="bg-accent text-white q-px-xl q-py-sm"
+            @click="browseMoreCourses"
           />
         </div>
       </q-toolbar>
@@ -47,15 +48,36 @@ import { ref } from "vue";
 import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "src/lib/vars";
 import BrandLogo from "src/components/BrandLogo.vue";
 
+// Variables
+const route = useRoute();
+const router = useRouter();
+const $q = useQuasar();
 const leftDrawerOpen = ref(false);
 
 import { px } from "src/lib/utils";
+import { useRoute, useRouter } from "vue-router";
+import { useQuasar } from "quasar";
 
 defineOptions({
   name: "UserLayout",
 });
 
+// Functions
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
+
+const browseMoreCourses = () => {
+  if (route.name === "Courses") {
+    $q.notify({
+      type: "info",
+      message: "You are already in the Courses page",
+      position: "top-right",
+      timeout: 1000,
+      classes: "quasar-notification-info",
+    });
+    return;
+  }
+  router.push({ name: "Courses" });
+};
 </script>

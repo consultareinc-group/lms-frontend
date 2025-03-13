@@ -61,16 +61,12 @@
               />
             </div>
             <div class="full-width">
-              <label
-                >Category Description <span class="text-red">*</span></label
-              >
+              <label>Category Description</label>
               <q-input
                 type="textarea"
                 outlined
                 v-model="category.description"
-                class="q-mt-sm"
-                :rules="[(val) => !!val || 'Field is required']"
-                autogrow
+                class="q-mt-sm full-height"
               />
             </div>
           </div>
@@ -114,7 +110,7 @@
           <template v-slot:body-cell-category_description="props">
             <q-td :props="props">
               <div style="white-space: normal">
-                {{ props.row.category_description }}
+                {{ props.row.category_description || "No description" }}
               </div>
             </q-td>
           </template>
@@ -174,15 +170,12 @@
                 />
               </div>
               <div class="full-width">
-                <label
-                  >Category Description <span class="text-red">*</span></label
-                >
+                <label>Category Description</label>
                 <q-input
                   type="textarea"
                   outlined
                   v-model="editCategoryData.description"
                   class="q-mt-sm"
-                  :rules="[(val) => !!val || 'Field is required']"
                   autogrow
                 />
               </div>
@@ -385,7 +378,7 @@ const editCategory = (id) => {
   const payload = {
     id: editCategoryData.value.id,
     category_name: editCategoryData.value.name,
-    category_description: editCategoryData.value.description,
+    category_description: editCategoryData.value.description || "",
   };
 
   categoryStore
@@ -482,5 +475,10 @@ const searchCategory = () => {
 :deep(.q-table__linear-progress) {
   color: #fff !important;
   height: 5px;
+}
+
+:deep(.q-textarea .q-field__native) {
+  resize: none;
+  padding-top: 10px;
 }
 </style>

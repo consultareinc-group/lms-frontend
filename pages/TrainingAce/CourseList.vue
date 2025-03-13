@@ -1,10 +1,18 @@
 <template>
-  <div class="row justify-start q-pa-xl">
-    <div class="col-12 q-mt-sm q-mb-xl">
-      <h4 class="q-ma-none text-grey-9 text-center">
-        <b>Courses</b>
-      </h4>
+  <div class="row justify-start">
+    <!-- Banner -->
+    <div class="banner">
+      <img
+        src="../../assets/banner.jpg"
+        alt="Courses Banner"
+        class="banner-image"
+      />
+      <div class="overlay">
+        <h1 class="banner-text">COURSES</h1>
+      </div>
+    </div>
 
+    <div class="col-12 q-mt-sm q-mb-xl q-pa-xl">
       <div class="flex justify-end q-mb-md q-mt-xl">
         <div class="flex justify-end items-center q-gutter-x-md">
           <q-input
@@ -146,7 +154,6 @@ const getCategories = () => {
   categoryStore
     .GetCategories({ offset: categoryOptions.value.values.length })
     .then((response) => {
-      console.log(response);
       response.data.forEach((data) => {
         categoryOptions.value.push({
           label: data.category_name,
@@ -253,6 +260,35 @@ const updateCategory = (val) => {
 </script>
 
 <style scoped>
+.banner {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+}
+.banner-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.banner-text {
+  color: white;
+  font-size: 48px;
+  font-weight: bold;
+}
+
 .clamp-title {
   display: -webkit-box;
   -webkit-line-clamp: 1;

@@ -74,6 +74,13 @@ const routes = [
           import("../pages/CoursePage/AdminCoursePage/EditQuestion.vue"),
         meta: { role: 0 },
       },
+      {
+        path: "add_category",
+        name: "Add Category",
+        component: () =>
+          import("../pages/CoursePage/AdminCoursePage/AddCategory.vue"),
+        meta: { role: 0 },
+      },
     ],
   },
   {

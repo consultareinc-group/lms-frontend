@@ -72,6 +72,7 @@
           </div>
 
           <q-btn
+            type="submit"
             :loading="btnLoadingState"
             label="Save"
             no-caps
@@ -156,7 +157,12 @@
           @click="editDialog = false"
         />
         <q-card-section class="q-mt-lg">
-          <q-form class="full-width" ref="courseForm" greedy>
+          <q-form
+            @submit.prevent="editCategory(editCategoryData.id)"
+            class="full-width"
+            ref="courseForm"
+            greedy
+          >
             <div class="column full-width no-wrap" style="gap: 20px">
               <div class="full-width">
                 <label>Category Name <span class="text-red">*</span></label>
@@ -191,10 +197,10 @@
               />
               <div class="q-mx-md"></div>
               <q-btn
+                type="submit"
                 flat
                 no-caps
                 class="bg-accent text-white q-px-lg"
-                @click="editCategory(editCategoryData.id)"
                 :disable="editCategoryLoading"
               >
                 <q-spinner v-if="editCategoryLoading" />
@@ -321,7 +327,7 @@ const getCategories = () => {
   categoryStore
     .GetCategories({ offset: categories.value.length })
     .then((response) => {
-      categories.value = response.data;
+      categories.value = [...categories.value, ...response.data];
     })
     .catch((error) => {
       $q.notify({
@@ -337,20 +343,41 @@ const getCategories = () => {
 const saveCategory = async () => {
   btnLoadingState.value = true;
 
-  try {
-    console.log(category.value);
-    $q.notify({
-      type: "positive",
-      message: "Category added successfully",
+  const payload = {
+    category_name: category.value.name,
+    category_description: category.value.description || "",
+  };
+
+  categoryStore
+    .AddCategory({ payload })
+    .then((response) => {
+      $q.notify({
+        html: true,
+        message: `<strong>Success!</strong> Category added successfully.`,
+        position: "top-right",
+        timeout: 2000,
+        classes: "quasar-notification-success",
+      });
+
+      categories.value = [];
+      getCategories();
+    })
+    .catch(() => {
+      $q.notify({
+        html: true,
+        message: `<strong>Error!</strong> Unable to add category.`,
+        position: "top-right",
+        timeout: 2000,
+        classes: "quasar-notification-negative",
+      });
+    })
+    .finally(() => {
+      btnLoadingState.value = false;
+      category.value = {
+        name: "",
+        description: "",
+      };
     });
-  } catch (error) {
-    $q.notify({
-      type: "negative",
-      message: "An error occurred. Please try again",
-    });
-  } finally {
-    btnLoadingState.value = false;
-  }
 };
 
 const showEditCategoryDialog = (id) => {
@@ -391,14 +418,14 @@ const editCategory = (id) => {
         timeout: 2000,
         classes: "quasar-notification-success",
       });
-      const index = categories.value.findIndex((cat) => cat.id === id);
-      if (index !== -1) {
-        categories.value[index] = {
-          id: editCategoryData.value.id,
-          category_name: editCategoryData.value.name,
-          category_description: editCategoryData.value.description,
-        };
-      }
+
+      categories.value = categories.value.map((cat) => {
+        if (cat.id === id) {
+          cat.category_name = editCategoryData.value.name;
+          cat.category_description = editCategoryData.value.description;
+        }
+        return cat;
+      });
       editDialog.value = false;
     })
     .catch(() => {

@@ -28,6 +28,18 @@ export const useCategoryStore = defineStore("category", {
           });
       });
     },
+    SearchCategories(request) {
+      return new Promise((resolve, reject) => {
+        api
+          .get(`lms/category?search_keyword=${request.keyword}`)
+          .then((response) => {
+            resolve(response.data);
+          })
+          .catch((error) => {
+            reject(error.response.data);
+          });
+      });
+    },
     AddCategory(request) {
       return new Promise((resolve, reject) => {
         api

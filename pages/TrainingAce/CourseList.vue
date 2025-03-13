@@ -284,6 +284,20 @@ const updateCategory = (val) => {
   width: 1200px;
 }
 
+@media (max-width: 1400px) {
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr);
+    width: 800px;
+  }
+}
+
+@media (max-width: 900px) {
+  .card-grid {
+    grid-template-columns: 1fr;
+    width: 400px;
+  }
+}
+
 .card {
   height: 440px;
   width: 100%;

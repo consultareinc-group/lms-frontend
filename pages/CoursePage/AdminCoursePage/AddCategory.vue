@@ -340,7 +340,27 @@ const getCategories = () => {
     });
 };
 
-const saveCategory = async () => {
+const searchCategory = () => {
+  tableLoading.value = true;
+  categories.value = [];
+
+  categoryStore
+    .SearchCategories({ keyword: search_keyword.value })
+    .then((response) => {
+      categories.value = response.data;
+    })
+    .catch((error) => {
+      $q.notify({
+        type: "negative",
+        message: "An error occurred. Please try again",
+      });
+    })
+    .finally(() => {
+      tableLoading.value = false;
+    });
+};
+
+const saveCategory = () => {
   btnLoadingState.value = true;
 
   const payload = {
@@ -487,10 +507,6 @@ const deleteCategory = (id) => {
       deleteCategoryLoading.value = false;
       deleteDialog.value = false;
     });
-};
-
-const searchCategory = () => {
-  console.log(search_keyword.value);
 };
 </script>
 

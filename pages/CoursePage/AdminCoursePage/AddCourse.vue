@@ -25,17 +25,29 @@
         class="bg-white q-my-lg q-py-lg q-px-xl items-start justify-start column"
         style="width: 100%"
       >
-        <header class="q-mb-lg">
-          <h6 class="q-ma-none">Add Course</h6>
-          <p class="text-weight-thin">
-            Please fill out the required fields
-            <span class="text-red">*</span>
-          </p>
+        <header class="q-mb-lg row justify-between full-width items-center">
+          <div>
+            <h6 class="q-ma-none">Add Course</h6>
+            <p class="text-weight-thin">
+              Please fill out the required fields
+              <span class="text-red">*</span>
+            </p>
+          </div>
+          <div>
+            <q-btn
+              :to="{ name: 'Add Category' }"
+              :loading="btnLoadingState"
+              label="Add Category"
+              no-caps
+              flat
+              class="bg-accent text-white q-px-xl"
+            />
+          </div>
         </header>
 
         <q-form class="full-width" ref="courseForm" greedy>
-          <div class="row">
-            <div class="col-4">
+          <div class="row full-width no-wrap" style="gap: 20px">
+            <div class="full-width">
               <label>Course Name <span class="text-red">*</span></label>
               <q-input
                 outlined
@@ -46,7 +58,7 @@
                 lazy-rules
               />
             </div>
-            <div class="col-4 q-px-sm">
+            <div class="full-width">
               <label>Status <span class="text-red">*</span></label>
               <q-select
                 outlined
@@ -62,12 +74,26 @@
                 lazy-rules
               />
             </div>
+          </div>
 
-            <div class="col-4">
+          <div class="row full-width no-wrap" style="gap: 20px">
+            <div class="full-width">
               <label>Video Embed Link <span class="text-red">*</span></label>
               <q-input
                 outlined
                 v-model="form.video_link"
+                dense
+                class="q-mt-sm"
+                :rules="[(val) => !!val || 'Field is required']"
+                lazy-rules
+              />
+            </div>
+
+            <div class="full-width">
+              <label>Category <span class="text-red">*</span></label>
+              <q-input
+                outlined
+                v-model="form.category"
                 dense
                 class="q-mt-sm"
                 :rules="[(val) => !!val || 'Field is required']"
@@ -83,7 +109,7 @@
               outlined
               v-model="form.course_description"
               autogrow
-              class="q-mt-sm"
+              class="q-mt-sm full-height"
               :rules="[(val) => !!val || 'Field is required']"
             />
           </div>
@@ -138,6 +164,7 @@ let form = ref({
   video_link: "", // Input for the course video link
   course_description: "", // Input for the course description
   status: "", // Input for the course status (Draft/Publish)
+  category: "",
 });
 
 // Reference to the form component, used for validation
@@ -195,3 +222,9 @@ const saveCourse = () => {
   });
 };
 </script>
+
+<style scoped>
+:deep(.q-textarea .q-field__control) {
+  min-height: 150px;
+}
+</style>

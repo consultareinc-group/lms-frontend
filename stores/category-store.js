@@ -31,12 +31,28 @@ export const useCategoryStore = defineStore("category", {
     EditCategory(request) {
       return new Promise((resolve, reject) => {
         api
-          .put(`lms/category/${request.id}`, request.payload)
+          .put(`lms/category/${request.id}`, request.id)
           .then((response) => {
             resolve(response.data);
           })
           .catch((error) => {
             reject(error.response.data);
+          });
+      });
+    },
+
+    DeleteCategory(request) {
+      return new Promise((resolve, reject) => {
+        api
+          .delete(`lms/category/${request.id}`, {
+            data: { id: request.id },
+          })
+          .then((response) => {
+            resolve(response.data);
+          })
+          .catch((error) => {
+            console.error("Delete Category Error:", error);
+            reject(error.response?.data || error.message);
           });
       });
     },

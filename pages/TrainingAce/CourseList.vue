@@ -73,12 +73,32 @@
                     {{ course.course_description }}
                   </div>
                 </q-card-section>
-                <q-btn
-                  @click.stop="viewCourseDetails(course.id)"
-                  color="primary"
-                  label="View Course"
-                  style="position: absolute; bottom: 20px; right: 20px"
-                />
+
+                <!-- add category name as tag -->
+                <div
+                  :class="
+                    course.category_name ? 'justify-between' : 'justify-end'
+                  "
+                  class="row items-center full-width q-px-lg no-wrap"
+                  style="position: absolute; bottom: 20px"
+                >
+                  <q-chip
+                    v-if="course.category_name"
+                    :label="course.category_name"
+                    color="accent"
+                    text-color="white"
+                    style="
+                      border-radius: 16px;
+                      font-size: 12px;
+                      max-width: 200px;
+                    "
+                  />
+                  <q-btn
+                    @click.stop="viewCourseDetails(course.id)"
+                    color="primary"
+                    label="View Course"
+                  />
+                </div>
               </q-card>
             </div>
           </div>
@@ -268,7 +288,6 @@ const updateCategory = (val) => {
   height: 440px;
   width: 100%;
   transition: transform 0.1s ease;
-  cursor: pointer;
   width: 400px !important;
 }
 

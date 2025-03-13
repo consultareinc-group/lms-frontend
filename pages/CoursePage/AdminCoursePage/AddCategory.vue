@@ -149,6 +149,7 @@
       </div>
     </div>
 
+    <!-- Edit Category Dialog -->
     <q-dialog v-model="editDialog" persistent>
       <q-card class="q-px-xl relative-position" style="width: 700px">
         <q-icon
@@ -211,6 +212,48 @@
         </q-card-section>
       </q-card>
     </q-dialog>
+
+    <!-- Delete Category Dialog -->
+    <q-dialog v-model="deleteDialog" persistent>
+      <q-card class="q-px-xl relative-position">
+        <q-icon
+          name="cancel"
+          color="grey"
+          size="sm"
+          class="absolute-top-right q-mt-sm q-mr-sm cursor-pointer"
+          @click="deleteDialog = false"
+        />
+        <q-card-section class="text-center q-mt-lg">
+          <q-icon name="delete" color="red-10" size="lg" />
+          <div class="text-h6 text-weight-bold">Delete Confirmation</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none text-center">
+          Are you sure you want to delete this Category?
+        </q-card-section>
+
+        <q-card-section class="flex justify-center q-my-lg">
+          <q-btn
+            flat
+            no-caps
+            label="Cancel"
+            class="border-000000-all q-px-lg"
+            v-close-popup
+          />
+          <div class="q-mx-md"></div>
+          <q-btn
+            flat
+            no-caps
+            class="bg-accent text-white q-px-lg"
+            @click="deleteCategory(selectedCategoryToBeDeleted.id)"
+            :disable="deleteCategoryLoading"
+          >
+            <q-spinner v-if="deleteCategoryLoading" />
+            <span v-else>Confirm</span>
+          </q-btn>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -265,11 +308,11 @@ const editCategoryData = ref({
 });
 
 const editDialog = ref(false);
-const deleteDialog = ref(false);
 const editCategoryLoading = ref(false);
-const deleteCategoryLoading = ref(false);
 
-const selectedCategory = ref(null);
+const deleteDialog = ref(false);
+const deleteCategoryLoading = ref(false);
+const selectedCategoryToBeDeleted = ref(null);
 
 const search_keyword = ref("");
 
@@ -388,7 +431,42 @@ const editCategory = (id) => {
 };
 
 const showDeleteCategoryDialog = (category) => {
-  console.log(category);
+  selectedCategoryToBeDeleted.value = category;
+  deleteDialog.value = true;
+};
+
+const deleteCategory = (id) => {
+  deleteCategoryLoading.value = true;
+
+  // convert id to number
+  id = parseInt(id);
+
+  categoryStore
+    .DeleteCategory({ id })
+    .then((response) => {
+      $q.notify({
+        html: true,
+        message: `<strong>Success!</strong> Category deleted successfully.`,
+        position: "top-right",
+        timeout: 2000,
+        classes: "quasar-notification-success",
+      });
+      categories.value = categories.value.filter((cat) => cat.id !== id);
+      deleteDialog.value = false;
+    })
+    .catch(() => {
+      $q.notify({
+        html: true,
+        message: `<strong>Error!</strong> Unable to delete category.`,
+        position: "top-right",
+        timeout: 2000,
+        classes: "quasar-notification-error",
+      });
+    })
+    .finally(() => {
+      deleteCategoryLoading.value = false;
+      deleteDialog.value = false;
+    });
 };
 
 const searchCategory = () => {

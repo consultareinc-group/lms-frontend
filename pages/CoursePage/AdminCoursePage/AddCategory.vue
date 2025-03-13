@@ -87,6 +87,19 @@
 
       <div>
         <h6 class="q-ma-none q-mb-md q-mt-xl">List of Available Categories</h6>
+        <div class="flex q-mb-md">
+          <div class="flex items-center">
+            <div class="q-mr-md">Search Category:</div>
+            <q-input
+              v-model="search_keyword"
+              outlined
+              dense
+              class="bg-white"
+              debounce="1000"
+              @update:model-value="searchCategory"
+            />
+          </div>
+        </div>
         <q-table
           flat
           :rows="categories"
@@ -115,14 +128,14 @@
                       <q-item
                         clickable
                         v-close-popup
-                        @click="editProductionPlan(props.row.id)"
+                        @click="showEditCategoryDialog(props.row.id)"
                       >
                         <q-item-section>Edit</q-item-section>
                       </q-item>
                       <q-item
                         clickable
                         v-close-popup
-                        @click="showArchiveDialog(props.row)"
+                        @click="showDeleteCategoryDialog(props.row)"
                       >
                         <q-item-section>Delete</q-item-section>
                       </q-item>
@@ -135,19 +148,80 @@
         </q-table>
       </div>
     </div>
+
+    <q-dialog v-model="editDialog" persistent>
+      <q-card class="q-px-xl relative-position" style="width: 700px">
+        <q-icon
+          name="cancel"
+          color="grey"
+          size="sm"
+          class="absolute-top-right q-mt-sm q-mr-sm cursor-pointer"
+          @click="editDialog = false"
+        />
+        <q-card-section class="q-mt-lg">
+          <q-form class="full-width" ref="courseForm" greedy>
+            <div class="column full-width no-wrap" style="gap: 20px">
+              <div class="full-width">
+                <label>Category Name <span class="text-red">*</span></label>
+                <q-input
+                  outlined
+                  v-model="editCategoryData.name"
+                  dense
+                  class="q-mt-sm"
+                  :rules="[(val) => !!val || 'Field is required']"
+                  lazy-rules
+                />
+              </div>
+              <div class="full-width">
+                <label
+                  >Category Description <span class="text-red">*</span></label
+                >
+                <q-input
+                  type="textarea"
+                  outlined
+                  v-model="editCategoryData.description"
+                  class="q-mt-sm"
+                  :rules="[(val) => !!val || 'Field is required']"
+                  autogrow
+                />
+              </div>
+            </div>
+
+            <div class="row full-width justify-center q-mt-lg">
+              <q-btn
+                flat
+                no-caps
+                label="Cancel"
+                class="border-000000-all q-px-lg"
+                @click="editDialog = false"
+              />
+              <div class="q-mx-md"></div>
+              <q-btn
+                flat
+                no-caps
+                class="bg-accent text-white q-px-lg"
+                @click="editCategory(editCategoryData.id)"
+                :disable="editCategoryLoading"
+              >
+                <q-spinner v-if="editCategoryLoading" />
+                <span v-else>Confirm</span>
+              </q-btn>
+            </div>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
 import { useQuasar } from "quasar";
-import { useRouter } from "vue-router";
 import { useCategoryStore } from "../../../stores/category-store";
 
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 
 // Variables
-const router = useRouter();
 const categoryStore = useCategoryStore();
 const $q = useQuasar();
 
@@ -183,6 +257,21 @@ const columns = ref([
 
 const categories = ref([]);
 const tableLoading = ref(false);
+
+const editCategoryData = ref({
+  id: null,
+  name: "",
+  description: "",
+});
+
+const editDialog = ref(false);
+const deleteDialog = ref(false);
+const editCategoryLoading = ref(false);
+const deleteCategoryLoading = ref(false);
+
+const selectedCategory = ref(null);
+
+const search_keyword = ref("");
 
 // Lifecycle Hooks
 onMounted(() => {
@@ -226,6 +315,84 @@ const saveCategory = async () => {
   } finally {
     btnLoadingState.value = false;
   }
+};
+
+const showEditCategoryDialog = (id) => {
+  editDialog.value = true;
+
+  categoryStore
+    .GetCategory({ id })
+    .then((response) => {
+      editCategoryData.value.id = response.data.id;
+      editCategoryData.value.name = response.data.category_name;
+      editCategoryData.value.description = response.data.category_description;
+    })
+    .catch((error) => {
+      $q.notify({
+        type: "negative",
+        message: "An error occurred. Please try again",
+      });
+      editDialog.value = false;
+    });
+};
+
+const editCategory = (id) => {
+  editCategoryLoading.value = true;
+
+  const payload = {
+    id: editCategoryData.value.id,
+    category_name: editCategoryData.value.name,
+    category_description: editCategoryData.value.description,
+  };
+
+  categoryStore
+    .EditCategory({ id: editCategoryData.value.id, payload })
+    .then((response) => {
+      $q.notify({
+        html: true,
+        message: `<strong>Success!</strong> Category updated successfully.`,
+        position: "top-right",
+        timeout: 2000,
+        classes: "quasar-notification-success",
+      });
+      const index = categories.value.findIndex((cat) => cat.id === id);
+      if (index !== -1) {
+        categories.value[index] = {
+          id: editCategoryData.value.id,
+          category_name: editCategoryData.value.name,
+          category_description: editCategoryData.value.description,
+        };
+      }
+      editDialog.value = false;
+    })
+    .catch(() => {
+      $q.notify({
+        html: true,
+        message: `<strong>Error!</strong> Unable to update category.`,
+        position: "top-right",
+        timeout: 2000,
+        classes: "quasar-notification-negative",
+      });
+    })
+    .finally(() => {
+      editCategoryLoading.value = false;
+      editDialog.value = false;
+
+      // Empty the editCategoryData
+      editCategoryData.value = {
+        id: null,
+        name: "",
+        description: "",
+      };
+    });
+};
+
+const showDeleteCategoryDialog = (category) => {
+  console.log(category);
+};
+
+const searchCategory = () => {
+  console.log(search_keyword.value);
 };
 </script>
 

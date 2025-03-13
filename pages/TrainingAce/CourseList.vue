@@ -26,12 +26,16 @@
             skip-hijack
           />
 
-          <q-select
-            outlined
-            dense
-            v-model="category"
-            :options="categoryOptions"
-          />
+          <div class="row items-center q-gutter-md">
+            <span>Category: </span>
+            <q-select
+              outlined
+              dense
+              v-model="category"
+              :options="categoryOptions"
+              @update:model-value="updateCategory"
+            />
+          </div>
         </div>
       </div>
 
@@ -43,7 +47,7 @@
         >
           <div class="card-grid">
             <div v-for="course in courses" :key="course.id">
-              <q-card class="card">
+              <q-card class="card" style="position: relative">
                 <div v-if="isValidVideo(course.video_link)">
                   <iframe
                     :src="getEmbedUrl(course.video_link)"
@@ -68,14 +72,13 @@
                   <div class="clamp-description">
                     {{ course.course_description }}
                   </div>
-                  <div class="flex justify-end q-mt-xl">
-                    <q-btn
-                      color="primary"
-                      label="View Course"
-                      @click.stop="viewCourseDetails(course.id)"
-                    />
-                  </div>
                 </q-card-section>
+                <q-btn
+                  @click.stop="viewCourseDetails(course.id)"
+                  color="primary"
+                  label="View Course"
+                  style="position: absolute; bottom: 20px; right: 20px"
+                />
               </q-card>
             </div>
           </div>
@@ -94,12 +97,14 @@
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useCourseStore } from "../../stores/course-store";
+import { useCategoryStore } from "../../stores/category-store";
 
 import CardLoader from "./CardLoader.vue";
 
 // Variables
 const router = useRouter();
 const courseStore = useCourseStore();
+const categoryStore = useCategoryStore();
 
 const courses = ref([]);
 const loading = ref(false);
@@ -108,19 +113,32 @@ const search_keyword = ref("");
 const bar = ref(null);
 
 const category = ref("All");
-const categoryOptions = [
-  { label: "All", value: "" },
-  { label: "Course 1", value: "Course 1" },
-  { label: "Course 2", value: "Course 2" },
-  { label: "Course 3", value: "Course 3" },
-];
+const categoryOptions = ref([{ label: "All", value: "" }]);
 
 // Lifecycle Hooks
 onMounted(() => {
+  getCategories();
   getCourses();
 });
 
 // Functions
+const getCategories = () => {
+  categoryStore
+    .GetCategories({ offset: categoryOptions.value.values.length })
+    .then((response) => {
+      console.log(response);
+      response.data.forEach((data) => {
+        categoryOptions.value.push({
+          label: data.category_name,
+          value: data.id,
+        });
+      });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
 const getCourses = () => {
   loading.value = true;
 
@@ -145,8 +163,13 @@ const search = () => {
   const barRef = bar.value;
   barRef.start();
 
+  const id = category.value.value;
+
   courseStore
-    .SearchPublishedCourses({ keyword: search_keyword.value })
+    .SearchPublishedCourses({
+      keyword: search_keyword.value,
+      category_id: id,
+    })
     .then((response) => {
       if (response.status === "success") {
         courses.value = response.data;
@@ -163,20 +186,26 @@ const search = () => {
 const getEmbedUrl = (url) => {
   if (url.includes("youtube.com")) {
     const videoId = url.split("v=")[1];
-    const ampersandPosition = videoId.indexOf("&");
-    if (ampersandPosition !== -1) {
-      return `https://www.youtube.com/embed/${videoId.substring(
-        0,
-        ampersandPosition
-      )}`;
+    if (videoId) {
+      const ampersandPosition = videoId.indexOf("&");
+      if (ampersandPosition !== -1) {
+        return `https://www.youtube.com/embed/${videoId.substring(
+          0,
+          ampersandPosition
+        )}`;
+      }
+      return `https://www.youtube.com/embed/${videoId}`;
     }
-    return `https://www.youtube.com/embed/${videoId}`;
   } else if (url.includes("youtu.be")) {
-    const videoId = url.split("youtu.be/")[1].split("?")[0];
-    return `https://www.youtube.com/embed/${videoId}`;
+    const videoId = url.split("youtu.be/")[1]?.split("?")[0];
+    if (videoId) {
+      return `https://www.youtube.com/embed/${videoId}`;
+    }
   } else if (url.includes("drive.google.com")) {
-    const fileId = url.split("/file/d/")[1].split("/")[0];
-    return `https://drive.google.com/file/d/${fileId}/preview`;
+    const fileId = url.split("/file/d/")[1]?.split("/")[0];
+    if (fileId) {
+      return `https://drive.google.com/file/d/${fileId}/preview`;
+    }
   }
   return url;
 };
@@ -195,6 +224,11 @@ const viewCourseDetails = (id) => {
 
 const capitalizeCourseName = (name) => {
   return name.replace(/\b\w/g, (char) => char.toUpperCase());
+};
+
+const updateCategory = (val) => {
+  category.value = val;
+  search();
 };
 </script>
 

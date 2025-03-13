@@ -84,21 +84,36 @@
                 v-model="form.video_link"
                 dense
                 class="q-mt-sm"
-                :rules="[(val) => !!val || 'Field is required']"
+                :rules="[requiredRule, urlRule]"
                 lazy-rules
               />
             </div>
 
             <div class="full-width">
               <label>Category <span class="text-red">*</span></label>
-              <q-input
+              <q-select
+                use-input
                 outlined
-                v-model="form.category"
                 dense
-                class="q-mt-sm"
+                v-model="form.category"
+                :options="categoryOptions"
+                option-label="category_name"
+                option-value="id"
+                input-debounce="500"
+                hide-selected
+                hide-dropdown-icon
+                fill-input
+                map-options
+                emit-value
+                @filter="filterCategoryOptions"
                 :rules="[(val) => !!val || 'Field is required']"
                 lazy-rules
-              />
+                class="q-mt-sm q-mb-md"
+              >
+                <template v-slot:append>
+                  <q-icon name="search" />
+                </template>
+              </q-select>
             </div>
           </div>
 
@@ -129,7 +144,7 @@
 
 <script setup>
 // Import Vue's reactive utility for managing state
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 // Import a breadcrumb component for navigation
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 // Import the store for managing course data
@@ -138,9 +153,13 @@ import { useCourseStore } from "../../../stores/course-store";
 import { useQuasar } from "quasar";
 
 import { useRouter } from "vue-router";
+import { useCategoryStore } from "../../../stores/category-store";
+import { error } from "pdf-lib";
 
+// Variables
 // Initialize the course store to manage state and perform actions
 const store = useCourseStore();
+const categoryStore = useCategoryStore();
 // Access Quasar's notification and UI functionalities
 const $q = useQuasar();
 
@@ -167,10 +186,64 @@ let form = ref({
   category: "",
 });
 
+const categoryOptions = ref([]);
+
 // Reference to the form component, used for validation
 const courseForm = ref(null);
 // Reactive state to manage the loading state of the save button
 const btnLoadingState = ref(false);
+
+// Lifecycle Hooks
+onMounted(() => {
+  getCategories();
+});
+
+// Functions
+const getCategories = () => {
+  categoryStore
+    .GetCategories({ offset: categoryOptions.value.length })
+    .then((response) => {
+      categoryOptions.value = response.data.sort((a, b) => {
+        const nameA = a.category_name.toLowerCase();
+        const nameB = b.category_name.toLowerCase();
+        const isNameANumeric = !isNaN(nameA[0]);
+        const isNameBNumeric = !isNaN(nameB[0]);
+        if (isNameANumeric && !isNameBNumeric) return -1;
+        if (!isNameANumeric && isNameBNumeric) return 1;
+        return nameA.localeCompare(nameB);
+      });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+const filterCategoryOptions = (val, update) => {
+  categoryStore
+    .SearchCategories({ keyword: val })
+    .then((response) => {
+      update(() => {
+        categoryOptions.value = response.data.sort((a, b) => {
+          const nameA = a.category_name.toLowerCase();
+          const nameB = b.category_name.toLowerCase();
+          const isNameANumeric = !isNaN(nameA[0]);
+          const isNameBNumeric = !isNaN(nameB[0]);
+          if (isNameANumeric && !isNameBNumeric) return -1;
+          if (!isNameANumeric && isNameBNumeric) return 1;
+          return nameA.localeCompare(nameB);
+        });
+      });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+const requiredRule = (val) => !!val || "Field is required";
+const urlRule = (val) =>
+  /^(https?:\/\/)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(
+    val
+  ) || "Invalid URL";
 
 // Define the saveCourse function to handle form submission
 const saveCourse = () => {
@@ -180,9 +253,17 @@ const saveCourse = () => {
       // Indicate the save process is in progress
       btnLoadingState.value = true;
 
+      const payload = {
+        course_name: form.value.course_name,
+        status: form.value.status,
+        video_link: form.value.video_link,
+        category_id: form.value.category,
+        course_description: form.value.course_description,
+      };
+
       // Call the store's PostCourse method to save the course data
       store
-        .PostCourse(form.value)
+        .PostCourse(payload)
         .then((response) => {
           // Check if the response indicates success
           const status = Boolean(response.status === "success");

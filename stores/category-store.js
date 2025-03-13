@@ -28,6 +28,18 @@ export const useCategoryStore = defineStore("category", {
           });
       });
     },
+    AddCategory(request) {
+      return new Promise((resolve, reject) => {
+        api
+          .post("lms/category", request.payload)
+          .then((response) => {
+            resolve(response.data);
+          })
+          .catch((error) => {
+            reject(error.response.data);
+          });
+      });
+    },
     EditCategory(request) {
       return new Promise((resolve, reject) => {
         api

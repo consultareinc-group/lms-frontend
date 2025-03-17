@@ -15,7 +15,10 @@
     <div class="col-12 q-mt-sm q-mb-xl q-pa-xl">
       <!-- <CardLoader v-if="loading" /> -->
       <div>
-        <div v-if="true" class="row justify-center q-mt-xl full-width">
+        <div
+          v-if="categories.length > 0"
+          class="row justify-center q-mt-xl full-width"
+        >
           <div class="card-grid">
             <div v-for="category in categories" :key="category.id">
               <q-card
@@ -32,7 +35,11 @@
         </div>
         <div v-else class="text-center q-mt-xl">
           <h5 class="text-grey-7">
-            <b>There are no categories found.</b>
+            <b
+              >There are no categories found. System Administrators need to add
+              a course first before a category is available.</b
+            >
+            <br />
           </h5>
         </div>
       </div>

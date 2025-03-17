@@ -22,12 +22,24 @@
         class="bg-white q-my-lg q-py-lg q-px-xl items-start justify-start column"
         style="width: 100%"
       >
-        <header class="q-mb-lg">
-          <h6 class="q-ma-none">Edit Course</h6>
-          <p class="text-weight-thin">
-            Please fill out the required fields
-            <span class="text-red">*</span>
-          </p>
+        <header class="q-mb-lg row justify-between full-width items-center">
+          <div>
+            <h6 class="q-ma-none">Edit Course</h6>
+            <p class="text-weight-thin">
+              Please fill out the required fields
+              <span class="text-red">*</span>
+            </p>
+          </div>
+          <div>
+            <q-btn
+              :to="{ name: 'Add Category' }"
+              :loading="btnLoadingState"
+              label="Add Category"
+              no-caps
+              flat
+              class="bg-accent text-white q-px-xl"
+            />
+          </div>
         </header>
 
         <q-form class="full-width" ref="courseForm" greedy>

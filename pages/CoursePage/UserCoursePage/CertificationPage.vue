@@ -198,16 +198,16 @@ const userName = ref(
 const quizName = ref(quizDetails.quiz_name.toUpperCase());
 const courseName = ref(courseDetails.course_name.toUpperCase());
 const certificateBody = ref(
-  `has successfully completed the FAMILIARIZATION TRAINING. This course covered essential topics related to participants, providing a comprehensive learning experience designed to equip them with the necessary skills and knowledge to navigate the complexities of ${quizName.value}.`
+  `has successfully completed the FAMILIARIZATION TRAINING. This course covered essential topics related to participants, providing a comprehensive learning experience designed to equip them with the necessary skills and knowledge to navigate the complexities of ${courseName.value}.`
 );
 const dateCompleted = ref(
-  date.formatDate(userDetails.date_time_completed, "YYYY-MM-DD")
+  date.formatDate(userDetails.date_time_completed, "MMMM D, YYYY")
 );
-const certificateNo = ref(padId(courseDetails.id, 4));
+const certificateNo = ref(padId(courseDetails.id, 10));
 const validUntil = ref(
   date.formatDate(
     date.addToDate(userDetails.date_time_completed, { years: 1 }),
-    "YYYY-MM-DD"
+    "MMMM D, YYYY"
   )
 );
 

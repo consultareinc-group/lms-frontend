@@ -34,11 +34,11 @@
             </p>
           </div>
           <q-btn
-            label="Go back to Add Course"
+            label="Go back"
             icon="arrow_back"
             flat
-            :to="{ name: 'Add Course' }"
             class="bg-accent text-white q-px-xl text-capitalize"
+            @click="router.back()"
           />
         </header>
 
@@ -262,8 +262,10 @@ import { useQuasar } from "quasar";
 import { useCategoryStore } from "../../../stores/category-store";
 
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
+import { useRouter } from "vue-router";
 
 // Variables
+const router = useRouter();
 const categoryStore = useCategoryStore();
 const $q = useQuasar();
 

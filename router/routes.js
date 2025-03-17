@@ -117,6 +117,11 @@ const routes = [
         name: "CourseDetails",
         component: () => import("../pages/TrainingAce/CourseDetails.vue"),
       },
+      {
+        path: "select_category",
+        name: "Select Category",
+        component: () => import("../pages/TrainingAce/SelectCategory.vue"),
+      },
     ],
   },
 ];

@@ -123,7 +123,7 @@
 
 <script setup>
 import { onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useCourseStore } from "../../stores/course-store";
 import { useCategoryStore } from "../../stores/category-store";
 
@@ -131,6 +131,7 @@ import CardLoader from "./CardLoader.vue";
 
 // Variables
 const router = useRouter();
+const route = useRoute();
 const courseStore = useCourseStore();
 const categoryStore = useCategoryStore();
 
@@ -142,11 +143,18 @@ const bar = ref(null);
 
 const category = ref("All");
 const categoryOptions = ref([{ label: "All", value: "" }]);
+const categoryId = ref(null);
 
 // Lifecycle Hooks
 onMounted(() => {
   getCategories();
   getCourses();
+
+  if (route.query.category_id && route.query.category_name) {
+    category.value = route.query.category_name;
+    categoryId.value = +route.query.category_id;
+    search();
+  }
 });
 
 // Functions
@@ -190,12 +198,10 @@ const search = () => {
   const barRef = bar.value;
   barRef.start();
 
-  const id = category.value.value;
-
   courseStore
     .SearchPublishedCourses({
       keyword: search_keyword.value,
-      category_id: id,
+      category_id: categoryId.value,
     })
     .then((response) => {
       if (response.status === "success") {
@@ -254,7 +260,15 @@ const capitalizeCourseName = (name) => {
 };
 
 const updateCategory = (val) => {
-  category.value = val;
+  categoryId.value = val.value;
+
+  // update route query
+  router.push({
+    query: {
+      category_id: categoryId.value,
+      category_name: val.label,
+    },
+  });
   search();
 };
 </script>
@@ -320,7 +334,7 @@ const updateCategory = (val) => {
   width: 1200px;
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 1350px) {
   .card-grid {
     grid-template-columns: repeat(2, 1fr);
     width: 800px;

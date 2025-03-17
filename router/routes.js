@@ -74,6 +74,13 @@ const routes = [
           import("../pages/CoursePage/AdminCoursePage/EditQuestion.vue"),
         meta: { role: 0 },
       },
+      {
+        path: "add_category",
+        name: "Add Category",
+        component: () =>
+          import("../pages/CoursePage/AdminCoursePage/AddCategory.vue"),
+        meta: { role: 0 },
+      },
     ],
   },
   {
@@ -109,6 +116,11 @@ const routes = [
         path: "courses/:id",
         name: "CourseDetails",
         component: () => import("../pages/TrainingAce/CourseDetails.vue"),
+      },
+      {
+        path: "select_category",
+        name: "Select Category",
+        component: () => import("../pages/TrainingAce/SelectCategory.vue"),
       },
     ],
   },

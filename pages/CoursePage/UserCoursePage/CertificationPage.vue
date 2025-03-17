@@ -20,6 +20,7 @@
       </div>
       <div class="q-gutter-md">
         <q-btn
+          @click="browseMoreCourses"
           label="Browse More Courses"
           no-caps
           rounded
@@ -67,26 +68,13 @@
             style="width: 100%"
           />
 
-          <!-- Certificate Name -->
-          <div
-            style="
-              position: absolute;
-              top: 27%;
-              left: 36%;
-              transform: translate(-51%, -50%);
-              font-size: 1.5em;
-              font-weight: 600;
-            "
-          >
-            {{ certificateName }}
-          </div>
-
           <!-- Full Name -->
           <div
             style="
               position: absolute;
-              top: 36%;
-              left: 5%;
+              top: 32%;
+              left: 50%;
+              transform: translateX(-50%);
               font-size: 1em;
               font-weight: 600;
               color: #585d67;
@@ -117,7 +105,7 @@
           <div
             style="
               position: absolute;
-              top: 67%;
+              top: 67.5%;
               left: 66%;
               transform: translate(-45%, -23%);
               font-size: 0.6em;
@@ -135,8 +123,8 @@
           <div
             style="
               position: absolute;
-              top: 70%;
-              left: 68%;
+              top: 71.5%;
+              left: 66%;
               transform: translate(-45%, -23%);
               font-size: 0.6em;
               font-weight: 300;
@@ -147,6 +135,24 @@
             "
           >
             {{ certificateNo }}
+          </div>
+
+          <!-- Valid until -->
+          <div
+            style="
+              position: absolute;
+              top: 75.5%;
+              left: 66%;
+              transform: translate(-45%, -23%);
+              font-size: 0.6em;
+              font-weight: 300;
+              text-align: justify;
+              width: 90%;
+              font-family: serif;
+              color: #585d67;
+            "
+          >
+            {{ validUntil }}
           </div>
         </div>
 
@@ -163,13 +169,14 @@
 </template>
 
 <script setup>
-import certificateTemplate from "../../../assets/certificate-template.png";
+import certificateTemplate from "../../../assets/certificate-template-new.png";
 import { ref } from "vue";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import { saveAs } from "file-saver";
 import { LocalStorage, date } from "quasar";
 import { useRouter } from "vue-router";
 
+// Variables
 const router = useRouter();
 
 const padId = (id, length) => {
@@ -180,8 +187,6 @@ const userDetails = LocalStorage.getItem("userDetails");
 const quizDetails = LocalStorage.getItem("quiz");
 const courseDetails = LocalStorage.getItem("course");
 
-const certificate_name = "Familiarization Certificate";
-const certificateName = ref(certificate_name.toUpperCase());
 const userName = ref(
   `${userDetails.first_name.toUpperCase()} ${
     userDetails.middle_name ? userDetails.middle_name.toUpperCase() : ""
@@ -190,20 +195,23 @@ const userName = ref(
   }`
 );
 
-// const userName = ref("");
-const courseDescription = ref(
-  "The practice of protecting systems, networks, and programs from digital attacks"
-);
 const quizName = ref(quizDetails.quiz_name.toUpperCase());
 const courseName = ref(courseDetails.course_name.toUpperCase());
 const certificateBody = ref(
-  `has successfully completed the ${quizName.value}. This course covered essential topics related: ${courseDescription.value}. Participants engaged in a comprehensive learning experience designed to equip them with the necessary skills and knowledge to navigate the complexities of ${courseName.value}.`
+  `has successfully completed the FAMILIARIZATION TRAINING. This course covered essential topics related to participants, providing a comprehensive learning experience designed to equip them with the necessary skills and knowledge to navigate the complexities of ${courseName.value}.`
 );
 const dateCompleted = ref(
-  date.formatDate(userDetails.date_time_completed, "YYYY-MM-DD")
+  date.formatDate(userDetails.date_time_completed, "MMMM D, YYYY")
 );
-const certificateNo = ref(padId(courseDetails.id, 4));
+const certificateNo = ref(padId(courseDetails.id, 10));
+const validUntil = ref(
+  date.formatDate(
+    date.addToDate(userDetails.date_time_completed, { years: 1 }),
+    "MMMM D, YYYY"
+  )
+);
 
+// Functions
 const navigateToQuizzes = () => {
   router.push({
     name: "List of Quizzes",
@@ -216,7 +224,7 @@ const navigateToQuizzes = () => {
 const generateCertificate = async () => {
   try {
     const templateUrl = new URL(
-      "../../../assets/certificate-template.pdf",
+      "../../../assets/certificate-template-new.pdf",
       import.meta.url
     ).href;
     const templateBytes = await fetch(templateUrl).then((res) =>
@@ -231,47 +239,57 @@ const generateCertificate = async () => {
     const fontSize = 12;
     const color = rgb(88 / 255, 93 / 255, 103 / 255);
 
-    page.drawText(certificateName.value, {
-      x: 23,
-      y: 255,
-      size: 20,
-      font,
-      color: rgb(0, 0, 0),
-    });
+    const textWidth = fontRegular.widthOfTextAtSize(userName.value, 24);
+    const pageWidth = page.getWidth();
+    const xPosition = (pageWidth - textWidth) / 2;
 
     page.drawText(userName.value, {
-      x: 23,
-      y: 210,
-      size: fontSize,
-      fontRegular,
+      x: xPosition,
+      y: 380,
+      size: 24,
+      font: fontRegular,
       color: color,
     });
 
     page.drawText(certificateBody.value, {
-      x: 25,
-      y: 190,
-      size: 10,
+      x: 50,
+      y: 340,
+      size: 16,
       font: fontRegular,
       color: color,
-      lineHeight: 15,
-      maxWidth: 450,
+      lineHeight: 20,
+      maxWidth: 800,
     });
 
     page.drawText(dateCompleted.value, {
-      x: 130,
-      y: 109,
-      size: 9,
+      x: 210,
+      y: 187,
+      size: 14,
       font: fontRegular,
       color: color,
     });
 
     page.drawText(certificateNo.value, {
-      x: 140,
-      y: 98,
-      size: 9,
+      x: 210,
+      y: 162,
+      size: 14,
       font: fontRegular,
       color: color,
     });
+
+    page.drawText(validUntil.value, {
+      x: 210,
+      y: 137,
+      size: 14,
+      font: fontRegular,
+      color: color,
+    });
+
+    // Testing Purposes
+    // const pdfBytes = await pdfDoc.save();
+    // const pdfBlob = new Blob([pdfBytes], { type: "application/pdf" });
+    // const pdfUrl = URL.createObjectURL(pdfBlob);
+    // window.open(pdfUrl, "_blank");
 
     const pdfBytes = await pdfDoc.save();
     saveAs(
@@ -283,5 +301,9 @@ const generateCertificate = async () => {
   } catch (error) {
     console.error("Error generating certificate:", error);
   }
+};
+
+const browseMoreCourses = () => {
+  router.push({ name: "Courses" });
 };
 </script>

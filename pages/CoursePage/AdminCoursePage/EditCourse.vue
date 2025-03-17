@@ -197,7 +197,6 @@ const btnLoadingState = ref(false);
 // Functions
 const getCourse = () => {
   store.GetCourse({ id: +route.params.course_id }).then((response) => {
-    console.log(response);
     if (response.status === "success") {
       form.value = response.data;
       form.value.category = getCategoryID(form.value.category_name);
@@ -281,7 +280,6 @@ const saveCourse = () => {
         course_description: form.value.course_description,
       };
 
-      console.log(payload);
       // Call the store's PostCourse method to save the course data
       store
         .PutCourse(payload)

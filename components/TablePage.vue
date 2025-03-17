@@ -181,7 +181,6 @@ const showEditQuestionDialog = () => {
 
 const showArchiveDialog = (id) => {
   showArchive.value = true;
-  console.log("id ", id);
 };
 
 const confirmArchive = () => {

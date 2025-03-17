@@ -348,6 +348,5 @@ let alert = ref(false);
 // Function to show an archive dialog with the selected course ID
 const showArchiveDialog = (id) => {
   alert.value = true;
-  console.log("id ", id); // Log the selected course ID for debugging
 };
 </script>

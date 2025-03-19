@@ -14,7 +14,9 @@
             flex: ` 0 0 ${px(SIDEBAR_WIDTH)}`,
           }"
         >
-          <brand-logo />
+          <a href="https://trainingace.pro/">
+            <brand-logo />
+          </a>
         </q-toolbar-title>
 
         <div class="q-ml-auto q-px-xl full-height flex items-center">

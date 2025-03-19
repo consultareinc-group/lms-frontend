@@ -175,6 +175,7 @@ const getCategories = () => {
 };
 
 const getCourses = () => {
+  courses.value = [];
   loading.value = true;
 
   courseStore
@@ -195,6 +196,8 @@ const getCourses = () => {
 };
 
 const search = () => {
+  courses.value = [];
+
   const barRef = bar.value;
   barRef.start();
 

@@ -306,6 +306,6 @@ const saveCourse = () => {
 
 <style scoped>
 :deep(.q-textarea .q-field__control) {
-  min-height: 150px;
+  min-height: 200px;
 }
 </style>

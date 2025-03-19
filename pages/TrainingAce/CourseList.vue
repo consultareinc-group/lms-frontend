@@ -148,12 +148,13 @@ const categoryId = ref(null);
 // Lifecycle Hooks
 onMounted(() => {
   getCategories();
-  getCourses();
 
-  if (route.query.category_id && route.query.category_name) {
-    category.value = route.query.category_name;
-    categoryId.value = +route.query.category_id;
+  if (route.params.category_id && route.params.category_name) {
+    category.value = route.params.category_name;
+    categoryId.value = +route.params.category_id;
     search();
+  } else {
+    getCourses();
   }
 });
 
@@ -175,13 +176,14 @@ const getCategories = () => {
 };
 
 const getCourses = () => {
-  courses.value = [];
   loading.value = true;
 
   courseStore
     .GetPublishedCourses({ offset: courses.value.length })
     .then((response) => {
       if (response.status === "success") {
+        courses.value = [];
+
         response.data.forEach((data) => {
           courses.value.push(data);
         });
@@ -196,8 +198,7 @@ const getCourses = () => {
 };
 
 const search = () => {
-  courses.value = [];
-
+  loading.value = true;
   const barRef = bar.value;
   barRef.start();
 
@@ -208,6 +209,7 @@ const search = () => {
     })
     .then((response) => {
       if (response.status === "success") {
+        courses.value = [];
         courses.value = response.data;
       }
     })
@@ -215,6 +217,7 @@ const search = () => {
       console.log(error);
     })
     .finally(() => {
+      loading.value = false;
       barRef.stop();
     });
 };
@@ -265,13 +268,18 @@ const capitalizeCourseName = (name) => {
 const updateCategory = (val) => {
   categoryId.value = val.value;
 
-  // update route query
-  router.push({
-    query: {
-      category_id: categoryId.value,
-      category_name: val.label,
-    },
-  });
+  window.history.replaceState(
+    {},
+    "",
+    router.resolve({
+      name: route.name,
+      params: {
+        category_id: categoryId.value || undefined,
+        category_name: val.label || undefined,
+      },
+    }).href
+  );
+
   search();
 };
 </script>

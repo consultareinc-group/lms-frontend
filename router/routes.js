@@ -108,7 +108,7 @@ const routes = [
           import("../pages/CoursePage/UserCoursePage/CertificationPage.vue"),
       },
       {
-        path: "courses",
+        path: "courses/:category_id?/:category_name?",
         name: "Courses",
         component: () => import("../pages/TrainingAce/CourseList.vue"),
       },

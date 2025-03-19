@@ -13,8 +13,10 @@
     </div>
 
     <div class="col-12 q-mt-sm q-mb-xl q-pa-xl">
-      <!-- <CardLoader v-if="loading" /> -->
-      <div>
+      <div v-if="loading" class="row justify-center">
+        <q-spinner-facebook color="accent" size="4em" />
+      </div>
+      <div v-else>
         <div
           v-if="categories.length > 0"
           class="row justify-center q-mt-xl full-width"
@@ -56,6 +58,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const categoryStore = useCategoryStore();
 const categories = ref([]);
+const loading = ref(false);
 
 // Lifecycle Hooks
 onMounted(() => {
@@ -64,6 +67,7 @@ onMounted(() => {
 
 // Functions
 const getCategories = () => {
+  loading.value = true;
   categoryStore
     .GetCategories({ offset: categories.value.values.length })
     .then((response) => {
@@ -77,13 +81,16 @@ const getCategories = () => {
     })
     .catch((error) => {
       console.log(error);
+    })
+    .finally(() => {
+      loading.value = false;
     });
 };
 
 const selectCategory = (category) => {
   router.push({
     name: "Courses",
-    query: { category_id: category.id, category_name: category.name },
+    params: { category_id: category.id, category_name: category.name },
   });
 };
 </script>

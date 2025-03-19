@@ -274,8 +274,8 @@ const updateCategory = (val) => {
     router.resolve({
       name: route.name,
       params: {
-        category_id: categoryId.value || undefined,
-        category_name: val.label || undefined,
+        category_id: val.value === "" ? "" : categoryId.value || undefined,
+        category_name: val.value === "" ? "" : val.label || undefined,
       },
     }).href
   );

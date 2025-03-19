@@ -56,7 +56,12 @@
                 v-model="category.name"
                 dense
                 class="q-mt-sm"
-                :rules="[(val) => !!val || 'Field is required']"
+                :rules="[
+                  (val) => !!val || 'Field is required',
+                  (val) =>
+                    !isCategoryNameDuplicate(val) ||
+                    'Category name already exists',
+                ]"
                 lazy-rules
               />
             </div>
@@ -316,6 +321,12 @@ const deleteCategoryLoading = ref(false);
 const selectedCategoryToBeDeleted = ref(null);
 
 const search_keyword = ref("");
+
+// Computed property to check for duplicate category names
+const isCategoryNameDuplicate = (name) =>
+  categories.value.some(
+    (cat) => cat.category_name.toLowerCase() === name.toLowerCase()
+  );
 
 // Lifecycle Hooks
 onMounted(() => {

@@ -315,3 +315,9 @@ const saveCourse = () => {
   });
 };
 </script>
+
+<style scoped>
+:deep(.q-textarea .q-field__control) {
+  min-height: 200px;
+}
+</style>

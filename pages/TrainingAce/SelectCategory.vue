@@ -83,7 +83,7 @@ const getCategories = () => {
 const selectCategory = (category) => {
   router.push({
     name: "Courses",
-    query: { category_id: category.id, category_name: category.name },
+    params: { category_id: category.id, category_name: category.name },
   });
 };
 </script>

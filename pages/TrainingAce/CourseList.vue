@@ -268,13 +268,18 @@ const capitalizeCourseName = (name) => {
 const updateCategory = (val) => {
   categoryId.value = val.value;
 
-  // update route query
-  router.push({
-    query: {
-      category_id: categoryId.value,
-      category_name: val.label,
-    },
-  });
+  window.history.replaceState(
+    {},
+    "",
+    router.resolve({
+      name: route.name,
+      params: {
+        category_id: categoryId.value || undefined,
+        category_name: val.label || undefined,
+      },
+    }).href
+  );
+
   search();
 };
 </script>

@@ -148,12 +148,13 @@ const categoryId = ref(null);
 // Lifecycle Hooks
 onMounted(() => {
   getCategories();
-  getCourses();
 
-  if (route.query.category_id && route.query.category_name) {
-    category.value = route.query.category_name;
-    categoryId.value = +route.query.category_id;
+  if (route.params.category_id && route.params.category_name) {
+    category.value = route.params.category_name;
+    categoryId.value = +route.params.category_id;
     search();
+  } else {
+    getCourses();
   }
 });
 

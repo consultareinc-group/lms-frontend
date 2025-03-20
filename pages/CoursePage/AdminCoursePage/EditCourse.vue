@@ -142,6 +142,7 @@
 <script setup>
 // Import Vue's reactive utility for managing state
 import { onMounted, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 // Import a breadcrumb component for navigation
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 // Import the store for managing course data
@@ -149,17 +150,18 @@ import { useCourseStore } from "../../../stores/course-store";
 // Import Quasar's UI utilities
 import { useQuasar } from "quasar";
 
-import { useRoute } from "vue-router";
 import { useCategoryStore } from "../../../stores/category-store";
 
 // Variables
 // Initialize the course store to manage state and perform actions
 const store = useCourseStore();
 const categoryStore = useCategoryStore();
+
 // Access Quasar's notification and UI functionalities
 const $q = useQuasar();
 
 const route = useRoute();
+const router = useRouter();
 
 // Define options for course status (Draft/Publish)
 let options = [
@@ -306,6 +308,8 @@ const saveCourse = () => {
             ],
             html: true, // Enable HTML content
           });
+
+          router.push({ name: "Course Management" });
         })
         .finally(() => {
           // Reset the loading state regardless of the response outcome

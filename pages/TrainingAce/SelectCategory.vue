@@ -13,9 +13,7 @@
     </div>
 
     <div class="col-12 q-mt-sm q-mb-xl q-pa-xl">
-      <div v-if="loading" class="row justify-center">
-        <q-spinner-facebook color="accent" size="4em" />
-      </div>
+      <CardLoader v-if="loading" />
       <div v-else>
         <div
           v-if="categories.length > 0"
@@ -23,13 +21,20 @@
         >
           <div class="card-grid">
             <div v-for="category in categories" :key="category.id">
-              <q-card
-                @click="selectCategory(category)"
-                class="card"
-                style="position: relative"
-              >
-                <q-card-section>
-                  {{ category.name }}
+              <q-card @click="selectCategory(category)" class="card">
+                <img
+                  src="../../assets/sample-category-image.png"
+                  :alt="category.course_name"
+                  style="
+                    width: 100%;
+                    height: 300px;
+                    object-fit: fill !important;
+                  "
+                />
+                <q-card-section class="q-pa-lg">
+                  <div class="clamp-title text-h5 text-bold">
+                    {{ category.name }}
+                  </div>
                 </q-card-section>
               </q-card>
             </div>
@@ -53,6 +58,7 @@
 import { onMounted, ref } from "vue";
 import { useCategoryStore } from "../../stores/category-store";
 import { useRouter } from "vue-router";
+import CardLoader from "./CardLoader.vue";
 
 // Variables
 const router = useRouter();
@@ -127,7 +133,7 @@ const selectCategory = (category) => {
 
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 40px;
   width: 1200px;
 }
@@ -147,22 +153,8 @@ const selectCategory = (category) => {
 }
 
 .card {
-  height: 100%;
-  width: 100%;
-  min-height: 200px;
-  transition: transform 0.1s ease;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 32px;
-  padding: 20px;
-  text-align: center;
   cursor: pointer;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  text-transform: uppercase;
-  font-weight: 700;
-  white-space: normal;
+  transition: transform 0.2s;
 }
 
 .card:hover {

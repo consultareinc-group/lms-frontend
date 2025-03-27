@@ -128,7 +128,7 @@
           table-header-class="bg-dark text-white"
           class="overflow-auto"
           :loading="tableLoading"
-          style="max-width: 700px"
+          style="max-width: 900px"
           :rows-per-page-options="[10, 20, 30]"
         >
           <template v-slot:body-cell-category_description="props">
@@ -144,12 +144,12 @@
               <q-img
                 v-if="props.row.thumbnail"
                 :src="props.row.thumbnail"
-                style="width: 100px; height: 100px"
+                style="width: 150px; height: 150px"
               />
               <q-img
                 v-else
                 src="../../../assets/sample-category-image.png"
-                style="width: 100px; height: 100px"
+                style="width: 150px; height: 150px"
               />
             </q-td>
           </template>

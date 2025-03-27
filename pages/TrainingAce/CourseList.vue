@@ -76,6 +76,7 @@
                 <q-card-section>
                   <div class="clamp-title text-h6">
                     {{ capitalizeCourseName(course.course_name) }}
+                    <q-tooltip>{{ course.course_name }}</q-tooltip>
                   </div>
                   <div class="clamp-description">
                     {{ course.course_description }}

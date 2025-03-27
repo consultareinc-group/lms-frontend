@@ -50,21 +50,39 @@
         >
           <div class="row full-width no-wrap" style="gap: 20px">
             <div class="full-width">
-              <label>Category Name <span class="text-red">*</span></label>
-              <q-input
-                outlined
-                v-model="category.name"
-                dense
-                class="q-mt-sm"
-                :rules="[
-                  (val) => !!val || 'Field is required',
-                  (val) =>
-                    !isCategoryNameDuplicate(val) ||
-                    'Category name already exists',
-                ]"
-                lazy-rules
-              />
+              <div>
+                <label>Category Name <span class="text-red">*</span></label>
+                <q-input
+                  outlined
+                  v-model="category.name"
+                  dense
+                  class="q-mt-sm"
+                  :rules="[
+                    (val) => !!val || 'Field is required',
+                    (val) =>
+                      !isCategoryNameDuplicate(val) ||
+                      'Category name already exists',
+                  ]"
+                  lazy-rules
+                />
+
+                <div>
+                  <label>Thumbnail</label>
+                  <q-file
+                    outlined
+                    v-model="category.thumbnail"
+                    dense
+                    class="q-mt-sm"
+                    :rules="[(val) => !!val || 'Field is required']"
+                  >
+                    <template v-slot:append>
+                      <q-icon name="upload" />
+                    </template>
+                  </q-file>
+                </div>
+              </div>
             </div>
+
             <div class="full-width">
               <label>Category Description</label>
               <q-input
@@ -118,6 +136,21 @@
               <div style="white-space: normal">
                 {{ props.row.category_description || "No description" }}
               </div>
+            </q-td>
+          </template>
+
+          <template v-slot:body-cell-thumbnail="props">
+            <q-td :props="props">
+              <q-img
+                v-if="props.row.thumbnail"
+                :src="props.row.thumbnail"
+                style="width: 100px; height: 100px"
+              />
+              <q-img
+                v-else
+                src="../../../assets/sample-category-image.png"
+                style="width: 100px; height: 100px"
+              />
             </q-td>
           </template>
 
@@ -277,6 +310,7 @@ const $q = useQuasar();
 const category = ref({
   name: "",
   description: "",
+  thumbnail: null,
 });
 
 const btnLoadingState = ref(false);
@@ -299,6 +333,15 @@ const columns = ref([
     field: (row) => row.category_description,
     format: (val) => `${val}`,
     sortable: true,
+  },
+  {
+    name: "thumbnail",
+    required: true,
+    label: "Thumbnail",
+    align: "left",
+    field: (row) => row.thumbnail,
+    format: (val) => `${val}`,
+    sortable: false,
   },
   { name: "action", field: "action" },
   // Add more columns as needed

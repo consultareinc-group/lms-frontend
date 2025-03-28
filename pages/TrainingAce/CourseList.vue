@@ -55,8 +55,15 @@
         >
           <div class="card-grid">
             <div v-for="course in courses" :key="course.id">
-              <q-card class="card" style="position: relative">
-                <div v-if="isValidVideo(course.video_link)">
+              <q-card
+                @click="viewCourseDetails(course.id)"
+                class="card"
+                style="position: relative"
+              >
+                <div
+                  v-if="isValidVideo(course.video_link)"
+                  style="pointer-events: none"
+                >
                   <iframe
                     :src="getEmbedUrl(course.video_link)"
                     :title="course.course_name"
@@ -102,11 +109,11 @@
                       max-width: 200px;
                     "
                   />
-                  <q-btn
+                  <!-- <q-btn
                     @click.stop="viewCourseDetails(course.id)"
                     color="primary"
                     label="View Course"
-                  />
+                  /> -->
                 </div>
               </q-card>
             </div>
@@ -259,7 +266,8 @@ const isValidVideo = (url) => {
 };
 
 const viewCourseDetails = (id) => {
-  router.push({ name: "CourseDetails", params: { id } });
+  const url = router.resolve({ name: "CourseDetails", params: { id } }).href;
+  window.open(url, "_blank");
 };
 
 const capitalizeCourseName = (name) => {
@@ -365,6 +373,7 @@ const updateCategory = (val) => {
   width: 100%;
   transition: transform 0.1s ease;
   width: 400px !important;
+  cursor: pointer;
 }
 
 .card:hover {

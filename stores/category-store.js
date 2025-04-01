@@ -43,7 +43,11 @@ export const useCategoryStore = defineStore("category", {
     AddCategory(request) {
       return new Promise((resolve, reject) => {
         api
-          .post("lms/category", request.payload)
+          .post("lms/category", request.payload, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
           .then((response) => {
             resolve(response.data);
           })
@@ -55,7 +59,11 @@ export const useCategoryStore = defineStore("category", {
     EditCategory(request) {
       return new Promise((resolve, reject) => {
         api
-          .post(`lms/category/${request.id}`, request.payload)
+          .post(`lms/category/${request.id}`, request.payload, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
           .then((response) => {
             resolve(response.data);
           })

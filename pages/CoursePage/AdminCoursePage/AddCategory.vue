@@ -202,16 +202,40 @@
           >
             <div class="column full-width no-wrap" style="gap: 20px">
               <div class="full-width">
+                <!-- Category Name -->
                 <label>Category Name <span class="text-red">*</span></label>
                 <q-input
                   outlined
                   v-model="editCategoryData.name"
                   dense
                   class="q-mt-sm"
-                  :rules="[(val) => !!val || 'Field is required']"
+                  :rules="[
+                    (val) => !!val || 'Field is required',
+                    (val) =>
+                      editCategoryData.name === editCategoryData.initial_name ||
+                      !isCategoryNameDuplicate(val) ||
+                      'Category name already exists',
+                  ]"
                   lazy-rules
                 />
               </div>
+
+              <!-- Thumbnail -->
+              <div>
+                <label>Thumbnail</label>
+                <q-file
+                  outlined
+                  v-model="editCategoryData.thumbnail"
+                  dense
+                  class="q-mt-sm"
+                >
+                  <template v-slot:append>
+                    <q-icon name="upload" />
+                  </template>
+                </q-file>
+              </div>
+
+              <!-- Category Description -->
               <div class="full-width">
                 <label>Category Description</label>
                 <q-input
@@ -352,7 +376,9 @@ const tableLoading = ref(false);
 const editCategoryData = ref({
   id: null,
   name: "",
+  initial_name: "",
   description: "",
+  thumbnail: null,
 });
 
 const editDialog = ref(false);
@@ -455,7 +481,7 @@ const saveCategory = () => {
         message: `<strong>Error!</strong> Unable to add category.`,
         position: "top-right",
         timeout: 2000,
-        classes: "quasar-notification-negative",
+        classes: "quasar-notification-error",
       });
     })
     .finally(() => {
@@ -473,9 +499,13 @@ const showEditCategoryDialog = (id) => {
   categoryStore
     .GetCategory({ id })
     .then((response) => {
-      editCategoryData.value.id = response.data.id;
-      editCategoryData.value.name = response.data.category_name;
-      editCategoryData.value.description = response.data.category_description;
+      const categoryData = response.data[0];
+      editCategoryData.value = {
+        id: categoryData.id,
+        name: categoryData.category_name,
+        initial_name: categoryData.category_name,
+        description: categoryData.category_description,
+      };
     })
     .catch((error) => {
       $q.notify({
@@ -489,11 +519,16 @@ const showEditCategoryDialog = (id) => {
 const editCategory = (id) => {
   editCategoryLoading.value = true;
 
-  const payload = {
-    id: editCategoryData.value.id,
-    category_name: editCategoryData.value.name,
-    category_description: editCategoryData.value.description || "",
-  };
+  const payload = new FormData();
+  payload.append("id", editCategoryData.value.id);
+  payload.append("category_name", editCategoryData.value.name);
+  payload.append(
+    "category_description",
+    editCategoryData.value.description || ""
+  );
+  if (editCategoryData.value.thumbnail) {
+    payload.append("image_file", editCategoryData.value.thumbnail);
+  }
 
   categoryStore
     .EditCategory({ id: editCategoryData.value.id, payload })
@@ -510,6 +545,11 @@ const editCategory = (id) => {
         if (cat.id === id) {
           cat.category_name = editCategoryData.value.name;
           cat.category_description = editCategoryData.value.description;
+          if (editCategoryData.value.thumbnail) {
+            cat.thumbnail = URL.createObjectURL(
+              editCategoryData.value.thumbnail
+            );
+          }
         }
         return cat;
       });
@@ -521,7 +561,7 @@ const editCategory = (id) => {
         message: `<strong>Error!</strong> Unable to update category.`,
         position: "top-right",
         timeout: 2000,
-        classes: "quasar-notification-negative",
+        classes: "quasar-notification-error",
       });
     })
     .finally(() => {

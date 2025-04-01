@@ -22,8 +22,21 @@
           <div class="card-grid">
             <div v-for="category in categories" :key="category.id">
               <q-card @click="selectCategory(category)" class="card">
-                <img
-                  src="../../assets/sample-category-image.png"
+                <q-img
+                  v-if="
+                    category.thumbnail !== null && category.thumbnail !== ''
+                  "
+                  :src="category.thumbnail"
+                  :alt="category.course_name"
+                  style="
+                    width: 100%;
+                    height: 300px;
+                    object-fit: fill !important;
+                  "
+                />
+                <q-img
+                  v-else
+                  src="../../assets/video image placeholder.jpg"
                   :alt="category.course_name"
                   style="
                     width: 100%;
@@ -82,8 +95,18 @@ const getCategories = () => {
           id: data.id,
           name: data.category_name,
           description: data.category_description,
+          thumbnail: data.image_file_base64,
         });
       });
+
+      // convert thumbnail to base64
+      categories.value.forEach((category) => {
+        if (category.thumbnail !== "") {
+          category.thumbnail = `data:image/png;base64,${category.thumbnail}`;
+        }
+      });
+
+      console.log(categories.value);
     })
     .catch((error) => {
       console.log(error);

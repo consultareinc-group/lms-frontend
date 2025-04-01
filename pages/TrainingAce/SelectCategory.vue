@@ -101,7 +101,7 @@ const getCategories = () => {
 
       // convert thumbnail to base64
       categories.value.forEach((category) => {
-        if (category.thumbnail !== "") {
+        if (category.thumbnail !== "" && category.thumbnail !== null) {
           category.thumbnail = `data:image/png;base64,${category.thumbnail}`;
         }
       });

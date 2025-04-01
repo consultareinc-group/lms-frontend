@@ -50,21 +50,38 @@
         >
           <div class="row full-width no-wrap" style="gap: 20px">
             <div class="full-width">
-              <label>Category Name <span class="text-red">*</span></label>
-              <q-input
-                outlined
-                v-model="category.name"
-                dense
-                class="q-mt-sm"
-                :rules="[
-                  (val) => !!val || 'Field is required',
-                  (val) =>
-                    !isCategoryNameDuplicate(val) ||
-                    'Category name already exists',
-                ]"
-                lazy-rules
-              />
+              <div>
+                <label>Category Name <span class="text-red">*</span></label>
+                <q-input
+                  outlined
+                  v-model="category.name"
+                  dense
+                  class="q-mt-sm"
+                  :rules="[
+                    (val) => !!val || 'Field is required',
+                    (val) =>
+                      !isCategoryNameDuplicate(val) ||
+                      'Category name already exists',
+                  ]"
+                  lazy-rules
+                />
+
+                <div>
+                  <label>Thumbnail</label>
+                  <q-file
+                    outlined
+                    v-model="category.thumbnail"
+                    dense
+                    class="q-mt-sm"
+                  >
+                    <template v-slot:append>
+                      <q-icon name="upload" />
+                    </template>
+                  </q-file>
+                </div>
+              </div>
             </div>
+
             <div class="full-width">
               <label>Category Description</label>
               <q-input
@@ -110,7 +127,7 @@
           table-header-class="bg-dark text-white"
           class="overflow-auto"
           :loading="tableLoading"
-          style="max-width: 700px"
+          style="max-width: 900px"
           :rows-per-page-options="[10, 20, 30]"
         >
           <template v-slot:body-cell-category_description="props">
@@ -118,6 +135,21 @@
               <div style="white-space: normal">
                 {{ props.row.category_description || "No description" }}
               </div>
+            </q-td>
+          </template>
+
+          <template v-slot:body-cell-thumbnail="props">
+            <q-td :props="props">
+              <q-img
+                v-if="props.row.thumbnail"
+                :src="props.row.thumbnail"
+                style="width: 150px; height: 150px"
+              />
+              <q-img
+                v-else
+                src="../../../assets/video image placeholder.jpg"
+                style="width: 150px; height: 150px"
+              />
             </q-td>
           </template>
 
@@ -170,16 +202,40 @@
           >
             <div class="column full-width no-wrap" style="gap: 20px">
               <div class="full-width">
+                <!-- Category Name -->
                 <label>Category Name <span class="text-red">*</span></label>
                 <q-input
                   outlined
                   v-model="editCategoryData.name"
                   dense
                   class="q-mt-sm"
-                  :rules="[(val) => !!val || 'Field is required']"
+                  :rules="[
+                    (val) => !!val || 'Field is required',
+                    (val) =>
+                      editCategoryData.name === editCategoryData.initial_name ||
+                      !isCategoryNameDuplicate(val) ||
+                      'Category name already exists',
+                  ]"
                   lazy-rules
                 />
               </div>
+
+              <!-- Thumbnail -->
+              <div>
+                <label>Thumbnail</label>
+                <q-file
+                  outlined
+                  v-model="editCategoryData.thumbnail"
+                  dense
+                  class="q-mt-sm"
+                >
+                  <template v-slot:append>
+                    <q-icon name="upload" />
+                  </template>
+                </q-file>
+              </div>
+
+              <!-- Category Description -->
               <div class="full-width">
                 <label>Category Description</label>
                 <q-input
@@ -277,6 +333,7 @@ const $q = useQuasar();
 const category = ref({
   name: "",
   description: "",
+  thumbnail: null,
 });
 
 const btnLoadingState = ref(false);
@@ -300,6 +357,15 @@ const columns = ref([
     format: (val) => `${val}`,
     sortable: true,
   },
+  {
+    name: "thumbnail",
+    required: true,
+    label: "Thumbnail",
+    align: "left",
+    field: (row) => row.thumbnail,
+    format: (val) => `${val}`,
+    sortable: false,
+  },
   { name: "action", field: "action" },
   // Add more columns as needed
 ]);
@@ -310,7 +376,9 @@ const tableLoading = ref(false);
 const editCategoryData = ref({
   id: null,
   name: "",
+  initial_name: "",
   description: "",
+  thumbnail: null,
 });
 
 const editDialog = ref(false);
@@ -341,6 +409,16 @@ const getCategories = () => {
     .GetCategories({ offset: categories.value.length })
     .then((response) => {
       categories.value = [...categories.value, ...response.data];
+
+      // convert image_file_base64
+      categories.value = categories.value.map((cat) => {
+        if (cat.image_file_base64) {
+          cat.thumbnail = `data:image/png;base64,${cat.image_file_base64}`;
+        } else {
+          cat.thumbnail = null;
+        }
+        return cat;
+      });
     })
     .catch((error) => {
       $q.notify({
@@ -376,10 +454,12 @@ const searchCategory = () => {
 const saveCategory = () => {
   btnLoadingState.value = true;
 
-  const payload = {
-    category_name: category.value.name,
-    category_description: category.value.description || "",
-  };
+  const payload = new FormData();
+  payload.append("category_name", category.value.name);
+  payload.append("category_description", category.value.description || "");
+  if (category.value.thumbnail) {
+    payload.append("image_file", category.value.thumbnail);
+  }
 
   categoryStore
     .AddCategory({ payload })
@@ -401,7 +481,7 @@ const saveCategory = () => {
         message: `<strong>Error!</strong> Unable to add category.`,
         position: "top-right",
         timeout: 2000,
-        classes: "quasar-notification-negative",
+        classes: "quasar-notification-error",
       });
     })
     .finally(() => {
@@ -419,9 +499,13 @@ const showEditCategoryDialog = (id) => {
   categoryStore
     .GetCategory({ id })
     .then((response) => {
-      editCategoryData.value.id = response.data.id;
-      editCategoryData.value.name = response.data.category_name;
-      editCategoryData.value.description = response.data.category_description;
+      const categoryData = response.data[0];
+      editCategoryData.value = {
+        id: categoryData.id,
+        name: categoryData.category_name,
+        initial_name: categoryData.category_name,
+        description: categoryData.category_description,
+      };
     })
     .catch((error) => {
       $q.notify({
@@ -435,11 +519,16 @@ const showEditCategoryDialog = (id) => {
 const editCategory = (id) => {
   editCategoryLoading.value = true;
 
-  const payload = {
-    id: editCategoryData.value.id,
-    category_name: editCategoryData.value.name,
-    category_description: editCategoryData.value.description || "",
-  };
+  const payload = new FormData();
+  payload.append("id", editCategoryData.value.id);
+  payload.append("category_name", editCategoryData.value.name);
+  payload.append(
+    "category_description",
+    editCategoryData.value.description || ""
+  );
+  if (editCategoryData.value.thumbnail) {
+    payload.append("image_file", editCategoryData.value.thumbnail);
+  }
 
   categoryStore
     .EditCategory({ id: editCategoryData.value.id, payload })
@@ -456,6 +545,11 @@ const editCategory = (id) => {
         if (cat.id === id) {
           cat.category_name = editCategoryData.value.name;
           cat.category_description = editCategoryData.value.description;
+          if (editCategoryData.value.thumbnail) {
+            cat.thumbnail = URL.createObjectURL(
+              editCategoryData.value.thumbnail
+            );
+          }
         }
         return cat;
       });
@@ -467,7 +561,7 @@ const editCategory = (id) => {
         message: `<strong>Error!</strong> Unable to update category.`,
         position: "top-right",
         timeout: 2000,
-        classes: "quasar-notification-negative",
+        classes: "quasar-notification-error",
       });
     })
     .finally(() => {

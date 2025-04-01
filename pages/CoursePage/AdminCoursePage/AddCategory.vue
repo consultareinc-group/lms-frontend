@@ -457,7 +457,7 @@ const saveCategory = () => {
   const payload = new FormData();
   payload.append("category_name", category.value.name);
   payload.append("category_description", category.value.description || "");
-  if (category.value.thumbnail) {
+  if (category.value.thumbnail && category.value.thumbnail instanceof File) {
     payload.append("image_file", category.value.thumbnail);
   }
 
@@ -475,7 +475,8 @@ const saveCategory = () => {
       categories.value = [];
       getCategories();
     })
-    .catch(() => {
+    .catch((error) => {
+      console.error("Error adding category:", error);
       $q.notify({
         html: true,
         message: `<strong>Error!</strong> Unable to add category.`,
@@ -489,6 +490,7 @@ const saveCategory = () => {
       category.value = {
         name: "",
         description: "",
+        thumbnail: null,
       };
     });
 };
@@ -526,7 +528,10 @@ const editCategory = (id) => {
     "category_description",
     editCategoryData.value.description || ""
   );
-  if (editCategoryData.value.thumbnail) {
+  if (
+    editCategoryData.value.thumbnail &&
+    editCategoryData.value.thumbnail instanceof File
+  ) {
     payload.append("image_file", editCategoryData.value.thumbnail);
   }
 
@@ -573,6 +578,7 @@ const editCategory = (id) => {
         id: null,
         name: "",
         description: "",
+        thumbnail: null,
       };
     });
 };

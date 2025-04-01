@@ -22,27 +22,19 @@
           <div class="card-grid">
             <div v-for="category in categories" :key="category.id">
               <q-card @click="selectCategory(category)" class="card">
-                <q-img
+                <img
                   v-if="
                     category.thumbnail !== null && category.thumbnail !== ''
                   "
                   :src="category.thumbnail"
                   :alt="category.course_name"
-                  style="
-                    width: 100%;
-                    height: 300px;
-                    object-fit: fill !important;
-                  "
+                  style="height: 350px; object-fit: fill"
                 />
-                <q-img
+                <img
                   v-else
                   src="../../assets/video image placeholder.jpg"
                   :alt="category.course_name"
-                  style="
-                    width: 100%;
-                    height: 300px;
-                    object-fit: fill !important;
-                  "
+                  style="height: 350px; object-fit: fill"
                 />
                 <q-card-section class="q-pa-lg">
                   <div class="clamp-title text-h5 text-bold">

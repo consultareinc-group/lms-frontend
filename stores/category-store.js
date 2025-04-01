@@ -55,7 +55,7 @@ export const useCategoryStore = defineStore("category", {
     EditCategory(request) {
       return new Promise((resolve, reject) => {
         api
-          .put(`lms/category/${request.id}`, request.payload)
+          .post(`lms/category/${request.id}`, request.payload)
           .then((response) => {
             resolve(response.data);
           })

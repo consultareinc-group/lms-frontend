@@ -73,7 +73,6 @@
                     v-model="category.thumbnail"
                     dense
                     class="q-mt-sm"
-                    :rules="[(val) => !!val || 'Field is required']"
                   >
                     <template v-slot:append>
                       <q-icon name="upload" />
@@ -148,7 +147,7 @@
               />
               <q-img
                 v-else
-                src="../../../assets/sample-category-image.png"
+                src="../../../assets/video image placeholder.jpg"
                 style="width: 150px; height: 150px"
               />
             </q-td>
@@ -384,6 +383,16 @@ const getCategories = () => {
     .GetCategories({ offset: categories.value.length })
     .then((response) => {
       categories.value = [...categories.value, ...response.data];
+
+      // convert image_file_base64
+      categories.value = categories.value.map((cat) => {
+        if (cat.image_file_base64) {
+          cat.thumbnail = `data:image/png;base64,${cat.image_file_base64}`;
+        } else {
+          cat.thumbnail = null;
+        }
+        return cat;
+      });
     })
     .catch((error) => {
       $q.notify({
@@ -419,10 +428,12 @@ const searchCategory = () => {
 const saveCategory = () => {
   btnLoadingState.value = true;
 
-  const payload = {
-    category_name: category.value.name,
-    category_description: category.value.description || "",
-  };
+  const payload = new FormData();
+  payload.append("category_name", category.value.name);
+  payload.append("category_description", category.value.description || "");
+  if (category.value.thumbnail) {
+    payload.append("image_file", category.value.thumbnail);
+  }
 
   categoryStore
     .AddCategory({ payload })

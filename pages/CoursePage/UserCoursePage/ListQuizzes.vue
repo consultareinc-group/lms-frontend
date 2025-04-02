@@ -252,7 +252,6 @@ const showUserDetailsDialog = (row) => {
     });
   } else {
     showUserDetails.value = true;
-    console.log("userDetails.value.first_name is empty or null");
   }
 };
 
@@ -268,7 +267,6 @@ const confirmAndNavigate = () => {
   userDetails.value.quiz_id = selectedQuizId.value;
   logStore.logs = userDetails.value;
   LocalStorage.set("userDetails", userDetails.value);
-  console.log("Logs ", logStore.logs);
   router.push({ name: "Quiz Page", params: { quiz_id: selectedQuizId.value } });
 };
 

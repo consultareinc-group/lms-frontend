@@ -93,6 +93,14 @@
             <p v-else class="q-mb-sm text-weight-light">
               {{ course.course_description }}
             </p>
+
+            <div class="q-my-md">
+              <p class="q-mb-sm">Category:</p>
+              <q-skeleton v-if="!course.course_name" square />
+              <p v-else class="q-mb-sm text-weight-light">
+                {{ course.category_name }}
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -340,6 +348,5 @@ let alert = ref(false);
 // Function to show an archive dialog with the selected course ID
 const showArchiveDialog = (id) => {
   alert.value = true;
-  console.log("id ", id); // Log the selected course ID for debugging
 };
 </script>

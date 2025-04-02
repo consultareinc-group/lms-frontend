@@ -75,7 +75,9 @@ export const useCourseStore = defineStore("course", {
       return new Promise((resolve, reject) => {
         // Make a GET request to fetch courses matching the search keyword
         api
-          .get(`lms/examinee/course?search_keyword="${request.keyword}"`)
+          .get(
+            `lms/examinee/course?search_keyword="${request.keyword}"&category_id=${request.category_id}`
+          )
           .then((response) => {
             resolve(response.data); // Resolve the promise with the API response data
           })
@@ -144,11 +146,14 @@ export const useCourseStore = defineStore("course", {
     ArchiveCourse(request) {
       return new Promise((resolve, reject) => {
         // Make a POST request to archive courses in the database courses table
-        api.delete(`lms/course/${request.id}`, { data: request }).then((response) => {
-          resolve(response.data); // Resolve the promise with the API response data
-        }).catch((response) => {
-          reject(response.data); // Reject the promise if the API request fails
-        });
+        api
+          .delete(`lms/course/${request.id}`, { data: request })
+          .then((response) => {
+            resolve(response.data); // Resolve the promise with the API response data
+          })
+          .catch((response) => {
+            reject(response.data); // Reject the promise if the API request fails
+          });
       });
     },
     // Action to fetch quizzes from the API with pagination support

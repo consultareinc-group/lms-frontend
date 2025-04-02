@@ -170,6 +170,7 @@ const selectCategory = (category) => {
 .card {
   cursor: pointer;
   transition: transform 0.2s;
+  height: 100%;
 }
 
 .card:hover {

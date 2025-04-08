@@ -157,13 +157,16 @@ const categoryId = ref(null);
 onMounted(() => {
   getCategories();
 
-  if (route.params.category_id && route.params.category_name) {
-    category.value = route.params.category_name;
-    categoryId.value = +route.params.category_id;
-    search();
-  } else {
-    getCourses();
-  }
+  category.value = route.params.category_name;
+  categoryId.value = +route.params.category_id
+    ? +route.params.category_id
+    : " ";
+  search();
+  // if (route.params.category_id && route.params.category_name) {
+
+  // } else {
+  //   getCourses();
+  // }
 });
 
 // Functions

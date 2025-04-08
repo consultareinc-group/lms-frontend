@@ -80,6 +80,9 @@ const browseMoreCourses = () => {
     });
     return;
   }
-  router.push({ name: "Courses" });
+  router.push({
+    name: "Courses",
+    params: { category_id: " ", category_name: "All" },
+  });
 };
 </script>

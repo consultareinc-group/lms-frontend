@@ -163,6 +163,9 @@ const submitQuiz = async () => {
 const navigateToCertification = () => {
   router.push({
     name: "Certification Page",
+    params: {
+      log_id: logStore.logs.id,
+    },
   });
 };
 

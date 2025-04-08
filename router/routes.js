@@ -102,7 +102,7 @@ const routes = [
           import("../pages/CoursePage/UserCoursePage/QuizPage.vue"),
       },
       {
-        path: "/certification_page",
+        path: "/certification_page/:log_id?",
         name: "Certification Page",
         component: () =>
           import("../pages/CoursePage/UserCoursePage/CertificationPage.vue"),

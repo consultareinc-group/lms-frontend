@@ -174,10 +174,11 @@ import { ref } from "vue";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import { saveAs } from "file-saver";
 import { LocalStorage, date } from "quasar";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 // Variables
 const router = useRouter();
+const route = useRoute();
 
 const padId = (id, length) => {
   return id.toString().padStart(length, "0");
@@ -203,7 +204,7 @@ const certificateBody = ref(
 const dateCompleted = ref(
   date.formatDate(userDetails.date_time_completed, "MMMM D, YYYY")
 );
-const certificateNo = ref(padId(courseDetails.id, 10));
+const certificateNo = ref(padId(route.params.log_id, 10));
 const validUntil = ref(
   date.formatDate(
     date.addToDate(userDetails.date_time_completed, { years: 1 }),
@@ -251,15 +252,40 @@ const generateCertificate = async () => {
       color: color,
     });
 
-    page.drawText(certificateBody.value, {
-      x: 50,
-      y: 340,
-      size: 16,
-      font: fontRegular,
-      color: color,
-      lineHeight: 20,
-      maxWidth: 800,
-    });
+    const maxWidth = 750; // Adjust as needed
+    const lineHeight = 20;
+    const words = certificateBody.value.split(" ");
+    let line = "";
+    let yPosition = 340;
+
+    for (const word of words) {
+      const testLine = line + word + " ";
+      const testWidth = fontRegular.widthOfTextAtSize(testLine, 16);
+      if (testWidth > maxWidth) {
+        page.drawText(line, {
+          x: 50,
+          y: yPosition,
+          size: 16,
+          font: fontRegular,
+          color: color,
+        });
+        line = word + " ";
+        yPosition -= lineHeight;
+      } else {
+        line = testLine;
+      }
+    }
+
+    // Draw the last line
+    if (line) {
+      page.drawText(line, {
+        x: 50,
+        y: yPosition,
+        size: 16,
+        font: fontRegular,
+        color: color,
+      });
+    }
 
     page.drawText(dateCompleted.value, {
       x: 210,

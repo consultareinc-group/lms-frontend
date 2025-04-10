@@ -13,7 +13,12 @@
     </div>
 
     <div class="col-12 q-mt-sm q-mb-xl q-pa-xl">
-      <div class="flex justify-end q-mb-md q-mt-xl">
+      <div class="flex justify-between q-mb-md q-mt-xl">
+        <div>
+          <p class="text-subtitle1">
+            Total Courses: <span class="text-bold">{{ courses.length }}</span>
+          </p>
+        </div>
         <div class="flex justify-end items-center q-gutter-x-md">
           <q-input
             v-model="search_keyword"
@@ -162,11 +167,6 @@ onMounted(() => {
     ? +route.params.category_id
     : " ";
   search();
-  // if (route.params.category_id && route.params.category_name) {
-
-  // } else {
-  //   getCourses();
-  // }
 });
 
 // Functions

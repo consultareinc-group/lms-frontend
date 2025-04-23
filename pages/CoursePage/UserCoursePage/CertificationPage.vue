@@ -170,29 +170,37 @@
 
 <script setup>
 import certificateTemplate from "../../../assets/certificate-template-new.png";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import { saveAs } from "file-saver";
 import { LocalStorage, date } from "quasar";
 import { useRoute, useRouter } from "vue-router";
+import { useAuthStore } from "src/stores/auth";
+import { useLogStore } from "../../../stores/log-store";
 
 // Variables
 const router = useRouter();
 const route = useRoute();
 
+const authStore = useAuthStore();
+const logStore = useLogStore();
+
+const logId = +route.params.log_id;
+const logDetails = ref({});
+
 const padId = (id, length) => {
   return id.toString().padStart(length, "0");
 };
 
-const userDetails = LocalStorage.getItem("userDetails");
+const userDetails = authStore.UserInformation;
 const quizDetails = LocalStorage.getItem("quiz");
 const courseDetails = LocalStorage.getItem("course");
 
 const userName = ref(
-  `${userDetails.first_name.toUpperCase()} ${
-    userDetails.middle_name ? userDetails.middle_name.toUpperCase() : ""
-  } ${userDetails.last_name.toUpperCase()} ${
-    userDetails.suffix ? userDetails.suffix.toUpperCase() : ""
+  `${userDetails?.first_name?.toUpperCase() || ""} ${
+    userDetails?.middle_name ? userDetails.middle_name.toUpperCase() : ""
+  } ${userDetails?.last_name?.toUpperCase() || ""} ${
+    userDetails?.suffix ? userDetails.suffix.toUpperCase() : ""
   }`
 );
 
@@ -201,18 +209,36 @@ const courseName = ref(courseDetails.course_name.toUpperCase());
 const certificateBody = ref(
   `has successfully completed the FAMILIARIZATION TRAINING. This course covered essential topics related to participants, providing a comprehensive learning experience designed to equip them with the necessary skills and knowledge to navigate the complexities of ${courseName.value}.`
 );
-const dateCompleted = ref(
-  date.formatDate(userDetails.date_time_completed, "MMMM D, YYYY")
-);
+const dateCompleted = ref(null);
 const certificateNo = ref(padId(route.params.log_id, 10));
-const validUntil = ref(
-  date.formatDate(
-    date.addToDate(userDetails.date_time_completed, { years: 1 }),
-    "MMMM D, YYYY"
-  )
-);
+const validUntil = ref(null);
+
+// Lifecycle Hooks
+onMounted(async () => {
+  await getLog();
+});
 
 // Functions
+const getLog = async () => {
+  logStore
+    .GetLog({ id: logId })
+    .then((response) => {
+      logDetails.value = response.data[0];
+      dateCompleted.value = logDetails.value.date_time_completed
+        ? date.formatDate(logDetails.value.date_time_completed, "MMMM D, YYYY")
+        : "N/A";
+      validUntil.value = logDetails.value.date_time_completed
+        ? date.formatDate(
+            date.addToDate(logDetails.value.date_time_completed, { years: 1 }),
+            "MMMM D, YYYY"
+          )
+        : "N/A";
+    })
+    .catch((error) => {
+      console.error("Error fetching log details:", error);
+    });
+};
+
 const navigateToQuizzes = () => {
   router.push({
     name: "List of Quizzes",

@@ -76,7 +76,17 @@
       </q-toolbar>
     </q-header>
 
-    <LoginDialog v-model="showLoginDialog" @close="closeDialog"></LoginDialog>
+    <LoginDialog
+      v-model="showLoginDialog"
+      @close="closeDialog"
+      @register="handleRegister"
+    ></LoginDialog>
+
+    <RegisterDialog
+      v-model="showRegisterDialog"
+      @close="closeDialog"
+      @login="handleLogin"
+    ></RegisterDialog>
 
     <q-page-container class="">
       <router-view />
@@ -104,6 +114,7 @@ import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "src/lib/vars";
 import BrandLogo from "src/components/BrandLogo.vue";
 
 import LoginDialog from "../../TrainingAce/components/LoginDialog.vue";
+import RegisterDialog from "../../TrainingAce/components/RegisterDialog.vue";
 
 // Variables
 const route = useRoute();
@@ -113,6 +124,7 @@ const authStore = useAuthStore();
 // const leftDrawerOpen = ref(false);
 
 const showLoginDialog = ref(false);
+const showRegisterDialog = ref(false);
 
 defineOptions({
   name: "UserLayout",
@@ -158,5 +170,16 @@ const logout = () => {
 
 const closeDialog = () => {
   showLoginDialog.value = false;
+  showRegisterDialog.value = false;
+};
+
+const handleLogin = () => {
+  showLoginDialog.value = true;
+  showRegisterDialog.value = false;
+};
+
+const handleRegister = () => {
+  showLoginDialog.value = false;
+  showRegisterDialog.value = true;
 };
 </script>

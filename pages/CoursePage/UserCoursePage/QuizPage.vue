@@ -54,7 +54,7 @@
           :loading="btnloadingState"
         />
       </div>
-      <q-dialog v-model="alert">
+      <q-dialog v-model="alert" persistent>
         <q-card class="q-px-xl relative-position">
           <q-card-section class="text-center q-mt-lg">
             <q-icon
@@ -153,7 +153,7 @@ const submitQuiz = async () => {
   await quizStore.submitAnswers(userAnswers.value, quizId.value);
 
   if (quizStore.quizResult.status === "passed") {
-    await logStore.postLogs();
+    await logStore.PostLogs({ quiz_id: quizId.value });
   }
 
   alert.value = true;

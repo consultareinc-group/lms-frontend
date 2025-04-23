@@ -10,13 +10,13 @@
       />
 
       <q-card-section class="text-center">
-        <div class="logo-container q-mb-lg">
+        <div>
           <q-img
             src="../../../../../assets/training-ace-pro-logo.png"
             width="250px"
           />
         </div>
-        <div class="text-grey-6 text-subtitle1">Sign in to your account</div>
+        <div class="text-grey-6 text-h5">Sign in to your account</div>
       </q-card-section>
 
       <q-card-section>
@@ -70,7 +70,15 @@
             :loading="btnLoadingState"
           />
           <div class="flex justify-center">
-            <p>Don't have an account? <a href="#">Register</a></p>
+            <p>
+              Don't have an account?
+              <span
+                @click="emit('register')"
+                class="cursor-pointer text-primary underline"
+              >
+                Register
+              </span>
+            </p>
           </div>
         </q-form>
       </q-card-section>
@@ -91,7 +99,7 @@ import { useRouter } from "vue-router";
 import { useAuthStore } from "src/stores/auth";
 import { useQuasar } from "quasar";
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close", "register"]);
 
 const router = useRouter();
 const authStore = useAuthStore();

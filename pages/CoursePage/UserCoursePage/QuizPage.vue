@@ -54,7 +54,7 @@
           :loading="btnloadingState"
         />
       </div>
-      <q-dialog v-model="alert">
+      <q-dialog v-model="alert" persistent>
         <q-card class="q-px-xl relative-position">
           <q-card-section class="text-center q-mt-lg">
             <q-icon
@@ -173,7 +173,7 @@ const retakeQuiz = () => {
   questionStore.questions = [...questionStore.questions].sort(
     () => Math.random() - 0.5
   );
-  userAnswers.value = {};
+  // userAnswers.value = {};
   alert.value = false;
 };
 </script>

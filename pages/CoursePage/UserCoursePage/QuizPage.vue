@@ -173,7 +173,7 @@ const retakeQuiz = () => {
   questionStore.questions = [...questionStore.questions].sort(
     () => Math.random() - 0.5
   );
-  userAnswers.value = {};
+  // userAnswers.value = {};
   alert.value = false;
 };
 </script>

@@ -169,16 +169,19 @@
 </template>
 
 <script setup>
-import certificateTemplate from "../../../assets/certificate-template-new.png";
 import { ref } from "vue";
-import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
-import { saveAs } from "file-saver";
 import { LocalStorage, date } from "quasar";
 import { useRoute, useRouter } from "vue-router";
+import { useLogStore } from "../../../stores/log-store";
+
+import certificateTemplate from "../../../assets/certificate-template-new.png";
+import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import { saveAs } from "file-saver";
 
 // Variables
 const router = useRouter();
 const route = useRoute();
+const logStore = useLogStore();
 
 const padId = (id, length) => {
   return id.toString().padStart(length, "0");
@@ -201,13 +204,14 @@ const courseName = ref(courseDetails.course_name.toUpperCase());
 const certificateBody = ref(
   `has successfully completed the FAMILIARIZATION TRAINING. This course covered essential topics related to participants, providing a comprehensive learning experience designed to equip them with the necessary skills and knowledge to navigate the complexities of ${courseName.value}.`
 );
+
 const dateCompleted = ref(
-  date.formatDate(userDetails.date_time_completed, "MMMM D, YYYY")
+  date.formatDate(logStore.logs.date_time_completed, "MMMM D, YYYY")
 );
 const certificateNo = ref(padId(route.params.log_id, 10));
 const validUntil = ref(
   date.formatDate(
-    date.addToDate(userDetails.date_time_completed, { years: 1 }),
+    date.addToDate(logStore.logs.date_time_completed, { years: 1 }),
     "MMMM D, YYYY"
   )
 );

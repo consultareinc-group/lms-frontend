@@ -4,6 +4,7 @@ const routes = [
     name: "Learning Management System",
     component: () => import("../layouts/MainLayout.vue"),
     children: [
+      // Course Management
       {
         path: "course_management",
         name: "Course Management",
@@ -81,8 +82,18 @@ const routes = [
           import("../pages/CoursePage/AdminCoursePage/AddCategory.vue"),
         meta: { role: 0, requiresAuth: true },
       },
+
+      // User Management
+      {
+        path: "user_management",
+        name: "User Management",
+        component: () => import("../pages/UserManagement/UserManagement.vue"),
+        meta: { role: 0, requiresAuth: true },
+      },
     ],
   },
+
+  // Examinee / TrainingAce
   {
     path: "/lms",
     name: "Learning Management System Client",

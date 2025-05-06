@@ -90,6 +90,12 @@ const routes = [
         component: () => import("../pages/UserManagement/UserManagement.vue"),
         meta: { role: 0, requiresAuth: true },
       },
+      {
+        path: "user_management/user_certificates/:user_id",
+        name: "User Certificates",
+        component: () => import("../pages/UserManagement/UserCertificates.vue"),
+        meta: { role: 0, requiresAuth: true },
+      },
     ],
   },
 

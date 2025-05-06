@@ -1,168 +1,185 @@
 <template>
-  <div class="row items-center justify-between" style="height: 100vh">
-    <div class="col-6 text-center q-gutter-lg">
-      <div class="q-gutter-md">
-        <div class="text-h4 text-cyan text-weight-bold">
-          Certificate of Completion
-        </div>
-        <div class="text-h5 text-weight-medium">
-          Congratulations, {{ userName }}!
-        </div>
-      </div>
-      <div>
-        <p
-          class="text-subtitle1"
-          style="text-align: center; margin: 0 auto; max-width: 400px"
-        >
-          You have demonstrated exceptional knowledge and mastery by completing
-          the {{ quizName }} as part of the {{ courseName }} course.
-        </p>
-      </div>
-      <div class="q-gutter-md">
-        <q-btn
-          @click="browseMoreCourses"
-          label="Browse More Courses"
-          no-caps
-          rounded
-          class="text-black q-px-xl"
-        />
-        <q-btn
-          label="Take Another Quiz"
-          @click="navigateToQuizzes"
-          no-caps
-          rounded
-          class="bg-accent text-white q-px-xl"
-        />
-      </div>
+  <div>
+    <div
+      v-if="loading"
+      class="column items-center justify-center"
+      style="height: 100vh; text-align: center"
+    >
+      <q-spinner-dots color="primary" size="80px" />
+      <p
+        class="text-subtitle1 text-primary"
+        style="margin-top: 10px; font-size: 1.5rem"
+      >
+        Generating certificate...
+      </p>
     </div>
 
-    <!-- Certificate Preview with Overlay Text -->
-    <div
-      class="col-6"
-      style="
-        height: 100%;
-        background: linear-gradient(
-          90deg,
-          rgba(4, 42, 81, 1) 0%,
-          rgba(74, 143, 212, 1) 100%
-        );
-      "
-    >
-      <div
-        class="q-gutter-xl justify-center items-center column"
-        style="height: 100%"
-      >
-        <div class="text-h5 text-white text-start">Preview:</div>
-        <div
-          style="
-            position: relative;
-            display: inline-block;
-            text-align: center;
-            width: 100%;
-            max-width: 500px;
-          "
-        >
-          <img
-            :src="certificateTemplate"
-            alt="certificate-image"
-            style="width: 100%"
-          />
-
-          <!-- Full Name -->
-          <div
-            style="
-              position: absolute;
-              top: 32%;
-              left: 50%;
-              transform: translateX(-50%);
-              font-size: 1em;
-              font-weight: 600;
-              color: #585d67;
-            "
-          >
-            {{ userName }}
+    <div v-else class="row items-center justify-between" style="height: 100vh">
+      <div class="col-6 text-center q-gutter-lg">
+        <div class="q-gutter-md">
+          <div class="text-h4 text-cyan text-weight-bold">
+            Certificate of Completion
           </div>
-
-          <!-- Body -->
-          <div
-            style="
-              position: absolute;
-              top: 49%;
-              left: 45%;
-              transform: translate(-45%, -36%);
-              font-size: 0.7em;
-              font-weight: 300;
-              text-align: justify;
-              width: 90%;
-              font-family: serif;
-              color: #585d67;
-            "
-          >
-            {{ certificateBody }}
-          </div>
-
-          <!-- Date of Completion -->
-          <div
-            style="
-              position: absolute;
-              top: 67.5%;
-              left: 66%;
-              transform: translate(-45%, -23%);
-              font-size: 0.6em;
-              font-weight: 300;
-              text-align: justify;
-              width: 90%;
-              font-family: serif;
-              color: #585d67;
-            "
-          >
-            {{ dateCompleted }}
-          </div>
-
-          <!-- Certificate No. -->
-          <div
-            style="
-              position: absolute;
-              top: 71.5%;
-              left: 66%;
-              transform: translate(-45%, -23%);
-              font-size: 0.6em;
-              font-weight: 300;
-              text-align: justify;
-              width: 90%;
-              font-family: serif;
-              color: #585d67;
-            "
-          >
-            {{ certificateNo }}
-          </div>
-
-          <!-- Valid until -->
-          <div
-            style="
-              position: absolute;
-              top: 75.5%;
-              left: 66%;
-              transform: translate(-45%, -23%);
-              font-size: 0.6em;
-              font-weight: 300;
-              text-align: justify;
-              width: 90%;
-              font-family: serif;
-              color: #585d67;
-            "
-          >
-            {{ validUntil }}
+          <div class="text-h5 text-weight-medium">
+            Congratulations, {{ userName }}!
           </div>
         </div>
+        <div>
+          <p
+            class="text-subtitle1"
+            style="text-align: center; margin: 0 auto; max-width: 400px"
+          >
+            You have demonstrated exceptional knowledge and mastery by
+            completing the {{ quizName }} as part of the
+            {{ courseName }} course.
+          </p>
+        </div>
+        <div class="q-gutter-md">
+          <q-btn
+            @click="browseMoreCourses"
+            label="Browse More Courses"
+            no-caps
+            rounded
+            class="text-black q-px-xl"
+          />
+          <q-btn
+            label="Take Another Quiz"
+            @click="navigateToQuizzes"
+            no-caps
+            rounded
+            class="bg-accent text-white q-px-xl"
+          />
+        </div>
+      </div>
 
-        <q-btn
-          label="Download Certificate"
-          no-caps
-          rounded
-          class="bg-accent text-white q-px-xl"
-          @click="generateCertificate"
-        />
+      <!-- Certificate Preview with Overlay Text -->
+      <div
+        class="col-6"
+        style="
+          height: 100%;
+          background: linear-gradient(
+            90deg,
+            rgba(4, 42, 81, 1) 0%,
+            rgba(74, 143, 212, 1) 100%
+          );
+        "
+      >
+        <div
+          class="q-gutter-xl justify-center items-center column"
+          style="height: 100%"
+        >
+          <div class="text-h5 text-white text-start">Preview:</div>
+          <div
+            style="
+              position: relative;
+              display: inline-block;
+              text-align: center;
+              width: 100%;
+              max-width: 500px;
+            "
+          >
+            <img
+              :src="certificateTemplate"
+              alt="certificate-image"
+              style="width: 100%"
+            />
+
+            <!-- Full Name -->
+            <div
+              style="
+                position: absolute;
+                top: 32%;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 1em;
+                font-weight: 600;
+                color: #585d67;
+              "
+            >
+              {{ userName }}
+            </div>
+
+            <!-- Body -->
+            <div
+              style="
+                position: absolute;
+                top: 49%;
+                left: 45%;
+                transform: translate(-45%, -36%);
+                font-size: 0.7em;
+                font-weight: 300;
+                text-align: justify;
+                width: 90%;
+                font-family: serif;
+                color: #585d67;
+              "
+            >
+              {{ certificateBody }}
+            </div>
+
+            <!-- Date of Completion -->
+            <div
+              style="
+                position: absolute;
+                top: 67.5%;
+                left: 66%;
+                transform: translate(-45%, -23%);
+                font-size: 0.6em;
+                font-weight: 300;
+                text-align: justify;
+                width: 90%;
+                font-family: serif;
+                color: #585d67;
+              "
+            >
+              {{ dateCompleted }}
+            </div>
+
+            <!-- Certificate No. -->
+            <div
+              style="
+                position: absolute;
+                top: 71.5%;
+                left: 66%;
+                transform: translate(-45%, -23%);
+                font-size: 0.6em;
+                font-weight: 300;
+                text-align: justify;
+                width: 90%;
+                font-family: serif;
+                color: #585d67;
+              "
+            >
+              {{ certificateNo }}
+            </div>
+
+            <!-- Valid until -->
+            <div
+              style="
+                position: absolute;
+                top: 75.5%;
+                left: 66%;
+                transform: translate(-45%, -23%);
+                font-size: 0.6em;
+                font-weight: 300;
+                text-align: justify;
+                width: 90%;
+                font-family: serif;
+                color: #585d67;
+              "
+            >
+              {{ validUntil }}
+            </div>
+          </div>
+
+          <q-btn
+            label="Download Certificate"
+            no-caps
+            rounded
+            class="bg-accent text-white q-px-xl"
+            @click="generateCertificate"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -187,6 +204,8 @@ const logStore = useLogStore();
 
 const logId = +route.params.log_id;
 const logDetails = ref({});
+
+const loading = ref(false);
 
 const padId = (id, length) => {
   return id.toString().padStart(length, "0");
@@ -220,10 +239,12 @@ onMounted(async () => {
 
 // Functions
 const getLog = async () => {
+  loading.value = true;
+
   logStore
     .GetLog({ id: logId })
     .then((response) => {
-      logDetails.value = response.data[0];
+      logDetails.value = response.data;
       dateCompleted.value = logDetails.value.date_time_completed
         ? date.formatDate(logDetails.value.date_time_completed, "MMMM D, YYYY")
         : "N/A";
@@ -236,6 +257,9 @@ const getLog = async () => {
     })
     .catch((error) => {
       console.error("Error fetching log details:", error);
+    })
+    .finally(() => {
+      loading.value = false;
     });
 };
 

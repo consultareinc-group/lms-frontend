@@ -31,10 +31,11 @@
             />
           </div>
         </div>
+
         <q-table
           flat
           bordered
-          :rows="courses"
+          :rows="users"
           :columns="columns"
           row-key="id"
           table-header-class="bg-dark text-white"
@@ -45,34 +46,17 @@
             <q-td :props="props">
               <div class="table-menu">
                 <q-btn dense icon="more_vert" flat round>
-                  <q-menu style="width: 100px">
+                  <q-menu style="width: 150px">
                     <q-list>
                       <q-item
                         clickable
                         v-close-popup
                         :to="{
-                          name: 'View Course Details',
-                          params: { course_id: props.row.id },
+                          name: 'User Certificates',
+                          params: { user_id: props.row.id },
                         }"
                       >
-                        <q-item-section>View</q-item-section>
-                      </q-item>
-                      <q-item
-                        clickable
-                        v-close-popup
-                        :to="{
-                          name: 'Edit Course',
-                          params: { course_id: props.row.id },
-                        }"
-                      >
-                        <q-item-section>Edit</q-item-section>
-                      </q-item>
-                      <q-item
-                        clickable
-                        v-close-popup
-                        @click="showArchiveDialog(props.row)"
-                      >
-                        <q-item-section>Archive</q-item-section>
+                        <q-item-section>View Certificates</q-item-section>
                       </q-item>
                     </q-list>
                   </q-menu>
@@ -88,41 +72,82 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { useUserStore } from "../../stores/user-store";
+
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 
 // Variables
+const userStore = useUserStore();
+
+const users = ref([]);
 const search_keyword = ref("");
 const tableLoadingState = ref(false);
-const courses = ref([]);
+
 const columns = ref([
   {
     name: "id",
-    label: "ID",
+    required: true,
+    label: "User ID",
     align: "left",
-    field: "id",
+    field: (row) => row.id,
+    format: (val) => `${val}`,
+    sortable: false,
+  },
+  {
+    name: "full_name",
+    required: true,
+    label: "Full Name",
+    align: "left",
+    field: (row) =>
+      [row.first_name, row.middle_name, row.last_name]
+        .filter((name) => name != null && name.trim() !== "")
+        .join(" "),
+    format: (val) => `${val}`,
     sortable: true,
   },
   {
-    name: "name",
-    label: "Name",
+    name: "suffix",
+    required: true,
+    label: "Suffix",
     align: "left",
-    field: "name",
+    field: (row) => row.suffix_name || "none",
+    format: (val) => `${val}`,
     sortable: true,
   },
   {
     name: "email",
+    required: true,
     label: "Email",
     align: "left",
-    field: "email",
+    field: (row) => row.email,
+    format: (val) => `${val}`,
     sortable: true,
   },
-  {
-    name: "action",
-    label: "",
-    align: "right",
-    field: "",
-  },
+  { name: "action", field: "action" },
+  // Add more columns as needed
 ]);
+
+// Lifecycle Hooks
+onMounted(() => {
+  getUsers();
+});
+
+// Functions
+const getUsers = () => {
+  tableLoadingState.value = true;
+
+  userStore
+    .GetUsers({ offset: users.value.length })
+    .then((response) => {
+      users.value = response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching users:", error);
+    })
+    .finally(() => {
+      tableLoadingState.value = false;
+    });
+};
 </script>
 
 <style lang="scss" scoped></style>

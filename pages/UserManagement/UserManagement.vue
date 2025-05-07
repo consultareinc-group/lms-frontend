@@ -41,6 +41,7 @@
           table-header-class="bg-dark text-white"
           class="sticky-table-header"
           :loading="tableLoadingState"
+          :rows-per-page-options="[10, 20, 30, 50, 100]"
         >
           <template v-slot:body-cell-action="props">
             <q-td :props="props">

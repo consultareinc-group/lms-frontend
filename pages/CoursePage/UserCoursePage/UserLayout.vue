@@ -55,6 +55,18 @@
                 >
               </template>
               <q-list>
+                <q-item
+                  clickable
+                  v-close-popup
+                  :to="{
+                    name: 'My Certificates',
+                    params: { user_id: authStore.UserInformation.id },
+                  }"
+                >
+                  <q-item-section>
+                    <q-item-label>My Certificates</q-item-label>
+                  </q-item-section>
+                </q-item>
                 <q-item clickable v-close-popup @click="logout">
                   <q-item-section>
                     <q-item-label>Sign out</q-item-label>

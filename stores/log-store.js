@@ -35,5 +35,18 @@ export const useLogStore = defineStore("logs", {
           });
       });
     },
+
+    GetLogsByUserId(request) {
+      return new Promise((resolve, reject) => {
+        api
+          .get(`/lms/examinee/logs?user_id=${request.user_id}`)
+          .then((response) => {
+            resolve(response.data);
+          })
+          .catch((error) => {
+            reject(error.response.data);
+          });
+      });
+    },
   },
 });

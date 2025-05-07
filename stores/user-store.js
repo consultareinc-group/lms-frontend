@@ -16,29 +16,17 @@ export const useUserStore = defineStore("user", {
           });
       });
     },
-    // GetCategory(request) {
-    //   return new Promise((resolve, reject) => {
-    //     api
-    //       .get(`lms/category/${request.id}`)
-    //       .then((response) => {
-    //         resolve(response.data);
-    //       })
-    //       .catch((error) => {
-    //         reject(error.response.data);
-    //       });
-    //   });
-    // },
-    // SearchCategories(request) {
-    //   return new Promise((resolve, reject) => {
-    //     api
-    //       .get(`lms/category?search_keyword=${request.keyword}`)
-    //       .then((response) => {
-    //         resolve(response.data);
-    //       })
-    //       .catch((error) => {
-    //         reject(error.response.data);
-    //       });
-    //   });
-    // },
+    GetUser(request) {
+      return new Promise((resolve, reject) => {
+        api
+          .get(`users/${request.id}`)
+          .then((response) => {
+            resolve(response.data);
+          })
+          .catch((error) => {
+            reject(error.response.data);
+          });
+      });
+    },
   },
 });

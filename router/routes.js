@@ -114,7 +114,7 @@ const routes = [
         meta: { requiresAuth: true },
       },
       {
-        path: "/quiz_page/:quiz_id",
+        path: "/quiz_page/:course_id/:quiz_id",
         name: "Quiz Page",
         component: () =>
           import("../pages/CoursePage/UserCoursePage/QuizPage.vue"),
@@ -127,6 +127,22 @@ const routes = [
           import("../pages/CoursePage/UserCoursePage/CertificationPage.vue"),
         meta: { requiresAuth: true },
       },
+      {
+        path: "/view_certificate/:log_id?",
+        name: "View Certificate",
+        component: () =>
+          import("../pages/CoursePage/UserCoursePage/ViewCertificate.vue"),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: "error/:message?",
+        name: "Error Page",
+        component: () =>
+          import("../pages/CoursePage/UserCoursePage/ErrorPage.vue"),
+        meta: { requiresAuth: true },
+      },
+
+      // TrainingAce
       {
         path: "courses/:category_id?/:category_name?",
         name: "Courses",
@@ -144,6 +160,12 @@ const routes = [
         name: "Select Category",
         component: () => import("../pages/TrainingAce/SelectCategory.vue"),
         meta: { requiresAuth: false },
+      },
+      {
+        path: "my_certificates/:user_id",
+        name: "My Certificates",
+        component: () => import("../pages/TrainingAce/MyCertificates.vue"),
+        meta: { requiresAuth: true },
       },
     ],
   },

@@ -81,7 +81,7 @@
             <img
               :src="certificateTemplate"
               alt="certificate-image"
-              style="width: 100%"
+              style="width: 100%; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25)"
             />
 
             <!-- Full Name -->
@@ -186,20 +186,20 @@
 </template>
 
 <script setup>
-import certificateTemplate from "../../../assets/certificate-template-new.png";
 import { onMounted, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useLogStore } from "../../../stores/log-store";
+
+import { date } from "quasar";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import { saveAs } from "file-saver";
-import { LocalStorage, date } from "quasar";
-import { useRoute, useRouter } from "vue-router";
-import { useAuthStore } from "src/stores/auth";
-import { useLogStore } from "../../../stores/log-store";
+
+import certificateTemplate from "../../../assets/certificate-template-new.png";
 
 // Variables
 const router = useRouter();
 const route = useRoute();
 
-const authStore = useAuthStore();
 const logStore = useLogStore();
 
 const logId = +route.params.log_id;
@@ -207,34 +207,22 @@ const logDetails = ref({});
 
 const loading = ref(false);
 
+const userName = ref(null);
+const quizName = ref(null);
+const courseName = ref(null);
+
 const padId = (id, length) => {
   return id.toString().padStart(length, "0");
 };
 
-const userDetails = authStore.UserInformation;
-const quizDetails = LocalStorage.getItem("quiz");
-const courseDetails = LocalStorage.getItem("course");
-
-const userName = ref(
-  `${userDetails?.first_name?.toUpperCase() || ""} ${
-    userDetails?.middle_name ? userDetails.middle_name.toUpperCase() : ""
-  } ${userDetails?.last_name?.toUpperCase() || ""} ${
-    userDetails?.suffix ? userDetails.suffix.toUpperCase() : ""
-  }`
-);
-
-const quizName = ref(quizDetails.quiz_name.toUpperCase());
-const courseName = ref(courseDetails.course_name.toUpperCase());
-const certificateBody = ref(
-  `has successfully completed the FAMILIARIZATION TRAINING. This course covered essential topics related to participants, providing a comprehensive learning experience designed to equip them with the necessary skills and knowledge to navigate the complexities of ${courseName.value}.`
-);
+const certificateBody = ref(null);
 const dateCompleted = ref(null);
 const certificateNo = ref(padId(route.params.log_id, 10));
 const validUntil = ref(null);
 
 // Lifecycle Hooks
-onMounted(async () => {
-  await getLog();
+onMounted(() => {
+  getLog();
 });
 
 // Functions
@@ -245,6 +233,19 @@ const getLog = async () => {
     .GetLog({ id: logId })
     .then((response) => {
       logDetails.value = response.data;
+
+      userName.value = [
+        logDetails.value.first_name,
+        logDetails.value.middle_name || null,
+        logDetails.value.last_name,
+        logDetails.value.suffix_name || null,
+      ]
+        .filter((namePart) => namePart && namePart.trim() !== "")
+        .join(" ");
+
+      quizName.value = logDetails.value.quiz_name.toUpperCase();
+      courseName.value = logDetails.value.course_name.toUpperCase();
+
       dateCompleted.value = logDetails.value.date_time_completed
         ? date.formatDate(logDetails.value.date_time_completed, "MMMM D, YYYY")
         : "N/A";
@@ -254,9 +255,23 @@ const getLog = async () => {
             "MMMM D, YYYY"
           )
         : "N/A";
+
+      certificateBody.value = `has successfully completed the FAMILIARIZATION TRAINING. This course covered essential topics related to participants, providing a comprehensive learning experience designed to equip them with the necessary skills and knowledge to navigate the complexities of ${quizName.value}.`;
     })
     .catch((error) => {
-      console.error("Error fetching log details:", error);
+      if (error.message === "Not Authorized.") {
+        router.push({
+          name: "Error Page",
+          params: { message: error.message },
+        });
+      } else if (error.message === "Certificate not found.") {
+        router.push({
+          name: "Error Page",
+          params: { message: error.message },
+        });
+      } else {
+        console.error("Error fetching log details:", error);
+      }
     })
     .finally(() => {
       loading.value = false;
@@ -267,7 +282,7 @@ const navigateToQuizzes = () => {
   router.push({
     name: "List of Quizzes",
     params: {
-      course_id: courseDetails.id,
+      course_id: logDetails.value.course_id,
     },
   });
 };
@@ -285,9 +300,7 @@ const generateCertificate = async () => {
     const pdfDoc = await PDFDocument.load(templateBytes);
     const page = pdfDoc.getPages()[0];
 
-    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const fontRegular = await pdfDoc.embedFont(StandardFonts.TimesRoman);
-    const fontSize = 12;
     const color = rgb(88 / 255, 93 / 255, 103 / 255);
 
     const textWidth = fontRegular.widthOfTextAtSize(userName.value, 24);
@@ -370,7 +383,7 @@ const generateCertificate = async () => {
     const pdfBytes = await pdfDoc.save();
     saveAs(
       new Blob([pdfBytes], { type: "application/pdf" }),
-      `${courseDetails.course_name.toUpperCase()} CERTIFICATE - ${
+      `${logDetails.value.course_name.toUpperCase()} CERTIFICATE - ${
         userName.value
       }.pdf`
     );

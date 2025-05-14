@@ -8,10 +8,38 @@ export const useLogStore = defineStore("logs", {
     logs: null,
   }),
   actions: {
-    postLogs(request) {
+    PostLogs(request) {
       return new Promise((resolve, reject) => {
         api
-          .post(`/lms/examinee/logs`, request)
+          .post("/lms/examinee/logs", request)
+          .then((response) => {
+            this.logs = response.data.data[0];
+            resolve(response.data);
+          })
+          .catch((error) => {
+            reject(error.response.data);
+          });
+      });
+    },
+
+    GetLog(request) {
+      return new Promise((resolve, reject) => {
+        api
+          .get(`/lms/examinee/logs/${request.id}`)
+          .then((response) => {
+            this.logs = response.data.data[0];
+            resolve(response.data);
+          })
+          .catch((error) => {
+            reject(error.response.data);
+          });
+      });
+    },
+
+    GetLogsByUserId(request) {
+      return new Promise((resolve, reject) => {
+        api
+          .get(`/lms/examinee/logs?user_id=${request.user_id}`)
           .then((response) => {
             resolve(response.data);
           })

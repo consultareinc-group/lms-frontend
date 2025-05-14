@@ -162,10 +162,9 @@ const categoryId = ref(null);
 onMounted(() => {
   getCategories();
 
-  category.value = route.params.category_name;
-  categoryId.value = +route.params.category_id
-    ? +route.params.category_id
-    : " ";
+  category.value = route.params.category_name || "All";
+  categoryId.value = +route.params.category_id ? +route.params.category_id : "";
+
   search();
 });
 

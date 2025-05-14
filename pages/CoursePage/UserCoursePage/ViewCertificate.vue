@@ -14,47 +14,10 @@
       </p>
     </div>
 
-    <div v-else class="row items-center justify-between" style="height: 100vh">
-      <div class="col-6 text-center q-gutter-lg">
-        <div class="q-gutter-md">
-          <div class="text-h4 text-cyan text-weight-bold">
-            Certificate of Completion
-          </div>
-          <div class="text-h5 text-weight-medium">
-            Congratulations, {{ userName }}!
-          </div>
-        </div>
-        <div>
-          <p
-            class="text-subtitle1"
-            style="text-align: center; margin: 0 auto; max-width: 400px"
-          >
-            You have demonstrated exceptional knowledge and mastery by
-            completing the {{ quizName }} as part of the
-            {{ courseName }} course.
-          </p>
-        </div>
-        <div class="q-gutter-md">
-          <q-btn
-            @click="browseMoreCourses"
-            label="Browse More Courses"
-            no-caps
-            rounded
-            class="text-black q-px-xl"
-          />
-          <q-btn
-            label="Take Another Quiz"
-            @click="navigateToQuizzes"
-            no-caps
-            rounded
-            class="bg-accent text-white q-px-xl"
-          />
-        </div>
-      </div>
-
+    <div v-else class="row items-center" style="height: 100vh">
       <!-- Certificate Preview with Overlay Text -->
       <div
-        class="col-6"
+        class="col-12"
         style="
           height: 100%;
           background: linear-gradient(
@@ -68,14 +31,13 @@
           class="q-gutter-xl justify-center items-center column"
           style="height: 100%"
         >
-          <div class="text-h5 text-white text-start">Preview:</div>
           <div
             style="
               position: relative;
               display: inline-block;
               text-align: center;
               width: 100%;
-              max-width: 500px;
+              max-width: 1000px;
             "
           >
             <img
@@ -91,7 +53,7 @@
                 top: 32%;
                 left: 50%;
                 transform: translateX(-50%);
-                font-size: 1em;
+                font-size: 2em;
                 font-weight: 600;
                 color: #585d67;
               "
@@ -106,7 +68,7 @@
                 top: 49%;
                 left: 45%;
                 transform: translate(-45%, -36%);
-                font-size: 0.7em;
+                font-size: 1.4em;
                 font-weight: 300;
                 text-align: justify;
                 width: 90%;
@@ -124,7 +86,7 @@
                 top: 67.5%;
                 left: 66%;
                 transform: translate(-45%, -23%);
-                font-size: 0.6em;
+                font-size: 1.2em;
                 font-weight: 300;
                 text-align: justify;
                 width: 90%;
@@ -142,7 +104,7 @@
                 top: 71.5%;
                 left: 66%;
                 transform: translate(-45%, -23%);
-                font-size: 0.6em;
+                font-size: 1.2em;
                 font-weight: 300;
                 text-align: justify;
                 width: 90%;
@@ -160,7 +122,7 @@
                 top: 75.5%;
                 left: 66%;
                 transform: translate(-45%, -23%);
-                font-size: 0.6em;
+                font-size: 1.2em;
                 font-weight: 300;
                 text-align: justify;
                 width: 90%;
@@ -278,15 +240,6 @@ const getLog = async () => {
     });
 };
 
-const navigateToQuizzes = () => {
-  router.push({
-    name: "List of Quizzes",
-    params: {
-      course_id: logDetails.value.course_id,
-    },
-  });
-};
-
 const generateCertificate = async () => {
   try {
     const templateUrl = new URL(
@@ -390,9 +343,5 @@ const generateCertificate = async () => {
   } catch (error) {
     console.error("Error generating certificate:", error);
   }
-};
-
-const browseMoreCourses = () => {
-  router.push({ name: "Courses" });
 };
 </script>

@@ -1,0 +1,99 @@
+name: Deploy LMS Frontend Staging to cPanel
+
+on:
+  push:
+    branches:
+      - staging # Trigger on push to the staging branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      # Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "20.x" # Use an appropriate version of Node.js
+
+      - name: Install npm
+        run: |
+          sudo apt-get update -y # Update apt repository
+          curl -sL https://deb.nodesource.com/setup_20.x | sudo -E bash - # Install Node.js & npm
+          sudo apt-get install -y nodejs # Install npm and nodejs
+          node -v # Verify node installation
+          npm -v  # Verify npm installation
+
+      # Clone interlinkiq frontend repository
+      - name: Clone interlinkiq frontend repository
+        run: |
+          git clone https://USERNAME:${{ secrets.PERSONAL_TOKEN }}@github.com/consultareinc-group/interlinkiq-frontend.git
+          cd interlinkiq-frontend
+          git checkout lms-staging
+          cd ../
+
+          mkdir -p interlinkiq-frontend/src/resources/lms/
+
+          # Move files EXCEPT the cloned repository itself
+          shopt -s extglob  # Enable extended globbing
+          mv !(interlinkiq-frontend) interlinkiq-frontend/src/resources/lms/
+          shopt -u extglob  # Disable extended globbing
+
+      # Install dependencies
+      - name: Install Dependencies
+        run: |
+          cd interlinkiq-frontend
+          npm install -g npm@11.0.0
+          npm install -g @quasar/cli
+          npm install
+          npm install pdf-lib
+          npm install file-saver
+
+      # Update API URL in axios.js
+      - name: Update API URL in axios.js
+        run: |
+          cd interlinkiq-frontend
+          sed -i "s|baseURL: '.*'|baseURL: '${{ secrets.STAGING_API_URL }}'|" src/boot/axios.js
+          sed -i "s|// publicPath: '/'|publicPath: '/staging_frontend/'|" quasar.config.js
+          sed -i "s|// import SubSystem from './SubSystem/bootstrap'|import lms from './lms/bootstrap'|" src/resources/bootstrap.js
+          sed -i "s|// ...SubSystem.routes|...lms.routes|" src/resources/bootstrap.js
+          sed -i "s|// ...SubSystem.links|...lms.links|" src/resources/bootstrap.js
+
+      # Build the Quasar app
+      - name: Build Quasar App
+        run: |
+          cd interlinkiq-frontend
+          quasar build
+
+      # Deploy to cPanel using SSH
+      - name: Deploy to cPanel
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          SSH_PORT: ${{ secrets.CPANEL_PORT }}
+        run: |
+          cd interlinkiq-frontend
+          # Start SSH agent
+          eval "$(ssh-agent -s)"
+
+          # Add SSH private key to the agent
+          echo "$SSH_PRIVATE_KEY" | ssh-add -
+
+          # Test SSH connection
+          ssh -o StrictHostKeyChecking=no -p $SSH_PORT $CPANEL_USER@$CPANEL_HOST "echo 'SSH connection successful!'"
+
+          # Remove only specific files and folders from the cPanel web root
+          ssh -p $SSH_PORT $CPANEL_USER@$CPANEL_HOST << EOF
+            cd ~/public_html/staging_frontend
+            rm -rf assets icons favicon.ico index.html
+          EOF
+
+          # Upload the build files to the cPanel server
+          rsync -avz -e "ssh -p $SSH_PORT" dist/spa/ $CPANEL_USER@$CPANEL_HOST:public_html/staging_frontend/
+
+          echo "Deployment to cPanel completed."

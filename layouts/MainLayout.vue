@@ -19,32 +19,29 @@
         </q-toolbar-title>
 
         <!-- sidebar toggle -->
-        <q-btn dense flat icon="menu" class="q-ml-sm" @click="toggleLeftDrawer" />
+        <q-btn
+          dense
+          flat
+          icon="menu"
+          class="q-ml-sm"
+          @click="toggleLeftDrawer"
+        />
 
         <div class="q-ml-auto q-px-md full-height">
           <q-btn-dropdown flat :ripple="false" no-caps class="full-height">
             <template v-slot:label>
-              <q-avatar>
+              <!-- <q-avatar>
                 <img src="https://cdn.quasar.dev/img/avatar.png" />
-              </q-avatar>
-              <span class="q-ml-md text-grey-9">Jane Doe</span>
+              </q-avatar> -->
+              <span class="q-ml-md text-grey-9"
+                >{{ authStore.UserInformation.first_name }},
+                {{ authStore.UserInformation.last_name }}</span
+              >
             </template>
             <q-list>
-              <q-item clickable v-close-popup>
+              <q-item clickable v-close-popup @click="logout">
                 <q-item-section>
-                  <q-item-label>Photos</q-item-label>
-                </q-item-section>
-              </q-item>
-
-              <q-item clickable v-close-popup>
-                <q-item-section>
-                  <q-item-label>Videos</q-item-label>
-                </q-item-section>
-              </q-item>
-
-              <q-item clickable v-close-popup>
-                <q-item-section>
-                  <q-item-label>Articles</q-item-label>
+                  <q-item-label>Sign out</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -52,7 +49,14 @@
         </div>
       </q-toolbar>
     </q-header>
-    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered :width="SIDEBAR_WIDTH" class="bg-dark">
+    <q-drawer
+      show-if-above
+      v-model="leftDrawerOpen"
+      side="left"
+      bordered
+      :width="SIDEBAR_WIDTH"
+      class="bg-dark"
+    >
       <q-list>
         <template v-for="link in sidebarLinks" :key="link.title">
           <nav-item v-if="!link.children" v-bind="link" />
@@ -82,6 +86,10 @@ import BrandLogo from "src/components/BrandLogo.vue";
 import sidebarLinks from "src/lib/sidebar-links";
 import NavItem from "src/components/sidebar-nav/NavItem.vue";
 import NavItemExpanded from "src/components/sidebar-nav/NavItemExpanded.vue";
+import { useAuthStore } from "src/stores/auth";
+import { useRouter } from "vue-router";
+const authStore = useAuthStore();
+const router = useRouter();
 
 const leftDrawerOpen = ref(false);
 
@@ -94,4 +102,10 @@ defineOptions({
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
+
+const logout = () => {
+  authStore.LogoutUser().finally(() => {
+    router.push("/signin");
+  });
+};
 </script>

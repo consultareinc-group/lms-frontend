@@ -33,7 +33,7 @@ jobs:
         run: |
           git clone https://USERNAME:${{ secrets.PERSONAL_TOKEN }}@github.com/consultareinc-group/interlinkiq-frontend.git
           cd interlinkiq-frontend
-          git checkout lms-staging
+          git checkout lms-stable
           cd ../
 
           mkdir -p interlinkiq-frontend/src/resources/lms/

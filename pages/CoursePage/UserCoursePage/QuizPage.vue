@@ -120,7 +120,7 @@ import { useQuestionStore } from "../../../stores/question-store";
 import { useQuizStore } from "../../../stores/quiz-store";
 import { useLogStore } from "../../../stores/log-store";
 import { useRoute, useRouter } from "vue-router";
-import { LocalStorage, useQuasar } from "quasar";
+import { useQuasar } from "quasar";
 
 const router = useRouter();
 const route = useRoute();
@@ -132,8 +132,6 @@ const $q = useQuasar();
 
 const quizId = ref(route.params.quiz_id);
 const userAnswers = ref({});
-const userDetails = ref(LocalStorage.getItem("userDetails"));
-const logs = ref({});
 
 onMounted(() => {
   quizStore.fetchQuizData(quizId.value);
@@ -155,11 +153,7 @@ const submitQuiz = async () => {
   await quizStore.submitAnswers(userAnswers.value, quizId.value);
 
   if (quizStore.quizResult.status === "passed") {
-    logStore.postLogs(userDetails.value).then((res) => {
-      logs.value = res.data[0];
-      logStore.logs = {};
-      logStore.logs = res.data[0];
-    });
+    await logStore.PostLogs({ quiz_id: quizId.value });
   }
 
   alert.value = true;
@@ -170,7 +164,7 @@ const navigateToCertification = () => {
   router.push({
     name: "Certification Page",
     params: {
-      log_id: logs.value.id,
+      log_id: logStore.logs.id,
     },
   });
 };

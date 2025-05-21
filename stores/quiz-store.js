@@ -1,9 +1,9 @@
-import { defineStore } from 'pinia'; // Import Pinia's defineStore to create a state management store
-import { api } from 'boot/axios'; // Import the axios instance for API requests
+import { defineStore } from "pinia"; // Import Pinia's defineStore to create a state management store
+import { api } from "boot/axios"; // Import the axios instance for API requests
 import { LocalStorage } from "quasar";
 
 // Define a Pinia store named 'counter' for managing course-related data
-export const useQuizStore = defineStore('quiz', {
+export const useQuizStore = defineStore("quiz", {
   state: () => ({
     quiz: [],
     quizzes: [],
@@ -28,7 +28,7 @@ export const useQuizStore = defineStore('quiz', {
     async fetchQuizData(quizId) {
       try {
         const response = await api.get(`lms/examinee/quiz/${quizId}`);
-        this.quiz = response.data.data[0];
+        this.quiz = response.data.data;
         LocalStorage.set("quiz", this.quiz);
       } catch (error) {
         console.error("Error getting quiz: ", error);
@@ -48,4 +48,4 @@ export const useQuizStore = defineStore('quiz', {
       }
     },
   },
-})
+});

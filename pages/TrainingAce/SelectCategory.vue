@@ -56,20 +56,42 @@
         </div>
       </div>
     </div>
+
+    <LoginDialog
+      v-model="showLoginDialog"
+      @close="closeDialog"
+      @register="handleRegister"
+    ></LoginDialog>
+
+    <RegisterDialog
+      v-model="showRegisterDialog"
+      @close="closeDialog"
+      @login="handleLogin"
+    ></RegisterDialog>
   </div>
 </template>
 
 <script setup>
 import { onMounted, ref } from "vue";
-import { useCategoryStore } from "../../stores/category-store";
 import { useRouter } from "vue-router";
+
+import { useAuthStore } from "src/stores/auth";
+import { useCategoryStore } from "../../stores/category-store";
+
 import CardLoader from "./CardLoader.vue";
+import LoginDialog from "./components/LoginDialog.vue";
+import RegisterDialog from "./components/RegisterDialog.vue";
 
 // Variables
 const router = useRouter();
+const authStore = useAuthStore();
 const categoryStore = useCategoryStore();
+
 const categories = ref([]);
+const selectedCategory = ref(null);
 const loading = ref(false);
+const showLoginDialog = ref(false);
+const showRegisterDialog = ref(false);
 
 // Lifecycle Hooks
 onMounted(() => {
@@ -97,8 +119,6 @@ const getCategories = () => {
           category.thumbnail = `data:image/png;base64,${category.thumbnail}`;
         }
       });
-
-      console.log(categories.value);
     })
     .catch((error) => {
       console.log(error);
@@ -109,10 +129,45 @@ const getCategories = () => {
 };
 
 const selectCategory = (category) => {
-  router.push({
-    name: "Courses",
-    params: { category_id: category.id, category_name: category.name },
-  });
+  // Check if Bearer token exists in local storage
+  if (!localStorage.getItem("Bearer")) {
+    // Show login dialog and store the selected category
+    selectedCategory.value = category;
+    showLoginDialog.value = true;
+  } else {
+    // Allow navigation to Courses
+    router.push({
+      name: "Courses",
+      params: { category_id: category.id, category_name: category.name },
+    });
+  }
+};
+
+const closeDialog = () => {
+  showLoginDialog.value = false;
+  showRegisterDialog.value = false;
+
+  // Ensure user is logged in before navigating
+  if (localStorage.getItem("Bearer") && selectedCategory.value) {
+    // Navigate to the selected category's courses
+    router.push({
+      name: "Courses",
+      params: {
+        category_id: selectedCategory.value.id,
+        category_name: selectedCategory.value.name,
+      },
+    });
+  }
+};
+
+const handleLogin = () => {
+  showLoginDialog.value = true;
+  showRegisterDialog.value = false;
+};
+
+const handleRegister = () => {
+  showRegisterDialog.value = true;
+  showLoginDialog.value = false;
 };
 </script>
 
